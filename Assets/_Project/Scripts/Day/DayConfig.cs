@@ -1,0 +1,19 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(menuName = "Ultimo Dia Util/Day/Day Config", fileName = "Day_")]
+public class DayConfig : ScriptableObject
+{
+    public int dayNumber = 1;
+    public string dayLabel = "Dia 1";
+
+    [TextArea(2, 4)]
+    public string dayIntro;
+
+    public float workDurationSeconds = 300f;
+    public EconomyConfig economyConfig;
+    public List<RequestType> availableRequestTypes = new List<RequestType>();
+    public List<RuleDefinition> rulebookEntries = new List<RuleDefinition>();
+    public List<NoticeBoardEntry> noticeBoardEntries = new List<NoticeBoardEntry>();
+    public List<StudentCaseDefinition> cases = new List<StudentCaseDefinition>();
+}
