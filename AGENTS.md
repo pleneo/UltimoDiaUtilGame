@@ -16,6 +16,8 @@ The team is building this game for a Computer Graphics discipline. The developer
 
 The game target platform is **Windows**, built with **Unity**, using **C#** and **2D orthographic rendering**.
 
+Also, access `./backlog.md` and `./GDD.md` to more context.
+
 ## Product Vision
 
 The player is a university student close to graduation but blocked by unpaid tuition debt. To pay that debt, the player works at the university administration office and must process student requests by validating documents, payments, and special cases under time pressure.
