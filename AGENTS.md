@@ -279,6 +279,37 @@ Recommended scenes:
 
 For MVP, one main scene with day summary overlays is acceptable.
 
+### Game Scene Organization
+
+For the `Game` scene, prefer a small set of root objects with explicit responsibilities:
+
+- `Systems`: managers such as `GameManager`, `DayManager`, `CaseManager`, `DocumentManager`, `EconomyManager`, and `UIManager`.
+- `World`: desk, NPC roots, queue visuals, and environment objects.
+- `UI`: the gameplay `Canvas` and its visible panels.
+- `Controllers`: scene-level controllers that are not visual UI and are not system managers, such as menu or input helper objects when needed.
+- `EventSystem`: Unity event system object.
+
+Recommended hierarchy shape:
+
+```text
+Game
+├─ Systems
+├─ World
+├─ UI
+│  └─ Canvas
+├─ Controllers
+└─ EventSystem
+```
+
+Rules for scene organization:
+
+- Keep the `Canvas` under `UI`, not under `Controllers` or manager objects.
+- Keep controllers and managers outside the `Canvas`; UI should not own gameplay logic.
+- Keep desk documents under a dedicated root such as `DocumentSpawnRoot` inside the desk hierarchy.
+- Let `DocumentManager` spawn and clear documents, but keep validation logic outside document prefabs.
+- Document prefabs should handle presentation and interaction only, such as drag, selection, and z-order.
+- `CaseValidator` or equivalent validation logic should decide correctness, not UI button scripts and not document scripts.
+
 ### Folder Structure
 
 Recommended Unity project folders:
