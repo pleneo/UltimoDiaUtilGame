@@ -10,6 +10,8 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
     [SerializeField] private TMP_Text bodyText;
     [SerializeField] private float selectedScale = 1.03f;
 
+    private static DraggableDocument currentSelected;
+
     public event Action<DraggableDocument> Selected;
 
     public DocumentRecord BoundRecord { get; private set; }
@@ -30,7 +32,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
 
-        parentRectTransform = transform.parent as RectTransform;
+        parentRectTransform = ResolveDragRoot();
         baseScale = transform.localScale;
     }
 
@@ -51,7 +53,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        parentRectTransform = transform.parent as RectTransform;
+        parentRectTransform = ResolveDragRoot();
 
         if (parentRectTransform == null)
         {
@@ -59,7 +61,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
         }
 
         transform.SetAsLastSibling();
-        SetSelectedVisual(true);
+        Select();
         IsDragging = true;
         canvasGroup.blocksRaycasts = false;
 
@@ -95,12 +97,47 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
         }
 
         transform.SetAsLastSibling();
-        SetSelectedVisual(true);
+        Select();
         Selected?.Invoke(this);
+    }
+
+    public void Select()
+    {
+        if (currentSelected != null && currentSelected != this)
+        {
+            currentSelected.SetSelectedVisual(false);
+        }
+
+        currentSelected = this;
+        SetSelectedVisual(true);
     }
 
     public void SetSelectedVisual(bool isSelected)
     {
         transform.localScale = isSelected ? baseScale * selectedScale : baseScale;
+    }
+
+    private void OnDisable()
+    {
+        if (currentSelected == this)
+        {
+            currentSelected = null;
+        }
+    }
+
+    private RectTransform ResolveDragRoot()
+    {
+        var current = transform.parent;
+        while (current != null)
+        {
+            if (current is RectTransform rect)
+            {
+                return rect;
+            }
+
+            current = current.parent;
+        }
+
+        return null;
     }
 }
