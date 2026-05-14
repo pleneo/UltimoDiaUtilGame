@@ -40,6 +40,12 @@ public enum DocumentType
     SpecialNotice
 }
 
+public enum StampType
+{
+    Aprovado,
+    Negado
+}
+
 public enum ValidationIssueType
 {
     MissingDocument,
