@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3327ca22ddb3dfd328edcdeb6fdf9ccf, type: 3}
+  m_Name: Case_Day01_Enrollment_MissingDocument
+  m_EditorClassIdentifier: Assembly-CSharp::StudentCaseDefinition
+  caseId: day01_enrollment_missing_document
+  caseTitle: Matricula sem historico
+  applicantName: Plinio Gomes
+  requestType: 0
+  npcDialogue: Aluno solicita matricula, mas nao trouxe o historico escolar.
+  caseSummary: O historico escolar esta faltando, entao a matricula deve ser indeferida.
+  referenceDateIso: 2026-05-21
+  requiresSupervisorReview: 0
+  hasDecisionOverride: 0
+  overriddenCorrectDecision: 0
+  overrideReason: 
+  mistakeIsCritical: 1
+  requiredDocuments:
+  - documentType: 1
+    required: 1
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys:
+    - nome
+  - documentType: 2
+    required: 1
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys:
+    - nome
+    - ra
+  - documentType: 3
+    required: 1
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys:
+    - nome
+    - ra
+  comparisonRules:
+  - firstDocumentType: 1
+    firstFieldKey: nome
+    secondDocumentType: 2
+    secondFieldKey: nome
+    description: O nome da Carteira de Identidade deve bater com o Historico Escolar.
+  - firstDocumentType: 1
+    firstFieldKey: nome
+    secondDocumentType: 3
+    secondFieldKey: nome
+    description: O nome da Carteira de Identidade deve bater com o Comprovante de
+      Matricula.
+  - firstDocumentType: 2
+    firstFieldKey: ra
+    secondDocumentType: 3
+    secondFieldKey: ra
+    description: O RA do Historico Escolar deve bater com o Comprovante de Matricula.
+  documents:
+  - definition: {fileID: 11400000, guid: 7bde6ce78d87f1849bf99ff827804f30, type: 2}
+    fields:
+    - key: nome
+      value: Plinio Gomes
+    hasValidStamp: 1
+    isSuspicious: 0
+    isFake: 0
+    issueDateIso: 2026-05-21
+    expiryDateIso: 
+    notes: 
+  - definition: {fileID: 11400000, guid: 48f615c100fcc3e42bb3800e98921f47, type: 2}
+    fields:
+    - key: nome
+      value: Plinio Gomes
+    - key: ra
+      value: 2026001
+    - key: curso
+      value: Ciencia da Computacao
+    hasValidStamp: 1
+    isSuspicious: 0
+    isFake: 0
+    issueDateIso: 2026-05-21
+    expiryDateIso: 
+    notes: 

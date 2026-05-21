@@ -4,6 +4,7 @@ using UnityEngine;
 public class CaseManager : MonoBehaviour
 {
     [SerializeField] private DocumentManager documentManager;
+    [SerializeField] private bool logDecisionDebug = true;
 
     public event Action<StudentCaseDefinition> CaseLoaded;
     public event Action<CaseResolutionResult> CaseResolved;
@@ -45,21 +46,23 @@ public class CaseManager : MonoBehaviour
             return;
         }
 
+        var resolvedCase = CurrentCase;
         var validation = CaseValidator.Evaluate(CurrentCase, documentManager != null ? documentManager.CurrentDocuments : null);
         var result = new CaseResolutionResult
         {
-            caseDefinition = CurrentCase,
+            caseDefinition = resolvedCase,
             chosenDecision = decision,
             validationResult = validation,
             isCorrectDecision = decision == validation.recommendedDecision,
             warningDelta = decision == validation.recommendedDecision
                 ? 0
-                : (CurrentCase.mistakeIsCritical ? 1 : 0),
+                : (resolvedCase.mistakeIsCritical ? 1 : 0),
             feedbackMessage = BuildFeedbackMessage(validation, decision)
         };
 
-        CaseResolved?.Invoke(result);
         ClearCurrentCase();
+        LogDecisionDebug(result);
+        CaseResolved?.Invoke(result);
     }
 
     public void ClearCurrentCase()
@@ -87,5 +90,41 @@ public class CaseManager : MonoBehaviour
         return validation.HasIssues
             ? "Decisao incorreta. Verifique os documentos."
             : "Decisao incorreta para este caso.";
+    }
+
+    private void LogDecisionDebug(CaseResolutionResult result)
+    {
+        if (!logDecisionDebug || result == null)
+        {
+            return;
+        }
+
+        var caseTitle = result.caseDefinition != null ? result.caseDefinition.caseTitle : "Caso desconhecido";
+        var applicantName = result.caseDefinition != null ? result.caseDefinition.applicantName : "Aluno desconhecido";
+        var expectedDecision = result.validationResult != null
+            ? result.validationResult.recommendedDecision.ToString()
+            : "Indisponivel";
+        var status = result.isCorrectDecision ? "CORRETA" : "INCORRETA";
+
+        Debug.Log(
+            $"[CaseManager] Caso: {caseTitle} | Aluno: {applicantName} | Escolha: {result.chosenDecision} | Esperado: {expectedDecision} | Decisao {status}");
+
+        if (result.validationResult == null || result.validationResult.issues == null || result.validationResult.issues.Count == 0)
+        {
+            Debug.Log("[CaseManager] Validacao: nenhum problema encontrado.");
+            return;
+        }
+
+        for (var index = 0; index < result.validationResult.issues.Count; index++)
+        {
+            var issue = result.validationResult.issues[index];
+            if (issue == null)
+            {
+                continue;
+            }
+
+            Debug.Log(
+                $"[CaseManager] Problema: {issue.issueType} | {issue.message} | Origem: {issue.sourceDocumentType} | Alvo: {issue.targetDocumentType}");
+        }
     }
 }

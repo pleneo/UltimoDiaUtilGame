@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b290265242201bda6b3af89dac3b1c4e, type: 3}
+  m_Name: Day_01_EnrollmentBasics
+  m_EditorClassIdentifier: Assembly-CSharp::DayConfig
+  dayNumber: 1
+  dayLabel: Dia 1
+  dayIntro: Primeiro dia de atendimento. Confira documentos de matricula com calma.
+  workDurationSeconds: 300
+  economyConfig: {fileID: 11400000, guid: e84698faf40f402498a135d229895ac6, type: 2}
+  availableRequestTypes: 00000000
+  rulebookEntries:
+  - {fileID: 11400000, guid: f9f72df7ef60c9843b4830b38b7cf0e9, type: 2}
+  noticeBoardEntries: []
+  cases:
+  - {fileID: 11400000, guid: ff6044d749eac8249aafab59413bc3ef, type: 2}
+  - {fileID: 11400000, guid: 50835d39f30efb546b1e3c519b2e7228, type: 2}
+  - {fileID: 11400000, guid: 5a349dc8447d29b4fb6dd49a7cb3ecbb, type: 2}

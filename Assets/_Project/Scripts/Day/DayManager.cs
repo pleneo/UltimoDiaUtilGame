@@ -7,6 +7,7 @@ public class DayManager : MonoBehaviour
     [SerializeField] private CaseManager caseManager;
     [SerializeField] private EconomyManager economyManager;
     [SerializeField] private UIManager uiManager;
+    [SerializeField] private bool waitForPlayerToAdvanceCase = true;
 
     public event Action<DaySummaryData> DayEnded;
 
@@ -17,6 +18,7 @@ public class DayManager : MonoBehaviour
     public int CorrectDecisions { get; private set; }
     public int IncorrectDecisions { get; private set; }
     public bool IsDayActive { get; private set; }
+    public bool IsWaitingForNextCase { get; private set; }
 
     private readonly List<StudentCaseDefinition> currentCases = new List<StudentCaseDefinition>();
 
@@ -87,6 +89,7 @@ public class DayManager : MonoBehaviour
         CorrectDecisions = 0;
         IncorrectDecisions = 0;
         IsDayActive = true;
+        IsWaitingForNextCase = false;
 
         currentCases.Clear();
         if (dayConfig.cases != null)
@@ -117,6 +120,7 @@ public class DayManager : MonoBehaviour
         }
 
         IsDayActive = false;
+        IsWaitingForNextCase = false;
 
         if (caseManager != null)
         {
@@ -184,6 +188,34 @@ public class DayManager : MonoBehaviour
         }
 
         CurrentCaseIndex++;
+        if (waitForPlayerToAdvanceCase)
+        {
+            IsWaitingForNextCase = true;
+        }
+        else
+        {
+            PresentCurrentCase();
+        }
+
+        PushHudUpdate();
+    }
+
+    public void ContinueToNextCase()
+    {
+        if (!IsDayActive)
+        {
+            Debug.LogWarning("[DayManager] Nao foi possivel avancar para o proximo aluno porque o dia nao esta ativo.");
+            return;
+        }
+
+        if (!IsWaitingForNextCase)
+        {
+            Debug.LogWarning("[DayManager] Nao foi possivel avancar para o proximo aluno porque o jogo nao esta aguardando avancar caso.");
+            return;
+        }
+
+        IsWaitingForNextCase = false;
+        Debug.Log("[DayManager] Avancando para o proximo aluno.");
         PresentCurrentCase();
         PushHudUpdate();
     }
