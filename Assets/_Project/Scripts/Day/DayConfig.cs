@@ -12,6 +12,8 @@ public class DayConfig : ScriptableObject
 
     public float workDurationSeconds = 300f;
     public EconomyConfig economyConfig;
+    public EnrollmentCaseGenerationConfig enrollmentGenerationConfig;
+    public bool includeManualCases = true;
     public List<RequestType> availableRequestTypes = new List<RequestType>();
     public List<RuleDefinition> rulebookEntries = new List<RuleDefinition>();
     public List<NoticeBoardEntry> noticeBoardEntries = new List<NoticeBoardEntry>();

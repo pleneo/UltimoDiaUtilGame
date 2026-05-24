@@ -17,6 +17,8 @@ MonoBehaviour:
   dayIntro: Primeiro dia de atendimento. Confira documentos de matricula com calma.
   workDurationSeconds: 300
   economyConfig: {fileID: 11400000, guid: e84698faf40f402498a135d229895ac6, type: 2}
+  enrollmentGenerationConfig: {fileID: 11400000, guid: 8a1fbe417318a66459f3d7311340f300, type: 2}
+  includeManualCases: 0
   availableRequestTypes: 00000000
   rulebookEntries:
   - {fileID: 11400000, guid: f9f72df7ef60c9843b4830b38b7cf0e9, type: 2}

@@ -92,7 +92,12 @@ public class DayManager : MonoBehaviour
         IsWaitingForNextCase = false;
 
         currentCases.Clear();
-        if (dayConfig.cases != null)
+        if (dayConfig.enrollmentGenerationConfig != null)
+        {
+            currentCases.AddRange(EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig));
+        }
+
+        if (dayConfig.includeManualCases && dayConfig.cases != null)
         {
             currentCases.AddRange(dayConfig.cases);
         }
