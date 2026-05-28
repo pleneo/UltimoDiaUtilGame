@@ -48,6 +48,9 @@ public class UIThemeApplier : MonoBehaviour
             return;
         }
 
+        // Aplica fonte em TODOS os TMP_Text da cena (sem precisar de UIThemeTarget)
+        ApplyFontToAll();
+
         var targets = FindObjectsByType<UIThemeTarget>(FindObjectsSortMode.None);
         int count = 0;
 
@@ -61,6 +64,34 @@ public class UIThemeApplier : MonoBehaviour
         {
             Debug.Log($"[UIThemeApplier] Tema aplicado em {count} elemento(s).");
         }
+    }
+
+    /// <summary>
+    /// Aplica fontPrimary em todos os TMP_Text da cena que não tenham UIThemeTarget.
+    /// Garante que nenhum texto fique com a fonte padrão esquecida.
+    /// </summary>
+    private void ApplyFontToAll()
+    {
+        if (theme.fontPrimary == null) return;
+
+        var todosOsTextos = FindObjectsByType<TMP_Text>(FindObjectsSortMode.None);
+        int count = 0;
+
+        foreach (var txt in todosOsTextos)
+        {
+            // Se tem UIThemeTarget com role de Heading e fontHeading definida, usa ela
+            var themeTarget = txt.GetComponent<UIThemeTarget>();
+            bool isHeading = themeTarget != null && themeTarget.role == UIColorRole.TextHeading;
+
+            if (isHeading && theme.fontHeading != null)
+                txt.font = theme.fontHeading;
+            else
+                txt.font = theme.fontPrimary;
+
+            count++;
+        }
+
+        Log($"Fonte aplicada em {count} TMP_Text(s).");
     }
 
     // -------------------------------------------------------------------------
@@ -90,6 +121,17 @@ public class UIThemeApplier : MonoBehaviour
             {
                 tmp.fontSize = ResolveFontSize(target.fontRole);
             }
+
+            // Aplica a fonte correta: heading usa fontHeading (se definida), resto usa fontPrimary
+            var fonte = (target.role == UIColorRole.TextHeading && theme.fontHeading != null)
+                ? theme.fontHeading
+                : theme.fontPrimary;
+
+            if (fonte != null)
+            {
+                tmp.font = fonte;
+            }
+
             Log($"TMP '{target.name}' → {target.role}");
         }
 

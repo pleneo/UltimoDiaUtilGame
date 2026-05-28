@@ -47,3 +47,5 @@ MonoBehaviour:
   fontSizeSmall: 12
   borderRadiusPanel: 4
   paddingPanel: 12
+  fontPrimary: {fileID: 11400000, guid: 13c6dd0ce1174354bb823cb108f65f0a, type: 2}
+  fontHeading: {fileID: 11400000, guid: 13c6dd0ce1174354bb823cb108f65f0a, type: 2}

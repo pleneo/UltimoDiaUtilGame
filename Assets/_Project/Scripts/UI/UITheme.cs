@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -82,7 +83,7 @@ public class UITheme : ScriptableObject
     [Header("─── Botões e Interativos ─────────────")]
 
     [Tooltip("Cor padrão de botões normais")]
-    public Color buttonNormal        = new Color(0.18f, 0.22f, 0.28f); // #2E3847
+    public Color buttonNormal        = new Color(0.18f, 0.22f, 0.28f); // #18191b
 
     [Tooltip("Cor de botão com hover (mouse sobre)")]
     public Color buttonHover         = new Color(0.25f, 0.30f, 0.38f); // #404D61
@@ -152,6 +153,17 @@ public class UITheme : ScriptableObject
 
     [Tooltip("Espaçamento interno padrão de painéis (px)")]
     public float paddingPanel        = 12f;
+
+    // -------------------------------------------------------------------------
+    // FONTES
+    // -------------------------------------------------------------------------
+    [Header("─── Fontes ───────────────────────────")]
+
+    [Tooltip("Fonte principal — aplicada em todos os textos, labels e botões")]
+    public TMP_FontAsset fontPrimary;
+
+    [Tooltip("Fonte de título — aplicada em headings (deixe vazio para usar a principal)")]
+    public TMP_FontAsset fontHeading;
 
     // -------------------------------------------------------------------------
     // MÉTODOS UTILITÁRIOS
