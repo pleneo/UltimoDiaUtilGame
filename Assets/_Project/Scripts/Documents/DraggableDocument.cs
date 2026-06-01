@@ -8,19 +8,23 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 {
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text bodyText;
+    [SerializeField] private DocumentView documentView;
     [SerializeField] private float selectedScale = 1.03f;
 
     private static DraggableDocument currentSelected;
 
     public event Action<DraggableDocument> Selected;
+    public event Action<DraggableDocument, PointerEventData> DragEnded;
 
     public DocumentRecord BoundRecord { get; private set; }
     public bool IsDragging { get; private set; }
+    public RectTransform RectTransform => rectTransform;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private RectTransform parentRectTransform;
     private Vector2 dragOffset;
+    private Vector2 lastValidAnchoredPosition;
     private Vector3 baseScale = Vector3.one;
 
     private void Awake()
@@ -34,11 +38,19 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
         parentRectTransform = ResolveDragRoot();
         baseScale = transform.localScale;
+
+        ResolveDocumentView();
     }
 
     public void Bind(DocumentRecord record)
     {
         BoundRecord = record;
+
+        if (ResolveDocumentView() != null)
+        {
+            documentView.Bind(record);
+            return;
+        }
 
         if (titleText != null)
         {
@@ -63,6 +75,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
         transform.SetAsLastSibling();
         Select();
         IsDragging = true;
+        lastValidAnchoredPosition = rectTransform.anchoredPosition;
         canvasGroup.blocksRaycasts = false;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRectTransform, eventData.position, eventData.pressEventCamera, out var localPointerPosition);
@@ -87,6 +100,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
         IsDragging = false;
         canvasGroup.blocksRaycasts = true;
         SetSelectedVisual(false);
+        DragEnded?.Invoke(this, eventData);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -117,12 +131,32 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
         transform.localScale = isSelected ? baseScale * selectedScale : baseScale;
     }
 
+    public void ReturnToLastValidPosition()
+    {
+        rectTransform.anchoredPosition = lastValidAnchoredPosition;
+    }
+
     private void OnDisable()
     {
         if (currentSelected == this)
         {
             currentSelected = null;
         }
+    }
+
+    private DocumentView ResolveDocumentView()
+    {
+        if (documentView == null)
+        {
+            documentView = GetComponent<DocumentView>();
+        }
+
+        if (documentView == null)
+        {
+            documentView = GetComponentInChildren<DocumentView>(true);
+        }
+
+        return documentView;
     }
 
     private RectTransform ResolveDragRoot()

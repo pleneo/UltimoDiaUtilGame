@@ -1,17 +1,28 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+
+[Serializable]
+public class DocumentPrefabMapping
+{
+    public DocumentType documentType = DocumentType.Unknown;
+    public DraggableDocument prefab;
+}
 
 public class DocumentManager : MonoBehaviour
 {
     [SerializeField] private Transform documentParent;
-    [SerializeField] private DraggableDocument documentPrefab;
+    [SerializeField] private DraggableDocument fallbackDocumentPrefab;
+    [SerializeField] private List<DocumentPrefabMapping> documentPrefabs = new List<DocumentPrefabMapping>();
+    [SerializeField] private List<Vector2> spawnPositions = new List<Vector2>();
 
     private readonly List<DocumentRecord> currentDocuments = new List<DocumentRecord>();
     private readonly List<DraggableDocument> spawnedViews = new List<DraggableDocument>();
 
+    public event Action DocumentsChanged;
+
     public IReadOnlyList<DocumentRecord> CurrentDocuments => currentDocuments;
+    public IReadOnlyList<DraggableDocument> SpawnedViews => spawnedViews;
 
     public void LoadCase(StudentCaseDefinition caseDefinition)
     {
@@ -32,8 +43,10 @@ public class DocumentManager : MonoBehaviour
 
             var clonedRecord = sourceRecord.Clone();
             currentDocuments.Add(clonedRecord);
-            SpawnDocumentView(clonedRecord);
+            SpawnDocumentView(clonedRecord, currentDocuments.Count - 1);
         }
+
+        DocumentsChanged?.Invoke();
     }
 
     public void ClearDocuments()
@@ -50,9 +63,10 @@ public class DocumentManager : MonoBehaviour
         }
 
         spawnedViews.Clear();
+        DocumentsChanged?.Invoke();
     }
 
-    private void SpawnDocumentView(DocumentRecord record)
+    private void SpawnDocumentView(DocumentRecord record, int index)
     {
         if (record == null)
         {
@@ -60,10 +74,11 @@ public class DocumentManager : MonoBehaviour
         }
 
         DraggableDocument view = null;
+        var prefab = ResolvePrefab(record.GetDocumentType());
 
-        if (documentPrefab != null)
+        if (prefab != null)
         {
-            view = Instantiate(documentPrefab, documentParent != null ? documentParent : transform);
+            view = Instantiate(prefab, documentParent != null ? documentParent : transform);
         }
         else
         {
@@ -74,8 +89,64 @@ public class DocumentManager : MonoBehaviour
 
         if (view != null)
         {
+            ApplySpawnPosition(view, index);
             view.Bind(record);
             spawnedViews.Add(view);
         }
+    }
+
+    private DraggableDocument ResolvePrefab(DocumentType documentType)
+    {
+        if (documentPrefabs != null)
+        {
+            for (var index = 0; index < documentPrefabs.Count; index++)
+            {
+                var mapping = documentPrefabs[index];
+                if (mapping == null || mapping.prefab == null)
+                {
+                    continue;
+                }
+
+                if (mapping.documentType == documentType)
+                {
+                    return mapping.prefab;
+                }
+            }
+        }
+
+        return fallbackDocumentPrefab;
+    }
+
+    private void ApplySpawnPosition(DraggableDocument view, int index)
+    {
+        if (view == null)
+        {
+            return;
+        }
+
+        var rectTransform = view.GetComponent<RectTransform>();
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        rectTransform.anchoredPosition = ResolveSpawnPosition(index);
+    }
+
+    private Vector2 ResolveSpawnPosition(int index)
+    {
+        if (spawnPositions != null && index >= 0 && index < spawnPositions.Count)
+        {
+            return spawnPositions[index];
+        }
+
+        if (spawnPositions != null && spawnPositions.Count > 0)
+        {
+            var lastPosition = spawnPositions[spawnPositions.Count - 1];
+            var extraIndex = Mathf.Max(0, index - spawnPositions.Count + 1);
+            return lastPosition + new Vector2(24f * extraIndex, -24f * extraIndex);
+        }
+
+        return new Vector2(32f * index, -32f * index);
     }
 }
