@@ -118,6 +118,7 @@ public class NpcMovementController : MonoBehaviour
     {
         currentState = MovementState.Idle;
         SetMovingAnimation(false);
+        NpcMovementEvents.RaiseNpcExited();
     }
 
     private void MoveTowardsTarget(Vector3 target, UnityAction onReachedTarget)

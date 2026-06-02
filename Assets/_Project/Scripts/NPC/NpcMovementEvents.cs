@@ -5,6 +5,7 @@ public static class NpcMovementEvents
     public static event Action NextNpc;
     public static event Action EndNpc;
     public static event Action NpcArrivedCenter;
+    public static event Action NpcExited;
 
     public static void RaiseNextNpc()
     {
@@ -19,5 +20,10 @@ public static class NpcMovementEvents
     public static void RaiseNpcArrivedCenter()
     {
         NpcArrivedCenter?.Invoke();
+    }
+
+    public static void RaiseNpcExited()
+    {
+        NpcExited?.Invoke();
     }
 }

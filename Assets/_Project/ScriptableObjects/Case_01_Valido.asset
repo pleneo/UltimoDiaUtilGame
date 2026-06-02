@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3327ca22ddb3dfd328edcdeb6fdf9ccf, type: 3}
+  m_Name: Case_01_Valido
+  m_EditorClassIdentifier: Assembly-CSharp::StudentCaseDefinition
+  caseId: case_01
+  caseTitle: Rg
+  applicantName: Estudante
+  requestType: 0
+  npcDialogue: 
+  caseSummary: 
+  referenceDateIso: 
+  requiresSupervisorReview: 0
+  hasDecisionOverride: 0
+  overriddenCorrectDecision: 0
+  overrideReason: 
+  mistakeIsCritical: 1
+  requiredDocuments: []
+  comparisonRules: []
+  documents: []
