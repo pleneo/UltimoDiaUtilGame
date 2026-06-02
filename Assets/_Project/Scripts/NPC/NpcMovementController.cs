@@ -15,6 +15,10 @@ public class NpcMovementController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera targetCamera;
     [SerializeField] private Animator npcAnimator;
+    [Tooltip("SpriteRenderer que mostra o NPC na cena. Pode deixar vazio se ele estiver no mesmo objeto ou em um filho.")]
+    [SerializeField] private SpriteRenderer npcSpriteRenderer;
+    [Tooltip("Visual usado quando a cena/teste chama o NPC direto, sem passar por um caso da fila.")]
+    [SerializeField] private NpcDefinition defaultNpcDefinition;
 
     [Header("Speed")]
     [SerializeField, Min(0.01f)] private float moveSpeed = 2.5f;
@@ -26,6 +30,14 @@ public class NpcMovementController : MonoBehaviour
 
     [Header("Behavior")]
     [SerializeField] private UnityEvent onArrivedCenter;
+
+    [Header("Static Sprites")]
+    [Tooltip("Sprite de lado/perfil usado enquanto o NPC entra e sai.")]
+    [SerializeField] private Sprite sideSprite;
+    [Tooltip("Sprite de frente usado quando o NPC para no meio da tela.")]
+    [SerializeField] private Sprite frontSprite;
+    [Tooltip("Desliga o Animator antigo quando Front Sprite está configurado, evitando que a animação sobrescreva os sprites estáticos.")]
+    [SerializeField] private bool disableAnimatorWhenUsingStaticSprites = true;
     
     [Header("Animation Parameters")]
     [SerializeField] private string movingBoolParameter = "IsMoving";
@@ -36,6 +48,8 @@ public class NpcMovementController : MonoBehaviour
     private float distanceFromCamera;
     private bool hasMovingBoolParameter;
     private int movingBoolHash;
+    private Sprite fallbackSideSprite;
+    private Sprite fallbackFrontSprite;
 
     private void Awake()
     {
@@ -52,8 +66,56 @@ public class NpcMovementController : MonoBehaviour
         }
 
         CacheMovementPlane();
+        CacheSpriteRendererSetup();
+        ApplyDefaultNpcDefinitionIfConfigured();
+        CacheFallbackSprites();
         CacheAnimatorSetup();
-        SetMovingAnimation(false);
+        SetSidePose(false);
+    }
+
+    private void OnValidate()
+    {
+        CacheSpriteRendererSetup();
+        ApplyDefaultNpcDefinitionIfConfigured();
+
+        if (npcSpriteRenderer != null && sideSprite != null)
+        {
+            npcSpriteRenderer.sprite = sideSprite;
+        }
+    }
+
+    public void ApplyNpcDefinition(NpcDefinition npcDefinition)
+    {
+        CacheSpriteRendererSetup();
+
+        sideSprite = npcDefinition != null && npcDefinition.sideSprite != null
+            ? npcDefinition.sideSprite
+            : fallbackSideSprite;
+
+        frontSprite = npcDefinition != null && npcDefinition.frontSprite != null
+            ? npcDefinition.frontSprite
+            : fallbackFrontSprite;
+
+        DisableAnimatorForStaticSpritesIfNeeded();
+        SetSidePose(false);
+    }
+
+    private void ApplyDefaultNpcDefinitionIfConfigured()
+    {
+        if (defaultNpcDefinition == null)
+        {
+            return;
+        }
+
+        if (defaultNpcDefinition.sideSprite != null)
+        {
+            sideSprite = defaultNpcDefinition.sideSprite;
+        }
+
+        if (defaultNpcDefinition.frontSprite != null)
+        {
+            frontSprite = defaultNpcDefinition.frontSprite;
+        }
     }
 
     private void OnEnable()
@@ -92,7 +154,7 @@ public class NpcMovementController : MonoBehaviour
         CacheMovementPlane();
         transform.position = BuildPoint(startViewportX);
         currentState = MovementState.Entering;
-        SetMovingAnimation(true);
+        SetSidePose(true);
     }
 
     private void HandleEndNpc()
@@ -103,13 +165,13 @@ public class NpcMovementController : MonoBehaviour
         }
 
         currentState = MovementState.Exiting;
-        SetMovingAnimation(true);
+        SetSidePose(true);
     }
 
     private void OnReachedCenter()
     {
         currentState = MovementState.WaitingAtCenter;
-        SetMovingAnimation(false);
+        SetFrontPose();
         onArrivedCenter?.Invoke();
         NpcMovementEvents.RaiseNpcArrivedCenter();
     }
@@ -117,7 +179,7 @@ public class NpcMovementController : MonoBehaviour
     private void OnReachedExit()
     {
         currentState = MovementState.Idle;
-        SetMovingAnimation(false);
+        SetSidePose(false);
         NpcMovementEvents.RaiseNpcExited();
     }
 
@@ -161,6 +223,30 @@ public class NpcMovementController : MonoBehaviour
         return worldPoint;
     }
 
+    private void CacheSpriteRendererSetup()
+    {
+        if (npcSpriteRenderer == null)
+        {
+            npcSpriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        if (npcSpriteRenderer == null)
+        {
+            npcSpriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
+        }
+
+        if (sideSprite == null && npcSpriteRenderer != null)
+        {
+            sideSprite = npcSpriteRenderer.sprite;
+        }
+    }
+
+    private void CacheFallbackSprites()
+    {
+        fallbackSideSprite = sideSprite;
+        fallbackFrontSprite = frontSprite;
+    }
+
     private void CacheAnimatorSetup()
     {
         if (npcAnimator == null)
@@ -175,7 +261,17 @@ public class NpcMovementController : MonoBehaviour
 
         if (npcAnimator == null)
         {
-            Debug.LogWarning("NpcMovementController nao encontrou Animator no objeto nem nos filhos.", this);
+            if (!HasStaticSpriteSetup())
+            {
+                Debug.LogWarning("NpcMovementController nao encontrou Animator nem sprites estaticos configurados.", this);
+            }
+
+            return;
+        }
+
+        if (HasStaticSpriteSetup() && disableAnimatorWhenUsingStaticSprites)
+        {
+            DisableAnimatorForStaticSpritesIfNeeded();
             return;
         }
 
@@ -225,11 +321,48 @@ public class NpcMovementController : MonoBehaviour
 
     private void SetMovingAnimation(bool isMoving)
     {
-        if (npcAnimator == null || !hasMovingBoolParameter)
+        if (npcAnimator == null || !npcAnimator.enabled || !hasMovingBoolParameter)
         {
             return;
         }
 
         npcAnimator.SetBool(movingBoolHash, isMoving);
+    }
+
+    private void SetSidePose(bool isMoving)
+    {
+        SetMovingAnimation(isMoving);
+        SetSprite(sideSprite);
+    }
+
+    private void SetFrontPose()
+    {
+        SetMovingAnimation(false);
+        SetSprite(frontSprite);
+    }
+
+    private void SetSprite(Sprite sprite)
+    {
+        if (npcSpriteRenderer == null || sprite == null)
+        {
+            return;
+        }
+
+        npcSpriteRenderer.sprite = sprite;
+    }
+
+    private void DisableAnimatorForStaticSpritesIfNeeded()
+    {
+        if (npcAnimator == null || !disableAnimatorWhenUsingStaticSprites || !HasStaticSpriteSetup())
+        {
+            return;
+        }
+
+        npcAnimator.enabled = false;
+    }
+
+    private bool HasStaticSpriteSetup()
+    {
+        return npcSpriteRenderer != null && frontSprite != null;
     }
 }

@@ -16,6 +16,7 @@ MonoBehaviour:
   caseTitle: Rg
   applicantName: Estudante
   requestType: 0
+  npcDefinition: {fileID: 11400000, guid: b725d404e1938724ea908eea7b74def8, type: 2}
   npcDialogue: 
   caseSummary: 
   referenceDateIso: 
@@ -26,4 +27,16 @@ MonoBehaviour:
   mistakeIsCritical: 1
   requiredDocuments: []
   comparisonRules: []
-  documents: []
+  documents:
+  - definition: {fileID: 11400000, guid: 87aec387fb86007d2aeb2045e4808341, type: 2}
+    fields:
+    - key: Nome
+      value: Estudante
+    - key: Matricula
+      value: '2026001'
+    hasValidStamp: 1
+    isSuspicious: 0
+    isFake: 0
+    issueDateIso: 2026-06-02
+    expiryDateIso: 2026-12-31
+    notes: Documento inicial para testar o carregamento do caso.

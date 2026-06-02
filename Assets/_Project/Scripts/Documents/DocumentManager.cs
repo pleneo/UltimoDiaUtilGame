@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class DocumentPrefabMapping
@@ -24,6 +25,16 @@ public class DocumentManager : MonoBehaviour
     public IReadOnlyList<DocumentRecord> CurrentDocuments => currentDocuments;
     public IReadOnlyList<DraggableDocument> SpawnedViews => spawnedViews;
 
+    private void Awake()
+    {
+        ResolveDocumentParentIfNeeded();
+    }
+
+    private void Awake()
+    {
+        ResolveDocumentParentIfNeeded();
+    }
+
     public void LoadCase(StudentCaseDefinition caseDefinition)
     {
         ClearDocuments();
@@ -44,6 +55,11 @@ public class DocumentManager : MonoBehaviour
             var clonedRecord = sourceRecord.Clone();
             currentDocuments.Add(clonedRecord);
             SpawnDocumentView(clonedRecord, currentDocuments.Count - 1);
+        }
+
+        if (currentDocuments.Count == 0)
+        {
+            Debug.LogWarning($"Caso '{caseDefinition.caseId}' carregou, mas nao possui documentos configurados.", this);
         }
 
         DocumentsChanged?.Invoke();
@@ -73,6 +89,8 @@ public class DocumentManager : MonoBehaviour
             return;
         }
 
+        ResolveDocumentParentIfNeeded();
+
         DraggableDocument view = null;
         var prefab = ResolvePrefab(record.GetDocumentType());
 
@@ -82,8 +100,9 @@ public class DocumentManager : MonoBehaviour
         }
         else
         {
-            var documentObject = new GameObject("Document", typeof(RectTransform), typeof(CanvasGroup), typeof(DraggableDocument));
+            var documentObject = new GameObject("Document", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(CanvasGroup), typeof(DraggableDocument));
             documentObject.transform.SetParent(documentParent != null ? documentParent : transform, false);
+            ConfigureGeneratedDocumentObject(documentObject);
             view = documentObject.GetComponent<DraggableDocument>();
         }
 
@@ -93,6 +112,30 @@ public class DocumentManager : MonoBehaviour
             view.Bind(record);
             spawnedViews.Add(view);
         }
+    }
+
+    private void ResolveDocumentParentIfNeeded()
+    {
+        if (documentParent != null)
+        {
+            return;
+        }
+
+        var documentSpawnRoot = GameObject.Find("DocumentSpawnRoot");
+        if (documentSpawnRoot != null)
+        {
+            documentParent = documentSpawnRoot.transform;
+        }
+    }
+
+    private static void ConfigureGeneratedDocumentObject(GameObject documentObject)
+    {
+        var rectTransform = documentObject.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(220f, 300f);
+        rectTransform.anchoredPosition = Vector2.zero;
+
+        var image = documentObject.GetComponent<Image>();
+        image.color = new Color(0.98f, 0.96f, 0.82f, 1f);
     }
 
     private DraggableDocument ResolvePrefab(DocumentType documentType)

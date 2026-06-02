@@ -44,6 +44,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     public void Bind(DocumentRecord record)
     {
+        EnsureTextFields();
         BoundRecord = record;
 
         if (ResolveDocumentView() != null)
@@ -173,5 +174,37 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
         }
 
         return null;
+    }
+
+    private void EnsureTextFields()
+    {
+        if (titleText == null)
+        {
+            titleText = CreateTextChild("Title", new Vector2(0f, 120f), new Vector2(180f, 34f), 20f, TextAlignmentOptions.Center);
+            titleText.fontStyle = FontStyles.Bold;
+        }
+
+        if (bodyText == null)
+        {
+            bodyText = CreateTextChild("Body", new Vector2(0f, -28f), new Vector2(180f, 210f), 13f, TextAlignmentOptions.TopLeft);
+        }
+    }
+
+    private TMP_Text CreateTextChild(string childName, Vector2 anchoredPosition, Vector2 size, float fontSize, TextAlignmentOptions alignment)
+    {
+        var textObject = new GameObject(childName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        textObject.transform.SetParent(transform, false);
+
+        var textRect = textObject.GetComponent<RectTransform>();
+        textRect.sizeDelta = size;
+        textRect.anchoredPosition = anchoredPosition;
+
+        var text = textObject.GetComponent<TextMeshProUGUI>();
+        text.fontSize = fontSize;
+        text.color = new Color(0.12f, 0.1f, 0.08f, 1f);
+        text.alignment = alignment;
+        text.textWrappingMode = TextWrappingModes.Normal;
+        text.overflowMode = TextOverflowModes.Ellipsis;
+        return text;
     }
 }

@@ -8,6 +8,7 @@ public class StudentCaseDefinition : ScriptableObject
     public string caseTitle = "Caso";
     public string applicantName = "Estudante";
     public RequestType requestType = RequestType.Enrollment;
+    public NpcDefinition npcDefinition;
 
     [TextArea(2, 5)]
     public string npcDialogue;

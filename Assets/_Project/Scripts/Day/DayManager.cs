@@ -5,6 +5,18 @@ using UnityEngine;
 
 public class DayManager : MonoBehaviour
 {
+    private struct QueuedStudentCase
+    {
+        public StudentCaseDefinition caseDefinition;
+        public NpcDefinition npcDefinitionOverride;
+
+        public QueuedStudentCase(StudentCaseDefinition caseDefinition, NpcDefinition npcDefinitionOverride)
+        {
+            this.caseDefinition = caseDefinition;
+            this.npcDefinitionOverride = npcDefinitionOverride;
+        }
+    }
+
     [SerializeField] private CaseManager caseManager;
     [SerializeField] private EconomyManager economyManager;
     [SerializeField] private UIManager uiManager;
@@ -16,6 +28,16 @@ public class DayManager : MonoBehaviour
     [SerializeField, Min(0.1f)] private float npcEventTimeoutSeconds = 4f;
     [SerializeField, Min(0f)] private float postDecisionDelaySeconds = 0.1f;
     [SerializeField] private bool enableQueueDebugLogs = true;
+
+    [Header("NPC Random Visuals")]
+    [SerializeField] private List<NpcDefinition> randomNpcDefinitions = new List<NpcDefinition>();
+    [SerializeField] private bool avoidRepeatingRandomNpc = true;
+    [Tooltip("Se houver apenas 1 caso no DayConfig, cria entradas extras desse mesmo caso para testar todos os NPCs aleatorios em sequencia.")]
+    [SerializeField] private bool autoRepeatSingleCaseForRandomNpcs = true;
+
+    [Header("Debug")]
+    [Tooltip("Apenas para prototipo: repete o primeiro caso N vezes para testar varios NPCs em sequencia sem criar varios casos.")]
+    [SerializeField, Min(0)] private int debugExtraRepeatedCases;
 
     public event Action<DaySummaryData> DayEnded;
 
@@ -29,12 +51,14 @@ public class DayManager : MonoBehaviour
     public bool IsWaitingForNextCase { get; private set; }
 
     private readonly List<StudentCaseDefinition> currentCases = new List<StudentCaseDefinition>();
-    private readonly Queue<StudentCaseDefinition> pendingCaseQueue = new Queue<StudentCaseDefinition>();
+    private readonly Queue<QueuedStudentCase> pendingCaseQueue = new Queue<QueuedStudentCase>();
 
     private Coroutine dayFlowCoroutine;
     private bool npcArrivedCenter;
     private bool npcExitedDesk;
     private bool hasPendingCaseResolution;
+    private bool warnedNpcMovementUnavailable;
+    private NpcDefinition lastRandomNpcDefinition;
 
     private void Awake()
     {
@@ -130,6 +154,8 @@ public class DayManager : MonoBehaviour
         hasPendingCaseResolution = false;
         npcArrivedCenter = false;
         npcExitedDesk = false;
+        warnedNpcMovementUnavailable = false;
+        lastRandomNpcDefinition = null;
 
         currentCases.Clear();
         pendingCaseQueue.Clear();
@@ -150,8 +176,13 @@ public class DayManager : MonoBehaviour
                 }
 
                 currentCases.Add(caseDefinition);
+                pendingCaseQueue.Enqueue(new QueuedStudentCase(caseDefinition, null));
             }
         }
+
+        AddDebugRepeatedCasesIfNeeded();
+        AddAutomaticRandomNpcTestCasesIfNeeded();
+        LogDaySetupDiagnostics();
 
         for (var index = 0; index < currentCases.Count; index++)
         {
@@ -173,6 +204,102 @@ public class DayManager : MonoBehaviour
         dayFlowCoroutine = StartCoroutine(RunDayCaseFlow());
         LogQueue($"Dia iniciado com {pendingCaseQueue.Count} caso(s) na fila.");
         PushHudUpdate();
+    }
+
+    private void AddDebugRepeatedCasesIfNeeded()
+    {
+        if (debugExtraRepeatedCases <= 0 || currentCases.Count == 0)
+        {
+            return;
+        }
+
+        var repeatedCase = currentCases[0];
+        for (var index = 0; index < debugExtraRepeatedCases; index++)
+        {
+            currentCases.Add(repeatedCase);
+            pendingCaseQueue.Enqueue(new QueuedStudentCase(repeatedCase, null));
+        }
+
+        LogQueue(
+            $"Modo debug adicionou {debugExtraRepeatedCases} repeticao(oes) do caso '{repeatedCase.caseId}'. " +
+            "Use isso so para testar a fila visual."
+        );
+    }
+
+    private void AddAutomaticRandomNpcTestCasesIfNeeded()
+    {
+        if (
+            !autoRepeatSingleCaseForRandomNpcs ||
+            debugExtraRepeatedCases > 0 ||
+            currentCases.Count != 1 ||
+            randomNpcDefinitions == null
+        )
+        {
+            return;
+        }
+
+        var repeatedCase = currentCases[0];
+        var addedCases = 0;
+        for (var index = 0; index < randomNpcDefinitions.Count; index++)
+        {
+            var randomNpcDefinition = randomNpcDefinitions[index];
+            if (randomNpcDefinition == null)
+            {
+                continue;
+            }
+
+            currentCases.Add(repeatedCase);
+            pendingCaseQueue.Enqueue(new QueuedStudentCase(repeatedCase, randomNpcDefinition));
+            addedCases++;
+        }
+
+        if (addedCases > 0)
+        {
+            LogQueue(
+                $"Auto-repeat criou {addedCases} entrada(s) extra(s) para testar os NPCs aleatorios " +
+                $"usando o caso '{repeatedCase.caseId}'."
+            );
+        }
+    }
+
+    private void LogDaySetupDiagnostics()
+    {
+        var randomNpcCount = CountValidRandomNpcDefinitions();
+        Debug.Log(
+            $"[QueueFlow] Setup do dia: casos={currentCases.Count}, fila={pendingCaseQueue.Count}, " +
+            $"npcAleatorios={randomNpcCount}, usaMovimentoNpc={useNpcMovementFlow}, " +
+            $"npcController={(npcMovementController != null ? npcMovementController.name : "nenhum")}.",
+            this
+        );
+
+        if (pendingCaseQueue.Count == 0)
+        {
+            Debug.LogWarning("DayManager nao tem casos na fila. Preencha DayConfig > Cases.", this);
+        }
+
+        if (useNpcMovementFlow && npcMovementController == null)
+        {
+            Debug.LogWarning("DayManager esta com Use Npc Movement Flow ligado, mas Npc Movement Controller nao foi encontrado/atribuido.", this);
+        }
+    }
+
+    private int CountValidRandomNpcDefinitions()
+    {
+        if (randomNpcDefinitions == null)
+        {
+            return 0;
+        }
+
+        var validCount = 0;
+        for (var index = 0; index < randomNpcDefinitions.Count; index++)
+        {
+            if (randomNpcDefinitions[index] != null)
+            {
+                validCount++;
+            }
+        }
+
+        return validCount;
     }
 
     public void EndDay(DayEndReason reason)
@@ -238,11 +365,12 @@ public class DayManager : MonoBehaviour
     {
         while (IsDayActive && pendingCaseQueue.Count > 0)
         {
-            CurrentCaseIndex = Mathf.Clamp(ResolvedCasesCount, 0, Mathf.Max(0, currentCases.Count - 1));
-            var nextCase = pendingCaseQueue.Dequeue();
-            LogQueue($"NPC chamado para caso '{nextCase.caseId}'. Restantes na fila: {pendingCaseQueue.Count}.");
+            CurrentCaseIndex = Mathf.Clamp(ResolvedCasesCount, 0, currentCases.Count - 1);
+            var nextQueueEntry = pendingCaseQueue.Dequeue();
+            var nextCase = nextQueueEntry.caseDefinition;
+            LogQueue($"NPC chamado para caso '{nextCase.caseId}'. Restantes na fila de casos: {pendingCaseQueue.Count}.");
 
-            yield return StartCasePresentation(nextCase);
+            yield return StartCasePresentation(nextQueueEntry);
             if (!IsDayActive)
             {
                 yield break;
@@ -286,8 +414,9 @@ public class DayManager : MonoBehaviour
         }
     }
 
-    private IEnumerator StartCasePresentation(StudentCaseDefinition caseDefinition)
+    private IEnumerator StartCasePresentation(QueuedStudentCase queueEntry)
     {
+        var caseDefinition = queueEntry.caseDefinition;
         if (caseDefinition == null)
         {
             yield break;
@@ -297,6 +426,7 @@ public class DayManager : MonoBehaviour
 
         if (ShouldUseNpcMovementFlow())
         {
+            npcMovementController.ApplyNpcDefinition(ResolveNpcDefinitionForCase(queueEntry));
             npcArrivedCenter = false;
             NpcMovementEvents.RaiseNextNpc();
             yield return WaitForNpcSignal(() => npcArrivedCenter, "chegada do NPC ao balcao");
@@ -305,6 +435,11 @@ public class DayManager : MonoBehaviour
             {
                 yield break;
             }
+        }
+        else if (useNpcMovementFlow && !warnedNpcMovementUnavailable)
+        {
+            warnedNpcMovementUnavailable = true;
+            Debug.LogWarning("Fluxo de movimento do NPC nao rodou. Verifique se existe um NpcMovementController ativo na cena.", this);
         }
 
         if (caseManager != null)
@@ -371,6 +506,48 @@ public class DayManager : MonoBehaviour
         }
 
         return useNpcMovementFlow && npcMovementController != null && npcMovementController.isActiveAndEnabled;
+    }
+
+    private NpcDefinition ResolveNpcDefinitionForCase(QueuedStudentCase queueEntry)
+    {
+        if (queueEntry.npcDefinitionOverride != null)
+        {
+            return queueEntry.npcDefinitionOverride;
+        }
+
+        var caseDefinition = queueEntry.caseDefinition;
+        if (caseDefinition != null && caseDefinition.npcDefinition != null)
+        {
+            return caseDefinition.npcDefinition;
+        }
+
+        if (randomNpcDefinitions == null || randomNpcDefinitions.Count == 0)
+        {
+            return null;
+        }
+
+        var validDefinitions = new List<NpcDefinition>();
+        for (var index = 0; index < randomNpcDefinitions.Count; index++)
+        {
+            if (randomNpcDefinitions[index] != null)
+            {
+                validDefinitions.Add(randomNpcDefinitions[index]);
+            }
+        }
+
+        if (validDefinitions.Count == 0)
+        {
+            return null;
+        }
+
+        if (avoidRepeatingRandomNpc && validDefinitions.Count > 1 && lastRandomNpcDefinition != null)
+        {
+            validDefinitions.Remove(lastRandomNpcDefinition);
+        }
+
+        var selectedDefinition = validDefinitions[UnityEngine.Random.Range(0, validDefinitions.Count)];
+        lastRandomNpcDefinition = selectedDefinition;
+        return selectedDefinition;
     }
 
     private void HandleCaseResolved(CaseResolutionResult result)

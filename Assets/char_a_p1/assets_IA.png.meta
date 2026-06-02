@@ -1,0 +1,640 @@
+fileFormatVersion: 2
+guid: 34e6ef31fbe0b7afebf47965cbcf5902
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 273584204006744274
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_0
+  - first:
+      213: 2993571448778209373
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_1
+  - first:
+      213: 3611563073761790589
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_2
+  - first:
+      213: 8880193928423788883
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_3
+  - first:
+      213: -5079916724397027316
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_4
+  - first:
+      213: -5446896427573234443
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_5
+  - first:
+      213: 2985583512805652937
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_6
+  - first:
+      213: 1325055561836722930
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_7
+  - first:
+      213: -1652616388270571719
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_8
+  - first:
+      213: 624828075744174222
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_9
+  - first:
+      213: 342167837855018283
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_10
+  - first:
+      213: -5986398267708208314
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_11
+  - first:
+      213: -5202015569482894214
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_12
+  - first:
+      213: 2919675912031534878
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_13
+  - first:
+      213: 5958097327821147988
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_14
+  - first:
+      213: 6455464118887358705
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_15
+  - first:
+      213: 8074772182931758555
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_16
+  - first:
+      213: -949604380027961007
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_17
+  - first:
+      213: 3913303225921237922
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_18
+  - first:
+      213: -2087632215388548791
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_19
+  - first:
+      213: 7692742534469254716
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_20
+  - first:
+      213: -6929470604137920848
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_21
+  - first:
+      213: 4869388590143355411
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_22
+  - first:
+      213: -8751498174656237876
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_23
+  - first:
+      213: 2799766711897068950
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_24
+  - first:
+      213: 767275941620104619
+    second: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 0
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: random_lado
+      rect:
+        serializedVersion: 2
+        x: 1095
+        y: 55
+        width: 83
+        height: 356
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d0eaff4267fbc300800000000000000
+      internalID: 273584204006744274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: igor_frente
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 544
+        width: 141
+        height: 394
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f4372ade8cb864b0800000000000000
+      internalID: -5446896427573234443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: igor_lado
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 545
+        width: 92
+        height: 392
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c93b08f26cee6920800000000000000
+      internalID: 2985583512805652937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: loiro_frente
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 543
+        width: 118
+        height: 380
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fafee6530b836210800000000000000
+      internalID: 1325055561836722930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bombabo_frente
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 543
+        width: 187
+        height: 386
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93fb42b962ab019e0800000000000000
+      internalID: -1652616388270571719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bombado_lado
+      rect:
+        serializedVersion: 2
+        x: 886
+        y: 544
+        width: 95
+        height: 382
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e802c6c03d5dba800800000000000000
+      internalID: 624828075744174222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: velho_frente
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 542
+        width: 162
+        height: 372
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2d69ece5df9fb400800000000000000
+      internalID: 342167837855018283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: velho_lado
+      rect:
+        serializedVersion: 2
+        x: 1275
+        y: 545
+        width: 103
+        height: 370
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64b0d392e7a0ceca0800000000000000
+      internalID: -5986398267708208314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morena_frente
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 57
+        width: 120
+        height: 364
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdd5ad5b48a5f0070800000000000000
+      internalID: 8074772182931758555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morena_lado
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 57
+        width: 92
+        height: 362
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 151474bf8d352d2f0800000000000000
+      internalID: -949604380027961007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: advogado_frente
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 56
+        width: 139
+        height: 374
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a3fc67ec88de4630800000000000000
+      internalID: 3913303225921237922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: advogado_lado
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 57
+        width: 88
+        height: 366
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9419a149f8d3703e0800000000000000
+      internalID: -2087632215388548791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: coroa_frente
+      rect:
+        serializedVersion: 2
+        x: 673
+        y: 53
+        width: 130
+        height: 374
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3ef393c39c12ca60800000000000000
+      internalID: 7692742534469254716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: coroa_lado
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 56
+        width: 92
+        height: 366
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b609de033395df90800000000000000
+      internalID: -6929470604137920848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: random_frente
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 53
+        width: 99
+        height: 368
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31ab5d4af1b839340800000000000000
+      internalID: 4869388590143355411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_23
+      rect:
+        serializedVersion: 2
+        x: 1196
+        y: 57
+        width: 99
+        height: 353
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccea22f07ce6c8680800000000000000
+      internalID: -8751498174656237876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_24
+      rect:
+        serializedVersion: 2
+        x: 1321
+        y: 57
+        width: 100
+        height: 364
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 695969c9df4cad620800000000000000
+      internalID: 2799766711897068950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_25
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 57
+        width: 96
+        height: 361
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bad38f85769e5aa00800000000000000
+      internalID: 767275941620104619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: loiro_lado
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 542
+        width: 108
+        height: 374
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff0bdbf994b503e80ac000fcba648fa9
+      internalID: 380909185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: cfd582de37f4a524baa89545738882be
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_1: 2993571448778209373
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_12: -5202015569482894214
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_13: 2919675912031534878
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_14: 5958097327821147988
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_15: 6455464118887358705
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_2: 3611563073761790589
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_23: -8751498174656237876
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_24: 2799766711897068950
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_25: 767275941620104619
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_3: 8880193928423788883
+      ChatGPT Image 14 de mai. de 2026, 16_56_05(2)_4: -5079916724397027316
+      advogado_frente: 3913303225921237922
+      advogado_lado: -2087632215388548791
+      bombabo_frente: -1652616388270571719
+      bombado_lado: 624828075744174222
+      coroa_frente: 7692742534469254716
+      coroa_lado: -6929470604137920848
+      igor_frente: -5446896427573234443
+      igor_lado: 2985583512805652937
+      loiro_frente: 1325055561836722930
+      loiro_lado: 380909185
+      morena_frente: 8074772182931758555
+      morena_lado: -949604380027961007
+      random_frente: 4869388590143355411
+      random_lado: 273584204006744274
+      velho_frente: 342167837855018283
+      velho_lado: -5986398267708208314
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

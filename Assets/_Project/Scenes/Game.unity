@@ -527,7 +527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 874fe06ab32517a25be607f64c3d28bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EconomyManager
-  defaultEconomyConfig: {fileID: 0}
+  defaultEconomyConfig: {fileID: 11400000, guid: b851aa60b41bb89588d5cb33663a9af6, type: 2}
 --- !u!114 &149090567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -541,6 +541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DocumentManager
   documentParent: {fileID: 918067260}
+  documentPrefab: {fileID: 0}
   fallbackDocumentPrefab: {fileID: 5423040262654243694}
   documentPrefabs:
   - documentType: 1
@@ -565,7 +566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 123a203b9ad99c9f6bc99938974b579e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaseManager
-  documentManager: {fileID: 0}
+  documentManager: {fileID: 149090567}
   logDecisionDebug: 1
 --- !u!114 &149090569
 MonoBehaviour:
@@ -579,9 +580,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fdf7fef550919bce874f6b1e11073a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  caseManager: {fileID: 0}
-  economyManager: {fileID: 0}
-  uiManager: {fileID: 0}
+  caseManager: {fileID: 149090568}
+  economyManager: {fileID: 149090566}
+  uiManager: {fileID: 149090565}
+  useNpcMovementFlow: 1
+  npcMovementController: {fileID: 0}
+  npcEventTimeoutSeconds: 4
+  postDecisionDelaySeconds: 0.2
+  enableQueueDebugLogs: 1
+  randomNpcDefinitions:
+  - {fileID: 11400000, guid: b725d404e1938724ea908eea7b74def8, type: 2}
+  - {fileID: 11400000, guid: 89b7c416b64e2d2e5a96d9c30cb3badb, type: 2}
+  avoidRepeatingRandomNpc: 1
   waitForPlayerToAdvanceCase: 1
 --- !u!114 &149090570
 MonoBehaviour:
@@ -595,11 +605,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd918cf4851e95af988ac65b1e41ef1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  dayManager: {fileID: 0}
-  economyManager: {fileID: 0}
-  uiManager: {fileID: 0}
+  dayManager: {fileID: 149090569}
+  economyManager: {fileID: 149090566}
+  uiManager: {fileID: 149090565}
   daySequence:
-  - {fileID: 11400000, guid: 8e04c1f923dcb1141914ae36cf9598ba, type: 2}
+  - {fileID: 11400000, guid: d4872952bd1349d9f9474d7c6f677d9b, type: 2}
   autoStartGame: 1
 --- !u!1 &169134776
 GameObject:
