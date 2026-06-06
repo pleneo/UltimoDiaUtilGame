@@ -30,11 +30,6 @@ public class DocumentManager : MonoBehaviour
         ResolveDocumentParentIfNeeded();
     }
 
-    private void Awake()
-    {
-        ResolveDocumentParentIfNeeded();
-    }
-
     public void LoadCase(StudentCaseDefinition caseDefinition)
     {
         ClearDocuments();

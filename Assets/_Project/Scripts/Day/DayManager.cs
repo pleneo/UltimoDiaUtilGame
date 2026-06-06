@@ -160,10 +160,13 @@ public class DayManager : MonoBehaviour
         currentCases.Clear();
         pendingCaseQueue.Clear();
 
+        // Rastreia quantos casos vieram de enrollment para enfileirá-los depois
+        // sem re-enfileirar os manuais (que já entram na fila logo abaixo)
         if (dayConfig.enrollmentGenerationConfig != null)
         {
             currentCases.AddRange(EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig));
         }
+        int enrollmentCaseCount = currentCases.Count;
 
         if (dayConfig.includeManualCases && dayConfig.cases != null)
         {
@@ -176,6 +179,7 @@ public class DayManager : MonoBehaviour
                 }
 
                 currentCases.Add(caseDefinition);
+                // Casos manuais já entram na fila aqui — não serão re-enfileirados depois
                 pendingCaseQueue.Enqueue(new QueuedStudentCase(caseDefinition, null));
             }
         }
@@ -184,9 +188,11 @@ public class DayManager : MonoBehaviour
         AddAutomaticRandomNpcTestCasesIfNeeded();
         LogDaySetupDiagnostics();
 
-        for (var index = 0; index < currentCases.Count; index++)
+        // FIX 1: tipo correto — QueuedStudentCase, não StudentCaseDefinition
+        // FIX 2: só enfileira enrollment; manuais e debug já foram enfileirados
+        for (var index = 0; index < enrollmentCaseCount; index++)
         {
-            pendingCaseQueue.Enqueue(currentCases[index]);
+            pendingCaseQueue.Enqueue(new QueuedStudentCase(currentCases[index], null));
         }
 
         if (economyManager != null)
@@ -649,4 +655,16 @@ public class DayManager : MonoBehaviour
 
         Debug.Log($"[QueueFlow] {message}", this);
     }
+    // FIX 3: métodos ausentes que eram referenciados em OnEnable/OnDisable
+    // sem eles o CS não compilava (método não definido)
+    private void HandleNpcArrivedCenter()
+    {
+        npcArrivedCenter = true;
+    }
+
+    private void HandleNpcExited()
+    {
+        npcExitedDesk = true;
+    }
+
 }
