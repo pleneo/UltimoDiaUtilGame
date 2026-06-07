@@ -35,86 +35,86 @@ public class DeskSceneLayout : MonoBehaviour
     [SerializeField] private Vector2 sidePanelAnchorMin = new(0.78f, 0.08f);
     [SerializeField] private Vector2 sidePanelAnchorMax = new(0.97f, 0.92f);
 
-    private void OnValidate()
-    {
-        if (!applyOnValidate)
-        {
-            return;
-        }
-
-        ApplyLayout();
-    }
-
-    [ContextMenu("Apply Desk Layout")]
-    public void ApplyLayout()
-    {
-        ApplyStretch(worldBackground, Vector2.zero, Vector2.one);
-        ApplyStretch(deskScene, deskSceneAnchorMin, deskSceneAnchorMax);
-        ApplyStretch(deskVisual, deskVisualAnchorMin, deskVisualAnchorMax);
-        ApplyStretch(deskPanel, deskPanelAnchorMin, deskPanelAnchorMax);
-        ApplyStretch(sidePanel, sidePanelAnchorMin, sidePanelAnchorMax);
-
-        ApplyImageColor(worldBackground, worldBackgroundColor);
-        ApplyImageColor(deskVisual, deskVisualColor);
-        ApplyImageColor(deskPanel, deskPanelColor);
-
-        OrderCanvasChildren();
-    }
-
-    private static void ApplyStretch(RectTransform target, Vector2 anchorMin, Vector2 anchorMax)
-    {
-        if (target == null)
-        {
-            return;
-        }
-
-        target.anchorMin = anchorMin;
-        target.anchorMax = anchorMax;
-        target.offsetMin = Vector2.zero;
-        target.offsetMax = Vector2.zero;
-        target.localScale = Vector3.one;
-        target.localRotation = Quaternion.identity;
-    }
-
-    private static void ApplyImageColor(Component target, Color color)
-    {
-        if (target == null)
-        {
-            return;
-        }
-
-        var image = target.GetComponent<Image>();
-        if (image != null)
-        {
-            image.color = color;
-        }
-    }
-
-    private void OrderCanvasChildren()
-    {
-        if (worldBackground != null)
-        {
-            worldBackground.SetSiblingIndex(0);
-        }
-
-        if (deskScene != null)
-        {
-            deskScene.SetSiblingIndex(1);
-        }
-
-        if (sidePanel != null)
-        {
-            sidePanel.SetSiblingIndex(2);
-        }
-
-        if (deskVisual != null)
-        {
-            deskVisual.SetSiblingIndex(0);
-        }
-
-        if (deskPanel != null)
-        {
-            deskPanel.SetSiblingIndex(1);
-        }
-    }
+    // private void OnValidate()
+    // {
+    //     if (!applyOnValidate)
+    //     {
+    //         return;
+    //     }
+    //
+    //     ApplyLayout();
+    // }
+    //
+    // [ContextMenu("Apply Desk Layout")]
+    // public void ApplyLayout()
+    // {
+    //     ApplyStretch(worldBackground, Vector2.zero, Vector2.one);
+    //     ApplyStretch(deskScene, deskSceneAnchorMin, deskSceneAnchorMax);
+    //     ApplyStretch(deskVisual, deskVisualAnchorMin, deskVisualAnchorMax);
+    //     ApplyStretch(deskPanel, deskPanelAnchorMin, deskPanelAnchorMax);
+    //     ApplyStretch(sidePanel, sidePanelAnchorMin, sidePanelAnchorMax);
+    //
+    //     ApplyImageColor(worldBackground, worldBackgroundColor);
+    //     ApplyImageColor(deskVisual, deskVisualColor);
+    //     ApplyImageColor(deskPanel, deskPanelColor);
+    //
+    //     OrderCanvasChildren();
+    // }
+    //
+    // private static void ApplyStretch(RectTransform target, Vector2 anchorMin, Vector2 anchorMax)
+    // {
+    //     if (target == null)
+    //     {
+    //         return;
+    //     }
+    //
+    //     target.anchorMin = anchorMin;
+    //     target.anchorMax = anchorMax;
+    //     target.offsetMin = Vector2.zero;
+    //     target.offsetMax = Vector2.zero;
+    //     target.localScale = Vector3.one;
+    //     target.localRotation = Quaternion.identity;
+    // }
+    //
+    // private static void ApplyImageColor(Component target, Color color)
+    // {
+    //     if (target == null)
+    //     {
+    //         return;
+    //     }
+    //
+    //     var image = target.GetComponent<Image>();
+    //     if (image != null)
+    //     {
+    //         image.color = color;
+    //     }
+    // }
+    //
+    // private void OrderCanvasChildren()
+    // {
+    //     if (worldBackground != null)
+    //     {
+    //         worldBackground.SetSiblingIndex(0);
+    //     }
+    //
+    //     if (deskScene != null)
+    //     {
+    //         deskScene.SetSiblingIndex(1);
+    //     }
+    //
+    //     if (sidePanel != null)
+    //     {
+    //         sidePanel.SetSiblingIndex(2);
+    //     }
+    //
+    //     if (deskVisual != null)
+    //     {
+    //         deskVisual.SetSiblingIndex(0);
+    //     }
+    //
+    //     if (deskPanel != null)
+    //     {
+    //         deskPanel.SetSiblingIndex(1);
+    //     }
+    // }
 }

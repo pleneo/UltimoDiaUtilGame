@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: fcaa5109680eeb942940b3fde4b68dd9
+guid: 5465551fe97e634459b6b1608a74a1d6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8594983228947636169
-    second: ChatGPT Image May 13, 2026, 06_43_11 PM_0
+      213: -7797404904063514437
+    second: Carimbo Aprovado1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChatGPT Image May 13, 2026, 06_43_11 PM_0
+      name: Carimbo Aprovado1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1536
-        height: 1024
+        x: 14
+        y: 42
+        width: 538
+        height: 736
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9cf1dd365b3874770800000000000000
-      internalID: 8594983228947636169
+      spriteID: bb8c76b5d8d0ac390800000000000000
+      internalID: -7797404904063514437
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ChatGPT Image May 13, 2026, 06_43_11 PM_0: 8594983228947636169
+      Carimbo Aprovado1_0: -7797404904063514437
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
