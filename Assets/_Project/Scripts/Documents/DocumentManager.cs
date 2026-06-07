@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,9 +29,20 @@ public class DocumentManager : MonoBehaviour
     [SerializeField] private List<RectTransform> spawnPoints = new List<RectTransform>();
     [Tooltip("Posicoes antigas por ordem. Usado somente se nao existir ponto visual configurado.")]
     [SerializeField] private List<Vector2> spawnPositions = new List<Vector2>();
+    [Header("Spawn Animation")]
+    [SerializeField] private bool animateDocumentEntry = true;
+    [SerializeField, Min(0f)] private float entryStaggerSeconds = 0.34f;
+    [SerializeField, Min(0.05f)] private float entryDurationSeconds = 0.42f;
+    [SerializeField] private Vector2 entryOffset = new Vector2(0f, 260f);
+    [SerializeField] private float entryStartRotationZ = -5f;
+    [SerializeField] private float entryEndScale = 1f;
+    [SerializeField] private float entryStartScale = 0.97f;
+    [Header("Visual Order")]
+    [SerializeField] private bool randomizeDocumentOrderPerCase = true;
 
     private readonly List<DocumentRecord> currentDocuments = new List<DocumentRecord>();
     private readonly List<DraggableDocument> spawnedViews = new List<DraggableDocument>();
+    private readonly List<Coroutine> runningAnimations = new List<Coroutine>();
 
     public event Action DocumentsChanged;
 
@@ -51,6 +63,8 @@ public class DocumentManager : MonoBehaviour
             return;
         }
 
+        var documentsToSpawn = new List<DocumentRecord>();
+
         for (var index = 0; index < caseDefinition.documents.Count; index++)
         {
             var sourceRecord = caseDefinition.documents[index];
@@ -60,8 +74,19 @@ public class DocumentManager : MonoBehaviour
             }
 
             var clonedRecord = sourceRecord.Clone();
-            currentDocuments.Add(clonedRecord);
-            SpawnDocumentView(clonedRecord, currentDocuments.Count - 1);
+            documentsToSpawn.Add(clonedRecord);
+        }
+
+        if (randomizeDocumentOrderPerCase)
+        {
+            ShuffleDocuments(documentsToSpawn);
+        }
+
+        for (var index = 0; index < documentsToSpawn.Count; index++)
+        {
+            var record = documentsToSpawn[index];
+            currentDocuments.Add(record);
+            SpawnDocumentView(record, index);
         }
 
         if (currentDocuments.Count == 0)
@@ -74,6 +99,7 @@ public class DocumentManager : MonoBehaviour
 
     public void ClearDocuments()
     {
+        StopRunningAnimations();
         currentDocuments.Clear();
 
         for (var index = 0; index < spawnedViews.Count; index++)
@@ -118,6 +144,111 @@ public class DocumentManager : MonoBehaviour
             ApplySpawnPosition(view, index, record.GetDocumentType());
             view.Bind(record);
             spawnedViews.Add(view);
+            StartEntryAnimation(view, index);
+        }
+    }
+
+    private void StartEntryAnimation(DraggableDocument view, int index)
+    {
+        if (view == null)
+        {
+            return;
+        }
+
+        if (!animateDocumentEntry)
+        {
+            view.SetInteractionEnabled(true);
+            view.SetVisualAlpha(1f);
+            return;
+        }
+
+        view.SetInteractionEnabled(false);
+        view.SetVisualAlpha(0f);
+
+        Coroutine animation = null;
+        animation = StartCoroutine(AnimateDocumentEntry(view, index, () => runningAnimations.Remove(animation)));
+        runningAnimations.Add(animation);
+    }
+
+    private IEnumerator AnimateDocumentEntry(DraggableDocument view, int index, Action onCompleted)
+    {
+        if (view == null)
+        {
+            onCompleted?.Invoke();
+            yield break;
+        }
+
+        if (entryStaggerSeconds > 0f && index > 0)
+        {
+            yield return new WaitForSeconds(entryStaggerSeconds * index);
+        }
+
+        var rectTransform = view.RectTransform;
+        var targetPosition = rectTransform.anchoredPosition;
+        var targetRotation = rectTransform.localRotation;
+        var targetScale = Vector3.one * entryEndScale;
+        var startPosition = targetPosition + entryOffset;
+        var startRotation = Quaternion.Euler(0f, 0f, entryStartRotationZ);
+        var startScale = Vector3.one * entryStartScale;
+
+        rectTransform.anchoredPosition = startPosition;
+        rectTransform.localRotation = startRotation;
+        rectTransform.localScale = startScale;
+
+        var elapsed = 0f;
+        while (elapsed < entryDurationSeconds)
+        {
+            elapsed += Time.deltaTime;
+            var t = Mathf.Clamp01(elapsed / entryDurationSeconds);
+            var eased = EaseInOutCubic(t);
+
+            rectTransform.anchoredPosition = Vector2.LerpUnclamped(startPosition, targetPosition, eased);
+            rectTransform.localRotation = Quaternion.LerpUnclamped(startRotation, targetRotation, eased);
+            rectTransform.localScale = Vector3.LerpUnclamped(startScale, targetScale, eased);
+            view.SetVisualAlpha(eased);
+            yield return null;
+        }
+
+        rectTransform.anchoredPosition = targetPosition;
+        rectTransform.localRotation = targetRotation;
+        rectTransform.localScale = targetScale;
+        view.SetVisualAlpha(1f);
+        view.SetInteractionEnabled(true);
+        onCompleted?.Invoke();
+    }
+
+    private void StopRunningAnimations()
+    {
+        for (var index = 0; index < runningAnimations.Count; index++)
+        {
+            var animation = runningAnimations[index];
+            if (animation != null)
+            {
+                StopCoroutine(animation);
+            }
+        }
+
+        runningAnimations.Clear();
+    }
+
+    private static float EaseInOutCubic(float value)
+    {
+        return value < 0.5f
+            ? 4f * value * value * value
+            : 1f - Mathf.Pow(-2f * value + 2f, 3f) / 2f;
+    }
+
+    private static void ShuffleDocuments(List<DocumentRecord> documents)
+    {
+        if (documents == null || documents.Count <= 1)
+        {
+            return;
+        }
+
+        for (var index = documents.Count - 1; index > 0; index--)
+        {
+            var randomIndex = UnityEngine.Random.Range(0, index + 1);
+            (documents[index], documents[randomIndex]) = (documents[randomIndex], documents[index]);
         }
     }
 

@@ -2,6 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum NpcVisualProfile
+{
+    Masculino,
+    Feminino
+}
+
 public enum EnrollmentGeneratedCaseType
 {
     Valid,
@@ -54,4 +60,11 @@ public class EnrollmentCaseGenerationConfig : ScriptableObject
     public List<string> firstNames = new List<string>();
     public List<string> lastNames = new List<string>();
     public List<string> courses = new List<string>();
+
+    [Header("Profiled Student Data")]
+    public bool useProfiledNpcGeneration = true;
+    public List<string> maleFirstNames = new List<string>();
+    public List<string> femaleFirstNames = new List<string>();
+    public List<NpcDefinition> maleNpcDefinitions = new List<NpcDefinition>();
+    public List<NpcDefinition> femaleNpcDefinitions = new List<NpcDefinition>();
 }

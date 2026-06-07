@@ -9,6 +9,20 @@ public class HUDController : MonoBehaviour
     [SerializeField] private TMP_Text warningsText;
     [SerializeField] private TMP_Text timerText;
 
+    public void Configure(
+        TMP_Text currentCase,
+        TMP_Text money,
+        TMP_Text debt,
+        TMP_Text warnings,
+        TMP_Text timer)
+    {
+        currentCaseText = currentCase;
+        moneyText = money;
+        debtText = debt;
+        warningsText = warnings;
+        timerText = timer;
+    }
+
     public void SetCaseInfo(StudentCaseDefinition caseDefinition)
     {
         if (currentCaseText == null)

@@ -27,6 +27,24 @@ public static class EnrollmentCaseGenerator
         return generatedCases;
     }
 
+    public static StudentCaseDefinition GenerateSingleCase(
+        EnrollmentCaseGenerationConfig config,
+        System.Random random,
+        int generatedIndex)
+    {
+        if (config == null)
+        {
+            return null;
+        }
+
+        random ??= config.useFreshRandomSeed
+            ? new System.Random()
+            : new System.Random(config.randomSeed);
+
+        var caseType = PickWeightedCaseType(config, random);
+        return CreateEnrollmentCase(caseType, config, random, generatedIndex);
+    }
+
     private static void AddMinimumCases(
         EnrollmentCaseGenerationConfig config,
         System.Random random,
@@ -115,7 +133,8 @@ public static class EnrollmentCaseGenerator
         System.Random random,
         int generatedIndex)
     {
-        var studentName = PickFullName(config, random);
+        var visualProfile = PickVisualProfile(config, random);
+        var studentName = PickFullName(config, random, visualProfile);
         var course = PickValue(config.courses, random, "Ciencia da Computacao");
         var ra = random.Next(config.firstRaNumber, config.lastRaNumber + 1).ToString();
         var wrongName = CreateWrongName(studentName, config, random);
@@ -136,6 +155,7 @@ public static class EnrollmentCaseGenerator
         studentCase.overriddenCorrectDecision = DecisionType.Approve;
         studentCase.overrideReason = string.Empty;
         studentCase.mistakeIsCritical = true;
+        studentCase.npcDefinition = PickNpcDefinition(config, random, visualProfile);
 
         AddEnrollmentRequirements(studentCase, caseType);
         AddEnrollmentComparisonRules(studentCase);
@@ -315,11 +335,38 @@ public static class EnrollmentCaseGenerator
             field != null && string.Equals(field.key, key, StringComparison.OrdinalIgnoreCase));
     }
 
-    private static string PickFullName(EnrollmentCaseGenerationConfig config, System.Random random)
+    private static string PickFullName(EnrollmentCaseGenerationConfig config, System.Random random, NpcVisualProfile visualProfile)
     {
-        var firstName = PickValue(config.firstNames, random, "Aluno");
+        var firstName = PickFirstNameByProfile(config, random, visualProfile);
         var lastName = PickValue(config.lastNames, random, "Silva");
         return $"{firstName} {lastName}";
+    }
+
+    private static string PickFirstNameByProfile(EnrollmentCaseGenerationConfig config, System.Random random, NpcVisualProfile visualProfile)
+    {
+        if (config != null && config.useProfiledNpcGeneration)
+        {
+            var profiledNames = visualProfile == NpcVisualProfile.Feminino
+                ? config.femaleFirstNames
+                : config.maleFirstNames;
+
+            var profiledFallback = visualProfile == NpcVisualProfile.Feminino ? "Ana" : "Joao";
+            var profiledName = PickValue(profiledNames, random, string.Empty);
+            if (!string.IsNullOrWhiteSpace(profiledName))
+            {
+                return profiledName;
+            }
+
+            var fallbackName = PickValue(config.firstNames, random, profiledFallback);
+            if (!string.IsNullOrWhiteSpace(fallbackName))
+            {
+                return fallbackName;
+            }
+
+            return profiledFallback;
+        }
+
+        return PickValue(config != null ? config.firstNames : null, random, "Aluno");
     }
 
     private static string PickValue(IReadOnlyList<string> values, System.Random random, string fallback)
@@ -388,6 +435,98 @@ public static class EnrollmentCaseGenerator
         }
 
         return wrongRa == ra ? $"{ra}9" : wrongRa;
+    }
+
+    private static NpcVisualProfile PickVisualProfile(EnrollmentCaseGenerationConfig config, System.Random random)
+    {
+        if (config == null || !config.useProfiledNpcGeneration)
+        {
+            return NpcVisualProfile.Masculino;
+        }
+
+        var hasMale = HasAnyValue(config.maleFirstNames) || HasAnyNpc(config.maleNpcDefinitions);
+        var hasFemale = HasAnyValue(config.femaleFirstNames) || HasAnyNpc(config.femaleNpcDefinitions);
+
+        if (hasMale && hasFemale)
+        {
+            return random.Next(0, 2) == 0 ? NpcVisualProfile.Masculino : NpcVisualProfile.Feminino;
+        }
+
+        if (hasFemale)
+        {
+            return NpcVisualProfile.Feminino;
+        }
+
+        return NpcVisualProfile.Masculino;
+    }
+
+    private static NpcDefinition PickNpcDefinition(EnrollmentCaseGenerationConfig config, System.Random random, NpcVisualProfile visualProfile)
+    {
+        if (config == null || !config.useProfiledNpcGeneration)
+        {
+            return null;
+        }
+
+        var pool = visualProfile == NpcVisualProfile.Feminino
+            ? config.femaleNpcDefinitions
+            : config.maleNpcDefinitions;
+
+        if (pool == null || pool.Count == 0)
+        {
+            return null;
+        }
+
+        var validPool = new List<NpcDefinition>();
+        for (var index = 0; index < pool.Count; index++)
+        {
+            if (pool[index] != null)
+            {
+                validPool.Add(pool[index]);
+            }
+        }
+
+        if (validPool.Count == 0)
+        {
+            return null;
+        }
+
+        return validPool[random.Next(0, validPool.Count)];
+    }
+
+    private static bool HasAnyValue(IReadOnlyList<string> values)
+    {
+        if (values == null)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < values.Count; index++)
+        {
+            if (!string.IsNullOrWhiteSpace(values[index]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasAnyNpc(IReadOnlyList<NpcDefinition> values)
+    {
+        if (values == null)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < values.Count; index++)
+        {
+            if (values[index] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static string BuildCaseTitle(EnrollmentGeneratedCaseType caseType)

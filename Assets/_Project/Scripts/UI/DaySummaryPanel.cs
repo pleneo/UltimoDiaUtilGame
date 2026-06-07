@@ -8,6 +8,13 @@ public class DaySummaryPanel : MonoBehaviour
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text bodyText;
 
+    public void Configure(GameObject panelRoot, TMP_Text title, TMP_Text body)
+    {
+        root = panelRoot;
+        titleText = title;
+        bodyText = body;
+    }
+
     public void Show(DaySummaryData summary)
     {
         if (root != null)

@@ -5,6 +5,18 @@ using UnityEngine;
 
 public class DayManager : MonoBehaviour
 {
+    private struct QueuedErrorFeedback
+    {
+        public string message;
+        public Color color;
+
+        public QueuedErrorFeedback(string message, Color color)
+        {
+            this.message = message;
+            this.color = color;
+        }
+    }
+
     private struct QueuedStudentCase
     {
         public StudentCaseDefinition caseDefinition;
@@ -27,6 +39,8 @@ public class DayManager : MonoBehaviour
     [SerializeField] private NpcMovementController npcMovementController;
     [SerializeField, Min(0.1f)] private float npcEventTimeoutSeconds = 4f;
     [SerializeField, Min(0f)] private float postDecisionDelaySeconds = 0.1f;
+    [SerializeField, Min(0f)] private float incorrectDecisionFeedbackDelaySeconds = 3f;
+    [SerializeField, Min(0f)] private float incorrectDecisionFeedbackDisplaySeconds = 3f;
     [SerializeField] private bool enableQueueDebugLogs = true;
 
     [Header("NPC Random Visuals")]
@@ -52,6 +66,8 @@ public class DayManager : MonoBehaviour
 
     private readonly List<StudentCaseDefinition> currentCases = new List<StudentCaseDefinition>();
     private readonly Queue<QueuedStudentCase> pendingCaseQueue = new Queue<QueuedStudentCase>();
+    private readonly Queue<QueuedErrorFeedback> pendingErrorFeedbackQueue = new Queue<QueuedErrorFeedback>();
+    private readonly List<FixedDayCaseEntry> pendingFixedCaseEntries = new List<FixedDayCaseEntry>();
 
     private Coroutine dayFlowCoroutine;
     private bool npcArrivedCenter;
@@ -59,6 +75,9 @@ public class DayManager : MonoBehaviour
     private bool hasPendingCaseResolution;
     private bool warnedNpcMovementUnavailable;
     private NpcDefinition lastRandomNpcDefinition;
+    private Coroutine incorrectDecisionFeedbackCoroutine;
+    private System.Random generatedCaseRandom;
+    private int generatedCaseCounter;
 
     private void Awake()
     {
@@ -108,6 +127,12 @@ public class DayManager : MonoBehaviour
         {
             StopCoroutine(dayFlowCoroutine);
             dayFlowCoroutine = null;
+        }
+
+        if (incorrectDecisionFeedbackCoroutine != null)
+        {
+            StopCoroutine(incorrectDecisionFeedbackCoroutine);
+            incorrectDecisionFeedbackCoroutine = null;
         }
     }
 
@@ -159,14 +184,51 @@ public class DayManager : MonoBehaviour
 
         currentCases.Clear();
         pendingCaseQueue.Clear();
+        pendingErrorFeedbackQueue.Clear();
+        pendingFixedCaseEntries.Clear();
+        generatedCaseCounter = 0;
+        generatedCaseRandom = null;
 
-        // Rastreia quantos casos vieram de enrollment para enfileirá-los depois
-        // sem re-enfileirar os manuais (que já entram na fila logo abaixo)
+        if (dayConfig.useInfiniteGeneratedCases)
+        {
+            PrepareInfiniteCaseFlow(dayConfig);
+        }
+        else
+        {
+            PrepareFiniteCaseFlow(dayConfig);
+        }
+
+        LogDaySetupDiagnostics();
+
+        if (economyManager != null)
+        {
+            economyManager.ApplyEconomyConfig(dayConfig.economyConfig);
+        }
+
+        if (uiManager != null)
+        {
+            uiManager.BindDay(dayConfig);
+            uiManager.HideDaySummary();
+            uiManager.ShowCurrentCase(null);
+            uiManager.ClearCaseFeedback();
+        }
+
+        dayFlowCoroutine = StartCoroutine(dayConfig.useInfiniteGeneratedCases
+            ? RunInfiniteDayCaseFlow()
+            : RunDayCaseFlow());
+        LogQueue(dayConfig.useInfiniteGeneratedCases
+            ? $"Dia infinito iniciado. Casos fixos pendentes: {pendingFixedCaseEntries.Count}."
+            : $"Dia iniciado com {pendingCaseQueue.Count} caso(s) na fila.");
+        PushHudUpdate();
+    }
+
+    private void PrepareFiniteCaseFlow(DayConfig dayConfig)
+    {
         if (dayConfig.enrollmentGenerationConfig != null)
         {
             currentCases.AddRange(EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig));
         }
-        int enrollmentCaseCount = currentCases.Count;
+        var enrollmentCaseCount = currentCases.Count;
 
         if (dayConfig.includeManualCases && dayConfig.cases != null)
         {
@@ -194,22 +256,52 @@ public class DayManager : MonoBehaviour
         {
             pendingCaseQueue.Enqueue(new QueuedStudentCase(currentCases[index], null));
         }
+    }
 
-        if (economyManager != null)
+    private void PrepareInfiniteCaseFlow(DayConfig dayConfig)
+    {
+        generatedCaseRandom = dayConfig.enrollmentGenerationConfig != null && !dayConfig.enrollmentGenerationConfig.useFreshRandomSeed
+            ? new System.Random(dayConfig.enrollmentGenerationConfig.randomSeed)
+            : new System.Random();
+
+        if (dayConfig.fixedCases != null)
         {
-            economyManager.ApplyEconomyConfig(dayConfig.economyConfig);
+            for (var index = 0; index < dayConfig.fixedCases.Count; index++)
+            {
+                var fixedCaseEntry = dayConfig.fixedCases[index];
+                if (fixedCaseEntry == null || fixedCaseEntry.caseDefinition == null)
+                {
+                    continue;
+                }
+
+                pendingFixedCaseEntries.Add(new FixedDayCaseEntry
+                {
+                    caseDefinition = fixedCaseEntry.caseDefinition,
+                    triggerResolvedCaseNumber = Mathf.Max(0, fixedCaseEntry.triggerResolvedCaseNumber)
+                });
+            }
         }
 
-        if (uiManager != null)
+        pendingFixedCaseEntries.Sort((left, right) =>
         {
-            uiManager.BindDay(dayConfig);
-            uiManager.HideDaySummary();
-            uiManager.ShowCurrentCase(null);
-        }
+            var triggerCompare = left.triggerResolvedCaseNumber.CompareTo(right.triggerResolvedCaseNumber);
+            if (triggerCompare != 0)
+            {
+                return triggerCompare;
+            }
 
-        dayFlowCoroutine = StartCoroutine(RunDayCaseFlow());
-        LogQueue($"Dia iniciado com {pendingCaseQueue.Count} caso(s) na fila.");
-        PushHudUpdate();
+            var leftId = left.caseDefinition != null ? left.caseDefinition.caseId : string.Empty;
+            var rightId = right.caseDefinition != null ? right.caseDefinition.caseId : string.Empty;
+            return string.CompareOrdinal(leftId, rightId);
+        });
+
+        for (var index = 0; index < pendingFixedCaseEntries.Count; index++)
+        {
+            if (pendingFixedCaseEntries[index].caseDefinition != null)
+            {
+                currentCases.Add(pendingFixedCaseEntries[index].caseDefinition);
+            }
+        }
     }
 
     private void AddDebugRepeatedCasesIfNeeded()
@@ -273,12 +365,13 @@ public class DayManager : MonoBehaviour
         var randomNpcCount = CountValidRandomNpcDefinitions();
         Debug.Log(
             $"[QueueFlow] Setup do dia: casos={currentCases.Count}, fila={pendingCaseQueue.Count}, " +
+            $"fixosPendentes={pendingFixedCaseEntries.Count}, infinito={CurrentDayConfig != null && CurrentDayConfig.useInfiniteGeneratedCases}, " +
             $"npcAleatorios={randomNpcCount}, usaMovimentoNpc={useNpcMovementFlow}, " +
             $"npcController={(npcMovementController != null ? npcMovementController.name : "nenhum")}.",
             this
         );
 
-        if (pendingCaseQueue.Count == 0)
+        if ((CurrentDayConfig == null || !CurrentDayConfig.useInfiniteGeneratedCases) && pendingCaseQueue.Count == 0)
         {
             Debug.LogWarning("DayManager nao tem casos na fila. Preencha DayConfig > Cases.", this);
         }
@@ -420,6 +513,55 @@ public class DayManager : MonoBehaviour
         }
     }
 
+    private IEnumerator RunInfiniteDayCaseFlow()
+    {
+        while (IsDayActive && RemainingTimeSeconds > 0f)
+        {
+            var nextQueueEntry = GetNextInfiniteQueueEntry();
+            if (nextQueueEntry.caseDefinition == null)
+            {
+                EndDay(DayEndReason.Completed);
+                yield break;
+            }
+
+            CurrentCaseIndex = ResolvedCasesCount;
+            LogQueue($"NPC chamado para caso '{nextQueueEntry.caseDefinition.caseId}' (infinito).");
+
+            yield return StartCasePresentation(nextQueueEntry);
+            if (!IsDayActive)
+            {
+                yield break;
+            }
+
+            hasPendingCaseResolution = true;
+            while (IsDayActive && hasPendingCaseResolution)
+            {
+                yield return null;
+            }
+
+            if (!IsDayActive)
+            {
+                yield break;
+            }
+
+            if (postDecisionDelaySeconds > 0f)
+            {
+                yield return new WaitForSeconds(postDecisionDelaySeconds);
+            }
+
+            yield return EndCasePresentation();
+            if (!IsDayActive)
+            {
+                yield break;
+            }
+        }
+
+        if (IsDayActive)
+        {
+            EndDay(DayEndReason.TimeExpired);
+        }
+    }
+
     private IEnumerator StartCasePresentation(QueuedStudentCase queueEntry)
     {
         var caseDefinition = queueEntry.caseDefinition;
@@ -556,6 +698,44 @@ public class DayManager : MonoBehaviour
         return selectedDefinition;
     }
 
+    private QueuedStudentCase GetNextInfiniteQueueEntry()
+    {
+        var fixedCase = TryConsumeFixedCaseForCurrentProgress();
+        if (fixedCase != null)
+        {
+            return new QueuedStudentCase(fixedCase, null);
+        }
+
+        var generatedCase = EnrollmentCaseGenerator.GenerateSingleCase(
+            CurrentDayConfig != null ? CurrentDayConfig.enrollmentGenerationConfig : null,
+            generatedCaseRandom,
+            ++generatedCaseCounter);
+
+        if (generatedCase != null)
+        {
+            currentCases.Add(generatedCase);
+        }
+
+        return new QueuedStudentCase(generatedCase, null);
+    }
+
+    private StudentCaseDefinition TryConsumeFixedCaseForCurrentProgress()
+    {
+        if (pendingFixedCaseEntries.Count == 0)
+        {
+            return null;
+        }
+
+        if (pendingFixedCaseEntries[0].triggerResolvedCaseNumber > ResolvedCasesCount)
+        {
+            return null;
+        }
+
+        var fixedCaseDefinition = pendingFixedCaseEntries[0].caseDefinition;
+        pendingFixedCaseEntries.RemoveAt(0);
+        return fixedCaseDefinition;
+    }
+
     private void HandleCaseResolved(CaseResolutionResult result)
     {
         if (!IsDayActive || result == null)
@@ -573,7 +753,6 @@ public class DayManager : MonoBehaviour
         }
 
         ResolvedCasesCount++;
-        hasPendingCaseResolution = false;
         CurrentCaseIndex = currentCases.Count > 0
             ? Mathf.Min(ResolvedCasesCount, currentCases.Count - 1)
             : 0;
@@ -596,6 +775,130 @@ public class DayManager : MonoBehaviour
         }
 
         PushHudUpdate();
+
+        if (result.isCorrectDecision)
+        {
+            if (uiManager != null)
+            {
+                uiManager.ClearCaseFeedback();
+            }
+
+            hasPendingCaseResolution = false;
+            return;
+        }
+
+        EnqueueIncorrectDecisionFeedback(result);
+        hasPendingCaseResolution = false;
+    }
+
+    private void EnqueueIncorrectDecisionFeedback(CaseResolutionResult result)
+    {
+        pendingErrorFeedbackQueue.Enqueue(new QueuedErrorFeedback(
+            BuildIncorrectDecisionFeedbackMessage(result),
+            new Color(0.92f, 0.34f, 0.28f, 1f)));
+
+        if (incorrectDecisionFeedbackCoroutine == null)
+        {
+            incorrectDecisionFeedbackCoroutine = StartCoroutine(ProcessIncorrectDecisionFeedbackQueue());
+        }
+    }
+
+    private IEnumerator ProcessIncorrectDecisionFeedbackQueue()
+    {
+        while (pendingErrorFeedbackQueue.Count > 0)
+        {
+            var feedback = pendingErrorFeedbackQueue.Dequeue();
+
+            if (incorrectDecisionFeedbackDelaySeconds > 0f)
+            {
+                yield return new WaitForSeconds(incorrectDecisionFeedbackDelaySeconds);
+            }
+
+            if (uiManager != null)
+            {
+                uiManager.ShowCaseFeedback(feedback.message, feedback.color);
+            }
+
+            if (incorrectDecisionFeedbackDisplaySeconds > 0f)
+            {
+                yield return new WaitForSeconds(incorrectDecisionFeedbackDisplaySeconds);
+            }
+
+            if (uiManager != null)
+            {
+                uiManager.ClearCaseFeedback();
+            }
+        }
+
+        incorrectDecisionFeedbackCoroutine = null;
+    }
+
+    private string BuildIncorrectDecisionFeedbackMessage(CaseResolutionResult result)
+    {
+        var penalty = economyManager != null ? economyManager.PenaltyPerMistake : 0;
+        var warningDelta = Mathf.Max(0, result.warningDelta);
+        var reason = BuildSpecificIncorrectReason(result);
+
+        var message = $"Decisao incorreta. -{penalty}";
+        if (warningDelta > 0)
+        {
+            message += $" | Advertencia +{warningDelta}";
+        }
+
+        message += $"\nMotivo: {reason}";
+        return message;
+    }
+
+    private static string BuildSpecificIncorrectReason(CaseResolutionResult result)
+    {
+        if (result == null || result.validationResult == null)
+        {
+            return "Nao foi possivel identificar o problema do caso.";
+        }
+
+        if (result.chosenDecision == DecisionType.Reject && result.validationResult.recommendedDecision == DecisionType.Approve)
+        {
+            return "A documentacao estava em ordem. O caso deveria ter sido aprovado.";
+        }
+
+        if (result.chosenDecision == DecisionType.Approve && result.validationResult.issues != null && result.validationResult.issues.Count > 0)
+        {
+            var reasons = new List<string>();
+            for (var index = 0; index < result.validationResult.issues.Count; index++)
+            {
+                var issue = result.validationResult.issues[index];
+                if (issue == null || string.IsNullOrWhiteSpace(issue.message))
+                {
+                    continue;
+                }
+
+                if (!reasons.Contains(issue.message))
+                {
+                    reasons.Add(issue.message);
+                }
+
+                if (reasons.Count >= 2)
+                {
+                    break;
+                }
+            }
+
+            if (reasons.Count > 0)
+            {
+                return string.Join(" | ", reasons);
+            }
+        }
+
+        if (result.chosenDecision == DecisionType.Forward)
+        {
+            return result.validationResult.hasSupervisorReview
+                ? "O caso foi encaminhado incorretamente."
+                : "Esse caso nao exigia encaminhamento ao superior.";
+        }
+
+        return string.IsNullOrWhiteSpace(result.feedbackMessage)
+            ? "Verifique os documentos do caso."
+            : result.feedbackMessage;
     }
 
     private DaySummaryData BuildSummary(DayEndReason reason)
@@ -604,8 +907,12 @@ public class DayManager : MonoBehaviour
         {
             dayNumber = CurrentDayConfig != null ? CurrentDayConfig.dayNumber : 1,
             dayLabel = CurrentDayConfig != null ? CurrentDayConfig.dayLabel : "Dia",
-            totalCases = currentCases.Count,
-            completedCases = Mathf.Clamp(ResolvedCasesCount, 0, currentCases.Count),
+            totalCases = CurrentDayConfig != null && CurrentDayConfig.useInfiniteGeneratedCases
+                ? ResolvedCasesCount
+                : currentCases.Count,
+            completedCases = CurrentDayConfig != null && CurrentDayConfig.useInfiniteGeneratedCases
+                ? ResolvedCasesCount
+                : Mathf.Clamp(ResolvedCasesCount, 0, currentCases.Count),
             correctDecisions = CorrectDecisions,
             incorrectDecisions = IncorrectDecisions,
             workDurationSeconds = CurrentDayConfig != null ? CurrentDayConfig.workDurationSeconds : 0f,

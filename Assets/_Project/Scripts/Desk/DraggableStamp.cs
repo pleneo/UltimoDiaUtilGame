@@ -90,6 +90,7 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     private void TentarCarimbar()
     {
         var receptores = FindObjectsByType<StampReceiver>(FindObjectsSortMode.None);
+        var stampWorldPosition = rectTransform.position;
 
         foreach (var receptor in receptores)
         {
@@ -101,7 +102,7 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
             if (RectTransformsOverlap(rectTransform, rectReceptor))
             {
-                receptor.ReceberCarimbo(tipoCarimbo);
+                receptor.ReceberCarimbo(tipoCarimbo, stampWorldPosition);
                 return;
             }
         }

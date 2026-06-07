@@ -82,7 +82,7 @@ public static class CaseValidator
                 result.issues.Add(new ValidationIssue
                 {
                     issueType = ValidationIssueType.MissingDocument,
-                    message = $"Documento obrigatorio ausente: {requirement.documentType}",
+                    message = $"Faltando documento: {GetDocumentTypeLabel(requirement.documentType)}.",
                     sourceDocumentType = requirement.documentType
                 });
                 continue;
@@ -93,7 +93,7 @@ public static class CaseValidator
                 result.issues.Add(new ValidationIssue
                 {
                     issueType = ValidationIssueType.SuspiciousDocument,
-                    message = $"{document.GetDisplayName()} foi marcado como falso.",
+                    message = $"{document.GetDisplayName()} aparenta ser falso.",
                     sourceDocumentType = document.GetDocumentType()
                 });
             }
@@ -103,7 +103,7 @@ public static class CaseValidator
                 result.issues.Add(new ValidationIssue
                 {
                     issueType = ValidationIssueType.SuspiciousDocument,
-                    message = $"{document.GetDisplayName()} esta suspeito.",
+                    message = $"{document.GetDisplayName()} apresenta informacoes suspeitas.",
                     sourceDocumentType = document.GetDocumentType()
                 });
             }
@@ -113,7 +113,7 @@ public static class CaseValidator
                 result.issues.Add(new ValidationIssue
                 {
                     issueType = ValidationIssueType.InvalidStamp,
-                    message = $"{document.GetDisplayName()} precisa de carimbo valido.",
+                    message = $"O documento {document.GetDisplayName()} esta sem carimbo valido.",
                     sourceDocumentType = document.GetDocumentType()
                 });
             }
@@ -123,7 +123,7 @@ public static class CaseValidator
                 result.issues.Add(new ValidationIssue
                 {
                     issueType = ValidationIssueType.ExpiredDocument,
-                    message = $"{document.GetDisplayName()} esta vencido.",
+                    message = $"O documento {document.GetDisplayName()} esta vencido.",
                     sourceDocumentType = document.GetDocumentType()
                 });
             }
@@ -146,7 +146,7 @@ public static class CaseValidator
                     result.issues.Add(new ValidationIssue
                     {
                         issueType = ValidationIssueType.MissingField,
-                        message = $"{document.GetDisplayName()} precisa do campo '{requiredFieldKey}'.",
+                        message = $"Faltando o campo {GetFieldLabel(requiredFieldKey)} em {document.GetDisplayName()}.",
                         sourceDocumentType = document.GetDocumentType()
                     });
                 }
@@ -180,7 +180,7 @@ public static class CaseValidator
                 result.issues.Add(new ValidationIssue
                 {
                     issueType = ValidationIssueType.MissingDocument,
-                    message = $"Comparacao impossivel entre {rule.firstDocumentType} e {rule.secondDocumentType}.",
+                    message = $"Nao foi possivel comparar {GetDocumentTypeLabel(rule.firstDocumentType)} com {GetDocumentTypeLabel(rule.secondDocumentType)}.",
                     sourceDocumentType = rule.firstDocumentType,
                     targetDocumentType = rule.secondDocumentType
                 });
@@ -196,7 +196,7 @@ public static class CaseValidator
                 {
                     issueType = ValidationIssueType.MissingField,
                     message = string.IsNullOrWhiteSpace(rule.description)
-                        ? "Campo de comparacao ausente."
+                        ? $"Faltam campos para comparar {GetFieldLabel(rule.firstFieldKey)}."
                         : rule.description,
                     sourceDocumentType = rule.firstDocumentType,
                     targetDocumentType = rule.secondDocumentType
@@ -210,7 +210,7 @@ public static class CaseValidator
                 {
                     issueType = ValidationIssueType.FieldMismatch,
                     message = string.IsNullOrWhiteSpace(rule.description)
-                        ? $"'{rule.firstFieldKey}' nao bate com '{rule.secondFieldKey}'."
+                        ? BuildFieldMismatchMessage(rule)
                         : rule.description,
                     sourceDocumentType = rule.firstDocumentType,
                     targetDocumentType = rule.secondDocumentType
@@ -246,6 +246,49 @@ public static class CaseValidator
     private static bool ValuesMatch(string firstValue, string secondValue)
     {
         return string.Equals(NormalizeValue(firstValue), NormalizeValue(secondValue), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string BuildFieldMismatchMessage(DocumentComparisonRule rule)
+    {
+        var fieldLabel = GetFieldLabel(rule.firstFieldKey);
+        var firstDocumentLabel = GetDocumentTypeLabel(rule.firstDocumentType);
+        var secondDocumentLabel = GetDocumentTypeLabel(rule.secondDocumentType);
+
+        return $"{fieldLabel} divergente entre {firstDocumentLabel} e {secondDocumentLabel}.";
+    }
+
+    private static string GetDocumentTypeLabel(DocumentType documentType)
+    {
+        return documentType switch
+        {
+            DocumentType.IdentityCard => "Carteira de Identidade",
+            DocumentType.SchoolTranscript => "Historico Escolar",
+            DocumentType.EnrollmentProof => "Comprovante de Matricula",
+            DocumentType.TuitionReceipt => "Comprovante de Mensalidade",
+            DocumentType.WithdrawalForm => "Formulario de Trancamento",
+            DocumentType.PaymentReceipt => "Comprovante de Pagamento",
+            DocumentType.SpecialNotice => "Aviso Especial",
+            _ => "Documento"
+        };
+    }
+
+    private static string GetFieldLabel(string fieldKey)
+    {
+        if (string.IsNullOrWhiteSpace(fieldKey))
+        {
+            return "informacao obrigatoria";
+        }
+
+        var normalizedKey = fieldKey.Trim().ToLowerInvariant();
+        return normalizedKey switch
+        {
+            "nome" => "nome",
+            "ra" => "RA",
+            "curso" => "curso",
+            "cpf" => "CPF",
+            "data" => "data",
+            _ => fieldKey
+        };
     }
 
     private static string NormalizeValue(string value)

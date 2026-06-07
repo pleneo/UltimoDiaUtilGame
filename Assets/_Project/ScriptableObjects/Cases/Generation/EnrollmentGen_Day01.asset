@@ -31,17 +31,18 @@ MonoBehaviour:
     minimumCount: 1
   caseTypeWeights:
   - caseType: 0
-    weight: 70
+    weight: 40
   - caseType: 1
-    weight: 20
+    weight: 25
   - caseType: 2
-    weight: 10
+    weight: 20
   - caseType: 3
-    weight: 0
+    weight: 15
   - caseType: 4
     weight: 0
   - caseType: 5
     weight: 0
+  useProfiledNpcGeneration: 0
   firstNames:
   - Ana
   - Bruno

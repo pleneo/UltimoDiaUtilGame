@@ -8,6 +8,8 @@ using UnityEngine;
 /// </summary>
 public class StampReceiver : MonoBehaviour
 {
+    private const DocumentType AllowedStampDocumentType = DocumentType.EnrollmentProof;
+
     [Header("Marcas Visuais")]
     [Tooltip("GameObject filho com a imagem do carimbo APROVADO.")]
     [SerializeField] private GameObject marcaAprovado;
@@ -47,8 +49,13 @@ public class StampReceiver : MonoBehaviour
     /// Chamado pelo DraggableStamp quando o carimbo é solto sobre este documento.
     /// </summary>
     /// <param name="tipo">Aprovado ou Negado.</param>
-    public void ReceberCarimbo(StampType tipo)
+    public void ReceberCarimbo(StampType tipo, Vector3 worldPosition)
     {
+        if (!CanReceiveStamp())
+        {
+            return;
+        }
+
         if (UltimoCarimbo.HasValue && !permiteRecarimbar)
         {
             // Documento já foi carimbado e recarimbar não é permitido
@@ -56,7 +63,7 @@ public class StampReceiver : MonoBehaviour
         }
 
         UltimoCarimbo = tipo;
-        AtualizarVisuais(tipo);
+        AtualizarVisuais(tipo, worldPosition);
         CarimboAplicado?.Invoke(tipo);
     }
 
@@ -76,11 +83,59 @@ public class StampReceiver : MonoBehaviour
     // Privado
     // -------------------------------------------------------------------------
 
-    private void AtualizarVisuais(StampType tipo)
+    private bool CanReceiveStamp()
+    {
+        var draggableDocument = GetComponentInParent<DraggableDocument>();
+        if (draggableDocument == null || draggableDocument.BoundRecord == null)
+        {
+            return false;
+        }
+
+        return draggableDocument.BoundRecord.GetDocumentType() == AllowedStampDocumentType;
+    }
+
+    private void AtualizarVisuais(StampType tipo, Vector3 worldPosition)
     {
         bool aprovado = tipo == StampType.Aprovado;
 
         if (marcaAprovado != null) marcaAprovado.SetActive(aprovado);
         if (marcaNegado  != null) marcaNegado.SetActive(!aprovado);
+
+        var activeMark = aprovado ? marcaAprovado : marcaNegado;
+        if (activeMark == null)
+        {
+            return;
+        }
+
+        MoveMarkToWorldPosition(activeMark, worldPosition);
+    }
+
+    private void MoveMarkToWorldPosition(GameObject markObject, Vector3 worldPosition)
+    {
+        var documentRect = GetComponent<RectTransform>();
+        var markRect = markObject.GetComponent<RectTransform>();
+        if (documentRect == null || markRect == null)
+        {
+            return;
+        }
+
+        var canvas = GetComponentInParent<Canvas>();
+        var eventCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? canvas.worldCamera
+            : null;
+
+        var screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, worldPosition);
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(documentRect, screenPoint, eventCamera, out var localPoint))
+        {
+            return;
+        }
+
+        var halfDocumentSize = documentRect.rect.size * 0.5f;
+        var halfMarkSize = markRect.rect.size * 0.5f;
+
+        localPoint.x = Mathf.Clamp(localPoint.x, -halfDocumentSize.x + halfMarkSize.x, halfDocumentSize.x - halfMarkSize.x);
+        localPoint.y = Mathf.Clamp(localPoint.y, -halfDocumentSize.y + halfMarkSize.y, halfDocumentSize.y - halfMarkSize.y);
+
+        markRect.anchoredPosition = localPoint;
     }
 }

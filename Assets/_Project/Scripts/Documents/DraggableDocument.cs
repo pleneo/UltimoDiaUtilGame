@@ -26,6 +26,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
     private Vector2 dragOffset;
     private Vector2 lastValidAnchoredPosition;
     private Vector3 baseScale = Vector3.one;
+    private bool interactionEnabled = true;
 
     private void Awake()
     {
@@ -66,6 +67,11 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!interactionEnabled)
+        {
+            return;
+        }
+
         parentRectTransform = ResolveDragRoot();
 
         if (parentRectTransform == null)
@@ -85,7 +91,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!IsDragging || parentRectTransform == null)
+        if (!interactionEnabled || !IsDragging || parentRectTransform == null)
         {
             return;
         }
@@ -98,6 +104,11 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!interactionEnabled)
+        {
+            return;
+        }
+
         IsDragging = false;
         canvasGroup.blocksRaycasts = true;
         SetSelectedVisual(false);
@@ -106,6 +117,11 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (!interactionEnabled)
+        {
+            return;
+        }
+
         if (eventData.button != PointerEventData.InputButton.Left)
         {
             return;
@@ -135,6 +151,27 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
     public void ReturnToLastValidPosition()
     {
         rectTransform.anchoredPosition = lastValidAnchoredPosition;
+    }
+
+    public void SetInteractionEnabled(bool isEnabled)
+    {
+        interactionEnabled = isEnabled;
+        IsDragging = false;
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.blocksRaycasts = isEnabled;
+        }
+    }
+
+    public void SetVisualAlpha(float alpha)
+    {
+        if (canvasGroup == null)
+        {
+            return;
+        }
+
+        canvasGroup.alpha = Mathf.Clamp01(alpha);
     }
 
     private void OnDisable()

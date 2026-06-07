@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -6,6 +8,47 @@ public class UIManager : MonoBehaviour
     [SerializeField] private RulebookPanel rulebookPanel;
     [SerializeField] private NoticeBoardPanel noticeBoardPanel;
     [SerializeField] private DaySummaryPanel daySummaryPanel;
+    [SerializeField] private TMP_Text caseFeedbackText;
+
+    private void Awake()
+    {
+        EnsureRuntimeUi();
+    }
+
+    private void EnsureRuntimeUi()
+    {
+        if (hudController == null)
+        {
+            hudController = FindObjectOfType<HUDController>(true);
+        }
+
+        if (daySummaryPanel == null)
+        {
+            daySummaryPanel = FindObjectOfType<DaySummaryPanel>(true);
+        }
+
+        var canvas = FindObjectOfType<Canvas>(true);
+        if (canvas == null)
+        {
+            return;
+        }
+
+        if (hudController == null)
+        {
+            hudController = CreateFallbackHud(canvas.transform);
+        }
+
+        if (daySummaryPanel == null)
+        {
+            daySummaryPanel = CreateFallbackDaySummary(canvas.transform);
+        }
+
+        if (caseFeedbackText == null)
+        {
+            caseFeedbackText = CreateFallbackCaseFeedback(canvas.transform);
+            ClearCaseFeedback();
+        }
+    }
 
     public void BindDay(DayConfig dayConfig)
     {
@@ -50,5 +93,136 @@ public class UIManager : MonoBehaviour
         {
             daySummaryPanel.Hide();
         }
+    }
+
+    public void ShowCaseFeedback(string message, Color color)
+    {
+        if (caseFeedbackText == null)
+        {
+            return;
+        }
+
+        caseFeedbackText.text = message;
+        caseFeedbackText.color = color;
+        caseFeedbackText.gameObject.SetActive(!string.IsNullOrWhiteSpace(message));
+    }
+
+    public void ClearCaseFeedback()
+    {
+        if (caseFeedbackText == null)
+        {
+            return;
+        }
+
+        caseFeedbackText.text = string.Empty;
+        caseFeedbackText.gameObject.SetActive(false);
+    }
+
+    private HUDController CreateFallbackHud(Transform parent)
+    {
+        var root = CreatePanelRoot("RuntimeHUD", parent);
+        var rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(0f, 1f);
+        rootRect.anchorMax = new Vector2(1f, 1f);
+        rootRect.pivot = new Vector2(0.5f, 1f);
+        rootRect.anchoredPosition = new Vector2(0f, -16f);
+        rootRect.sizeDelta = new Vector2(-32f, 140f);
+
+        var image = root.AddComponent<Image>();
+        image.color = new Color(0.08f, 0.11f, 0.14f, 0.82f);
+
+        var controller = root.AddComponent<HUDController>();
+        var currentCase = CreateText("CurrentCaseText", root.transform, new Vector2(16f, -14f), new Vector2(560f, 56f), 24, TextAlignmentOptions.TopLeft);
+        var money = CreateText("MoneyText", root.transform, new Vector2(16f, -76f), new Vector2(260f, 32f), 22, TextAlignmentOptions.TopLeft);
+        var debt = CreateText("DebtText", root.transform, new Vector2(292f, -76f), new Vector2(260f, 32f), 22, TextAlignmentOptions.TopLeft);
+        var warnings = CreateText("WarningsText", root.transform, new Vector2(568f, -76f), new Vector2(320f, 32f), 22, TextAlignmentOptions.TopLeft);
+        var timer = CreateText("TimerText", root.transform, new Vector2(-16f, -24f), new Vector2(260f, 32f), 22, TextAlignmentOptions.TopRight, true);
+
+        controller.Configure(currentCase, money, debt, warnings, timer);
+        return controller;
+    }
+
+    private DaySummaryPanel CreateFallbackDaySummary(Transform parent)
+    {
+        var root = CreatePanelRoot("RuntimeDaySummaryPanel", parent);
+        var rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(0.5f, 0.5f);
+        rootRect.anchorMax = new Vector2(0.5f, 0.5f);
+        rootRect.pivot = new Vector2(0.5f, 0.5f);
+        rootRect.sizeDelta = new Vector2(760f, 520f);
+        rootRect.anchoredPosition = Vector2.zero;
+
+        var image = root.AddComponent<Image>();
+        image.color = new Color(0.05f, 0.06f, 0.08f, 0.94f);
+
+        var title = CreateText("TitleText", root.transform, new Vector2(0f, -24f), new Vector2(680f, 48f), 34, TextAlignmentOptions.Center);
+        title.rectTransform.anchorMin = new Vector2(0.5f, 1f);
+        title.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        title.rectTransform.pivot = new Vector2(0.5f, 1f);
+
+        var body = CreateText("BodyText", root.transform, new Vector2(0f, -92f), new Vector2(680f, 380f), 24, TextAlignmentOptions.TopLeft);
+        body.rectTransform.anchorMin = new Vector2(0.5f, 1f);
+        body.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        body.rectTransform.pivot = new Vector2(0.5f, 1f);
+        body.enableWordWrapping = true;
+
+        var panel = root.AddComponent<DaySummaryPanel>();
+        panel.Configure(root, title, body);
+        root.SetActive(false);
+        return panel;
+    }
+
+    private TMP_Text CreateFallbackCaseFeedback(Transform parent)
+    {
+        var text = CreateText(
+            "RuntimeCaseFeedbackText",
+            parent,
+            new Vector2(0f, -180f),
+            new Vector2(980f, 120f),
+            30,
+            TextAlignmentOptions.Center);
+
+        text.rectTransform.anchorMin = new Vector2(0.5f, 1f);
+        text.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        text.rectTransform.pivot = new Vector2(0.5f, 1f);
+        text.fontStyle = FontStyles.Bold;
+        text.enableWordWrapping = true;
+        text.gameObject.SetActive(false);
+        return text;
+    }
+
+    private static GameObject CreatePanelRoot(string name, Transform parent)
+    {
+        var panel = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer));
+        panel.transform.SetParent(parent, false);
+        return panel;
+    }
+
+    private static TMP_Text CreateText(
+        string name,
+        Transform parent,
+        Vector2 anchoredPosition,
+        Vector2 size,
+        float fontSize,
+        TextAlignmentOptions alignment,
+        bool alignRight = false)
+    {
+        var textObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        textObject.transform.SetParent(parent, false);
+
+        var rect = textObject.GetComponent<RectTransform>();
+        rect.anchorMin = alignRight ? new Vector2(1f, 1f) : new Vector2(0f, 1f);
+        rect.anchorMax = alignRight ? new Vector2(1f, 1f) : new Vector2(0f, 1f);
+        rect.pivot = alignRight ? new Vector2(1f, 1f) : new Vector2(0f, 1f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = size;
+
+        var text = textObject.GetComponent<TextMeshProUGUI>();
+        text.fontSize = fontSize;
+        text.alignment = alignment;
+        text.color = new Color(0.96f, 0.95f, 0.88f, 1f);
+        text.text = string.Empty;
+        text.raycastTarget = false;
+        return text;
     }
 }
