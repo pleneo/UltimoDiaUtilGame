@@ -10,11 +10,23 @@ public class DocumentPrefabMapping
     public DraggableDocument prefab;
 }
 
+[Serializable]
+public class DocumentSpawnPointMapping
+{
+    public DocumentType documentType = DocumentType.Unknown;
+    public RectTransform spawnPoint;
+}
+
 public class DocumentManager : MonoBehaviour
 {
     [SerializeField] private Transform documentParent;
     [SerializeField] private DraggableDocument fallbackDocumentPrefab;
     [SerializeField] private List<DocumentPrefabMapping> documentPrefabs = new List<DocumentPrefabMapping>();
+    [Tooltip("Pontos visuais por tipo de documento. Use esta lista para manter cada tipo sempre no mesmo lugar.")]
+    [SerializeField] private List<DocumentSpawnPointMapping> documentSpawnPoints = new List<DocumentSpawnPointMapping>();
+    [Tooltip("Pontos visuais por ordem de documento. Usado somente se nao existir um ponto por tipo.")]
+    [SerializeField] private List<RectTransform> spawnPoints = new List<RectTransform>();
+    [Tooltip("Posicoes antigas por ordem. Usado somente se nao existir ponto visual configurado.")]
     [SerializeField] private List<Vector2> spawnPositions = new List<Vector2>();
 
     private readonly List<DocumentRecord> currentDocuments = new List<DocumentRecord>();
@@ -103,7 +115,7 @@ public class DocumentManager : MonoBehaviour
 
         if (view != null)
         {
-            ApplySpawnPosition(view, index);
+            ApplySpawnPosition(view, index, record.GetDocumentType());
             view.Bind(record);
             spawnedViews.Add(view);
         }
@@ -155,7 +167,7 @@ public class DocumentManager : MonoBehaviour
         return fallbackDocumentPrefab;
     }
 
-    private void ApplySpawnPosition(DraggableDocument view, int index)
+    private void ApplySpawnPosition(DraggableDocument view, int index, DocumentType documentType)
     {
         if (view == null)
         {
@@ -168,7 +180,67 @@ public class DocumentManager : MonoBehaviour
             return;
         }
 
+        if (TryApplyTypedSpawnPoint(rectTransform, documentType))
+        {
+            return;
+        }
+
+        if (TryApplySpawnPoint(rectTransform, index))
+        {
+            return;
+        }
+
         rectTransform.anchoredPosition = ResolveSpawnPosition(index);
+    }
+
+    private bool TryApplyTypedSpawnPoint(RectTransform documentRectTransform, DocumentType documentType)
+    {
+        if (documentSpawnPoints == null)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < documentSpawnPoints.Count; index++)
+        {
+            var mapping = documentSpawnPoints[index];
+            if (mapping == null || mapping.spawnPoint == null)
+            {
+                continue;
+            }
+
+            if (mapping.documentType != documentType)
+            {
+                continue;
+            }
+
+            ApplySpawnPointTransform(documentRectTransform, mapping.spawnPoint);
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryApplySpawnPoint(RectTransform documentRectTransform, int index)
+    {
+        if (spawnPoints == null || index < 0 || index >= spawnPoints.Count)
+        {
+            return false;
+        }
+
+        var spawnPoint = spawnPoints[index];
+        if (spawnPoint == null)
+        {
+            return false;
+        }
+
+        ApplySpawnPointTransform(documentRectTransform, spawnPoint);
+        return true;
+    }
+
+    private static void ApplySpawnPointTransform(RectTransform documentRectTransform, RectTransform spawnPoint)
+    {
+        documentRectTransform.position = spawnPoint.position;
+        documentRectTransform.rotation = spawnPoint.rotation;
     }
 
     private Vector2 ResolveSpawnPosition(int index)
