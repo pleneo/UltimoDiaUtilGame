@@ -63,41 +63,41 @@ public static class CaseDialogueMockLibrary
         switch (mockIndex)
         {
             case 0:
-                AddLine(targetLines, DialogueSpeaker.Npc, "Oi...Eu vim fazer minha matricula.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Oi... Eu vim fazer minha matrícula.");
                 AddLine(targetLines, DialogueSpeaker.Player, "Documentos, por favor.");
-                AddLine(targetLines, DialogueSpeaker.Npc, "Eu trouxe tudo eu acho.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Eu trouxe tudo, eu acho.");
                 break;
             case 1:
-                AddLine(targetLines, DialogueSpeaker.Npc, "Quero trancar calculo.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Quero trancar Cálculo.");
                 AddLine(targetLines, DialogueSpeaker.Player, "Existe uma taxa administrativa a ser paga.");
-                AddLine(targetLines, DialogueSpeaker.Npc, "Eu sei, nao vou pagar, nao consta sobre a taxa em contrato.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Eu sei, mas não vou pagar. Essa taxa não consta no contrato.");
                 break;
             case 2:
-                AddLine(targetLines, DialogueSpeaker.Npc, "Desejo trocar de curso de Administracao para Ciencia da Computacao.");
-                AddLine(targetLines, DialogueSpeaker.Player, "Para isso, preciso do formulario especifico de troca de curso.");
-                AddLine(targetLines, DialogueSpeaker.Npc, "Entendi. Vou procurar esse papel entao.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Desejo trocar do curso de Administração para Ciência da Computação.");
+                AddLine(targetLines, DialogueSpeaker.Player, "Para isso, preciso do formulário específico de troca de curso.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Entendi. Vou procurar esse documento, então.");
                 break;
             case 3:
                 AddLine(targetLines, DialogueSpeaker.Npc, "Vim buscar meu diploma.");
                 AddLine(targetLines, DialogueSpeaker.Player, "Documento com foto.");
                 break;
             case 4:
-                AddLine(targetLines, DialogueSpeaker.Npc, "Boa tarde queria fazer o pagamento de mensalidade.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Boa tarde. Gostaria de fazer o pagamento da mensalidade.");
                 break;
             case 5:
                 AddLine(targetLines, DialogueSpeaker.Npc, "Preciso da segunda via do meu boleto.");
-                AddLine(targetLines, DialogueSpeaker.Player, "Declaracao de matricula.");
-                AddLine(targetLines, DialogueSpeaker.Npc, "Aqui esta.");
+                AddLine(targetLines, DialogueSpeaker.Player, "Declaração de matrícula.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Aqui está.");
                 break;
             case 6:
                 AddLine(targetLines, DialogueSpeaker.Npc, "Preciso corrigir meu nome no sistema.");
-                AddLine(targetLines, DialogueSpeaker.Player, "Trouxe um documento de identificacao?");
+                AddLine(targetLines, DialogueSpeaker.Player, "Trouxe um documento de identificação?");
                 AddLine(targetLines, DialogueSpeaker.Npc, "Sim.");
                 AddLine(targetLines, DialogueSpeaker.Player, "Vou verificar.");
                 break;
             default:
-                AddLine(targetLines, DialogueSpeaker.Npc, "Vim renovar minha matricula.");
-                AddLine(targetLines, DialogueSpeaker.Player, "Ha pendencias financeiras em seu cadastro.");
+                AddLine(targetLines, DialogueSpeaker.Npc, "Vim renovar minha matrícula.");
+                AddLine(targetLines, DialogueSpeaker.Player, "Há pendências financeiras em seu cadastro.");
                 AddLine(targetLines, DialogueSpeaker.Npc, "Como assim?");
                 AddLine(targetLines, DialogueSpeaker.Player, "Existem mensalidades em atraso.");
                 break;
