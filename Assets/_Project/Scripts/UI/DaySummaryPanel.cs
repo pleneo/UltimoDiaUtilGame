@@ -1,18 +1,39 @@
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DaySummaryPanel : MonoBehaviour
 {
     [SerializeField] private GameObject root;
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text bodyText;
+    [SerializeField] private Button continueButton;
+    [SerializeField] private TMP_Text continueButtonText;
 
-    public void Configure(GameObject panelRoot, TMP_Text title, TMP_Text body)
+    public void Configure(GameObject panelRoot, TMP_Text title, TMP_Text body, Button button = null, TMP_Text buttonText = null)
     {
         root = panelRoot;
         titleText = title;
         bodyText = body;
+        continueButton = button;
+        continueButtonText = buttonText;
+    }
+
+    private void OnEnable()
+    {
+        if (continueButton != null)
+        {
+            continueButton.onClick.AddListener(ContinueAfterSummary);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (continueButton != null)
+        {
+            continueButton.onClick.RemoveListener(ContinueAfterSummary);
+        }
     }
 
     public void Show(DaySummaryData summary)
@@ -41,6 +62,8 @@ public class DaySummaryPanel : MonoBehaviour
             return;
         }
 
+        RefreshContinueButton(summary);
+
         if (titleText != null)
         {
             titleText.text = summary.headline;
@@ -57,6 +80,11 @@ public class DaySummaryPanel : MonoBehaviour
         builder.AppendLine($"Casos: {summary.completedCases}/{summary.totalCases}");
         builder.AppendLine($"Acertos: {summary.correctDecisions}");
         builder.AppendLine($"Erros: {summary.incorrectDecisions}");
+        builder.AppendLine($"Ganhos por acertos: +{summary.dailyGrossPay}");
+        builder.AppendLine($"Multas por erros: -{summary.dailyPenalty}");
+        builder.AppendLine($"Despesas do dia: -{summary.dailyExpenses}");
+        builder.AppendLine($"Pagamento da divida: -{summary.dailyDebtPayment}");
+        builder.AppendLine($"Saldo liquido do dia: {summary.dailyNetBalance}");
 
         if (summary.economySnapshot != null)
         {
@@ -84,6 +112,23 @@ public class DaySummaryPanel : MonoBehaviour
         bodyText.text = builder.ToString().TrimEnd();
     }
 
+    private void RefreshContinueButton(DaySummaryData summary)
+    {
+        if (continueButton != null)
+        {
+            continueButton.gameObject.SetActive(true);
+        }
+
+        if (continueButtonText == null || summary == null)
+        {
+            return;
+        }
+
+        continueButtonText.text = summary.endReason == DayEndReason.GameOver
+            ? "Encerrar"
+            : "Proximo dia";
+    }
+
     public void Hide()
     {
         if (root != null)
@@ -93,6 +138,15 @@ public class DaySummaryPanel : MonoBehaviour
         else
         {
             gameObject.SetActive(false);
+        }
+    }
+
+    private void ContinueAfterSummary()
+    {
+        var gameManager = FindObjectOfType<GameManager>();
+        if (gameManager != null)
+        {
+            gameManager.ContinueAfterSummary();
         }
     }
 }

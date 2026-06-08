@@ -5,18 +5,6 @@ using UnityEngine;
 
 public class DayManager : MonoBehaviour
 {
-    private struct QueuedErrorFeedback
-    {
-        public string message;
-        public Color color;
-
-        public QueuedErrorFeedback(string message, Color color)
-        {
-            this.message = message;
-            this.color = color;
-        }
-    }
-
     private struct QueuedStudentCase
     {
         public StudentCaseDefinition caseDefinition;
@@ -39,15 +27,19 @@ public class DayManager : MonoBehaviour
     [SerializeField] private NpcMovementController npcMovementController;
     [SerializeField, Min(0.1f)] private float npcEventTimeoutSeconds = 4f;
     [SerializeField, Min(0f)] private float postDecisionDelaySeconds = 0.1f;
-    [SerializeField, Min(0f)] private float incorrectDecisionFeedbackDelaySeconds = 3f;
-    [SerializeField, Min(0f)] private float incorrectDecisionFeedbackDisplaySeconds = 3f;
+    [SerializeField, Min(0f)] private float correctDecisionFeedbackDisplaySeconds = 1.35f;
+    [SerializeField, Min(0f)] private float incorrectDecisionFeedbackDisplaySeconds = 2.6f;
     [SerializeField] private bool enableQueueDebugLogs = true;
 
     [Header("NPC Random Visuals")]
     [SerializeField] private List<NpcDefinition> randomNpcDefinitions = new List<NpcDefinition>();
     [SerializeField] private bool avoidRepeatingRandomNpc = true;
     [Tooltip("Se houver apenas 1 caso no DayConfig, cria entradas extras desse mesmo caso para testar todos os NPCs aleatorios em sequencia.")]
-    [SerializeField] private bool autoRepeatSingleCaseForRandomNpcs = true;
+    [SerializeField] private bool autoRepeatSingleCaseForRandomNpcs = false;
+
+    [Header("MVP Day Queue")]
+    [Tooltip("Quantidade de NPCs por dia no MVP. Mantido em 5 para ficar simples de balancear e testar.")]
+    [SerializeField, Min(1)] private int casesPerDay = 5;
 
     [Header("Debug")]
     [Tooltip("Apenas para prototipo: repete o primeiro caso N vezes para testar varios NPCs em sequencia sem criar varios casos.")]
@@ -66,7 +58,6 @@ public class DayManager : MonoBehaviour
 
     private readonly List<StudentCaseDefinition> currentCases = new List<StudentCaseDefinition>();
     private readonly Queue<QueuedStudentCase> pendingCaseQueue = new Queue<QueuedStudentCase>();
-    private readonly Queue<QueuedErrorFeedback> pendingErrorFeedbackQueue = new Queue<QueuedErrorFeedback>();
     private readonly List<FixedDayCaseEntry> pendingFixedCaseEntries = new List<FixedDayCaseEntry>();
 
     private Coroutine dayFlowCoroutine;
@@ -75,7 +66,7 @@ public class DayManager : MonoBehaviour
     private bool hasPendingCaseResolution;
     private bool warnedNpcMovementUnavailable;
     private NpcDefinition lastRandomNpcDefinition;
-    private Coroutine incorrectDecisionFeedbackCoroutine;
+    private CaseResolutionResult lastResolutionResult;
     private System.Random generatedCaseRandom;
     private int generatedCaseCounter;
 
@@ -129,11 +120,7 @@ public class DayManager : MonoBehaviour
             dayFlowCoroutine = null;
         }
 
-        if (incorrectDecisionFeedbackCoroutine != null)
-        {
-            StopCoroutine(incorrectDecisionFeedbackCoroutine);
-            incorrectDecisionFeedbackCoroutine = null;
-        }
+        lastResolutionResult = null;
     }
 
     private void Update()
@@ -181,10 +168,10 @@ public class DayManager : MonoBehaviour
         npcExitedDesk = false;
         warnedNpcMovementUnavailable = false;
         lastRandomNpcDefinition = null;
+        lastResolutionResult = null;
 
         currentCases.Clear();
         pendingCaseQueue.Clear();
-        pendingErrorFeedbackQueue.Clear();
         pendingFixedCaseEntries.Clear();
         generatedCaseCounter = 0;
         generatedCaseRandom = null;
@@ -224,12 +211,14 @@ public class DayManager : MonoBehaviour
 
     private void PrepareFiniteCaseFlow(DayConfig dayConfig)
     {
+        var finiteCases = new List<StudentCaseDefinition>();
+
         if (dayConfig.enrollmentGenerationConfig != null)
         {
             var generatedCases = EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig);
             for (var index = 0; index < generatedCases.Count; index++)
             {
-                EnqueueCase(generatedCases[index], null);
+                AddCaseIfValid(finiteCases, generatedCases[index]);
             }
         }
 
@@ -243,13 +232,52 @@ public class DayManager : MonoBehaviour
                     continue;
                 }
 
-                EnqueueCase(caseDefinition, null);
+                AddCaseIfValid(finiteCases, caseDefinition);
             }
         }
 
-        AddDebugRepeatedCasesIfNeeded();
-        AddAutomaticRandomNpcTestCasesIfNeeded();
+        var queueRandom = CreateQueueRandom(dayConfig);
+
+        if (finiteCases.Count == 0)
+        {
+            return;
+        }
+
+        if (dayConfig.shuffleCaseQueue)
+        {
+            ShuffleFiniteCases(finiteCases, queueRandom);
+        }
+
+        var maxCases = GetTargetCaseCount(finiteCases.Count);
+
+        for (var index = 0; index < maxCases; index++)
+        {
+            var caseDefinition = finiteCases[index % finiteCases.Count];
+
+            EnqueueCase(caseDefinition, null);
+        }
+
         LogDaySetupDiagnostics();
+    }
+
+    private static void AddCaseIfValid(List<StudentCaseDefinition> targetCases, StudentCaseDefinition caseDefinition)
+    {
+        if (targetCases == null || caseDefinition == null)
+        {
+            return;
+        }
+
+        targetCases.Add(caseDefinition);
+    }
+
+    private static void ShuffleFiniteCases(List<StudentCaseDefinition> casesToShuffle, System.Random random)
+    {
+        if (casesToShuffle == null || casesToShuffle.Count <= 1 || random == null)
+        {
+            return;
+        }
+
+        ShuffleCases(casesToShuffle, random);
     }
 
     private void PrepareInfiniteCaseFlow(DayConfig dayConfig)
@@ -356,7 +384,7 @@ public class DayManager : MonoBehaviour
     {
         var randomNpcCount = CountValidRandomNpcDefinitions();
         Debug.Log(
-            $"[QueueFlow] Setup do dia: casos={currentCases.Count}, fila={pendingCaseQueue.Count}, " +
+            $"[QueueFlow] Setup do dia: casos={currentCases.Count}, fila={pendingCaseQueue.Count}, alvoDia={casesPerDay}, " +
             $"fixosPendentes={pendingFixedCaseEntries.Count}, infinito={CurrentDayConfig != null && CurrentDayConfig.useInfiniteGeneratedCases}, " +
             $"npcAleatorios={randomNpcCount}, usaMovimentoNpc={useNpcMovementFlow}, " +
             $"npcController={(npcMovementController != null ? npcMovementController.name : "nenhum")}.",
@@ -428,12 +456,14 @@ public class DayManager : MonoBehaviour
             caseManager.ClearCurrentCase();
         }
 
+        var economyBeforeClosing = economyManager != null ? economyManager.GetSnapshot() : new EconomySnapshot();
         if (economyManager != null)
         {
             economyManager.FinalizeDay();
         }
 
-        var summary = BuildSummary(reason);
+        var economyAfterClosing = economyManager != null ? economyManager.GetSnapshot() : new EconomySnapshot();
+        var summary = BuildSummary(reason, economyBeforeClosing, economyAfterClosing);
         LogQueue($"Dia encerrado. Motivo: {reason}. Resolvidos: {ResolvedCasesCount}/{currentCases.Count}.");
         DayEnded?.Invoke(summary);
     }
@@ -489,6 +519,12 @@ public class DayManager : MonoBehaviour
                 yield break;
             }
 
+            yield return ShowResolutionFeedbackBeforeNextCase(lastResolutionResult);
+            if (!IsDayActive)
+            {
+                yield break;
+            }
+
             if (postDecisionDelaySeconds > 0f)
             {
                 yield return new WaitForSeconds(postDecisionDelaySeconds);
@@ -518,7 +554,8 @@ public class DayManager : MonoBehaviour
 
     private IEnumerator RunInfiniteDayCaseFlow()
     {
-        while (IsDayActive && RemainingTimeSeconds > 0f)
+        var maxCases = GetTargetCaseCount(int.MaxValue);
+        while (IsDayActive && RemainingTimeSeconds > 0f && ResolvedCasesCount < maxCases)
         {
             var nextQueueEntry = GetNextInfiniteQueueEntry();
             if (nextQueueEntry.caseDefinition == null)
@@ -547,6 +584,12 @@ public class DayManager : MonoBehaviour
                 yield break;
             }
 
+            yield return ShowResolutionFeedbackBeforeNextCase(lastResolutionResult);
+            if (!IsDayActive)
+            {
+                yield break;
+            }
+
             if (postDecisionDelaySeconds > 0f)
             {
                 yield return new WaitForSeconds(postDecisionDelaySeconds);
@@ -561,7 +604,7 @@ public class DayManager : MonoBehaviour
 
         if (IsDayActive)
         {
-            EndDay(DayEndReason.TimeExpired);
+            EndDay(ResolvedCasesCount >= maxCases ? DayEndReason.Completed : DayEndReason.TimeExpired);
         }
     }
 
@@ -732,6 +775,34 @@ public class DayManager : MonoBehaviour
         return new QueuedStudentCase(generatedCase, null);
     }
 
+    private static System.Random CreateQueueRandom(DayConfig dayConfig)
+    {
+        return dayConfig != null && dayConfig.useFixedQueueSeed
+            ? new System.Random(dayConfig.queueRandomSeed)
+            : new System.Random();
+    }
+
+    private int GetTargetCaseCount(int availableCaseCount)
+    {
+        if (availableCaseCount <= 0)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(1, casesPerDay);
+    }
+
+    private static void ShuffleCases(List<StudentCaseDefinition> casesToShuffle, System.Random random)
+    {
+        for (var index = casesToShuffle.Count - 1; index > 0; index--)
+        {
+            var swapIndex = random.Next(index + 1);
+            var currentCase = casesToShuffle[index];
+            casesToShuffle[index] = casesToShuffle[swapIndex];
+            casesToShuffle[swapIndex] = currentCase;
+        }
+    }
+
     private StudentCaseDefinition TryConsumeFixedCaseForCurrentProgress()
     {
         if (pendingFixedCaseEntries.Count == 0)
@@ -789,61 +860,48 @@ public class DayManager : MonoBehaviour
 
         PushHudUpdate();
 
-        if (result.isCorrectDecision)
-        {
-            if (uiManager != null)
-            {
-                uiManager.ClearCaseFeedback();
-            }
-
-            hasPendingCaseResolution = false;
-            return;
-        }
-
-        EnqueueIncorrectDecisionFeedback(result);
+        lastResolutionResult = result;
         hasPendingCaseResolution = false;
     }
 
-    private void EnqueueIncorrectDecisionFeedback(CaseResolutionResult result)
+    private IEnumerator ShowResolutionFeedbackBeforeNextCase(CaseResolutionResult result)
     {
-        pendingErrorFeedbackQueue.Enqueue(new QueuedErrorFeedback(
-            BuildIncorrectDecisionFeedbackMessage(result),
-            new Color(0.92f, 0.34f, 0.28f, 1f)));
-
-        if (incorrectDecisionFeedbackCoroutine == null)
+        if (result == null || uiManager == null)
         {
-            incorrectDecisionFeedbackCoroutine = StartCoroutine(ProcessIncorrectDecisionFeedbackQueue());
+            yield break;
         }
+
+        var color = result.isCorrectDecision
+            ? new Color(0.24f, 0.78f, 0.46f, 1f)
+            : new Color(0.92f, 0.34f, 0.28f, 1f);
+
+        var title = result.isCorrectDecision ? "ATENDIMENTO CORRETO" : "ATENDIMENTO INCORRETO";
+        var message = result.isCorrectDecision
+            ? BuildCorrectDecisionFeedbackMessage(result)
+            : BuildIncorrectDecisionFeedbackMessage(result);
+        var displaySeconds = result.isCorrectDecision
+            ? correctDecisionFeedbackDisplaySeconds
+            : incorrectDecisionFeedbackDisplaySeconds;
+
+        uiManager.ShowCaseFeedback(title, message, color);
+
+        if (displaySeconds > 0f)
+        {
+            yield return new WaitForSeconds(displaySeconds);
+        }
+
+        uiManager.ClearCaseFeedback();
     }
 
-    private IEnumerator ProcessIncorrectDecisionFeedbackQueue()
+    private string BuildCorrectDecisionFeedbackMessage(CaseResolutionResult result)
     {
-        while (pendingErrorFeedbackQueue.Count > 0)
-        {
-            var feedback = pendingErrorFeedbackQueue.Dequeue();
+        var pay = economyManager != null ? economyManager.PayPerCorrectDecision : 0;
+        var action = GetDecisionLabel(result.chosenDecision);
+        var reason = string.IsNullOrWhiteSpace(result.feedbackMessage)
+            ? "Os documentos batiam com as regras do dia."
+            : result.feedbackMessage;
 
-            if (incorrectDecisionFeedbackDelaySeconds > 0f)
-            {
-                yield return new WaitForSeconds(incorrectDecisionFeedbackDelaySeconds);
-            }
-
-            if (uiManager != null)
-            {
-                uiManager.ShowCaseFeedback(feedback.message, feedback.color);
-            }
-
-            if (incorrectDecisionFeedbackDisplaySeconds > 0f)
-            {
-                yield return new WaitForSeconds(incorrectDecisionFeedbackDisplaySeconds);
-            }
-
-            if (uiManager != null)
-            {
-                uiManager.ClearCaseFeedback();
-            }
-        }
-
-        incorrectDecisionFeedbackCoroutine = null;
+        return $"{action} confirmado. +{pay}\n{reason}";
     }
 
     private string BuildIncorrectDecisionFeedbackMessage(CaseResolutionResult result)
@@ -851,15 +909,33 @@ public class DayManager : MonoBehaviour
         var penalty = economyManager != null ? economyManager.PenaltyPerMistake : 0;
         var warningDelta = Mathf.Max(0, result.warningDelta);
         var reason = BuildSpecificIncorrectReason(result);
+        var expected = result.validationResult != null
+            ? GetDecisionLabel(result.validationResult.recommendedDecision)
+            : "decisao esperada indisponivel";
 
-        var message = $"Decisao incorreta. -{penalty}";
+        var message = $"Esperado: {expected}. -{penalty}";
         if (warningDelta > 0)
         {
             message += $" | Advertencia +{warningDelta}";
         }
 
-        message += $"\nMotivo: {reason}";
+        message += $"\n{reason}";
         return message;
+    }
+
+    private static string GetDecisionLabel(DecisionType decision)
+    {
+        switch (decision)
+        {
+            case DecisionType.Approve:
+                return "Aprovar";
+            case DecisionType.Reject:
+                return "Reprovar";
+            case DecisionType.Forward:
+                return "Encaminhar";
+            default:
+                return decision.ToString();
+        }
     }
 
     private static string BuildSpecificIncorrectReason(CaseResolutionResult result)
@@ -914,8 +990,20 @@ public class DayManager : MonoBehaviour
             : result.feedbackMessage;
     }
 
-    private DaySummaryData BuildSummary(DayEndReason reason)
+    private DaySummaryData BuildSummary(
+        DayEndReason reason,
+        EconomySnapshot economyBeforeClosing,
+        EconomySnapshot economyAfterClosing)
     {
+        var payPerCorrectDecision = economyManager != null ? economyManager.PayPerCorrectDecision : 0;
+        var penaltyPerMistake = economyManager != null ? economyManager.PenaltyPerMistake : 0;
+        var dailyExpenses = economyManager != null ? economyManager.DailyExpenses : 0;
+        var dailyDebtPayment = economyBeforeClosing != null && economyAfterClosing != null
+            ? Mathf.Max(0, economyBeforeClosing.remainingDebt - economyAfterClosing.remainingDebt)
+            : 0;
+        var dailyGrossPay = CorrectDecisions * payPerCorrectDecision;
+        var dailyPenalty = IncorrectDecisions * penaltyPerMistake;
+
         var summary = new DaySummaryData
         {
             dayNumber = CurrentDayConfig != null ? CurrentDayConfig.dayNumber : 1,
@@ -928,10 +1016,15 @@ public class DayManager : MonoBehaviour
                 : Mathf.Clamp(ResolvedCasesCount, 0, currentCases.Count),
             correctDecisions = CorrectDecisions,
             incorrectDecisions = IncorrectDecisions,
+            dailyGrossPay = dailyGrossPay,
+            dailyPenalty = dailyPenalty,
+            dailyExpenses = dailyExpenses,
+            dailyDebtPayment = dailyDebtPayment,
+            dailyNetBalance = dailyGrossPay - dailyPenalty - dailyExpenses - dailyDebtPayment,
             workDurationSeconds = CurrentDayConfig != null ? CurrentDayConfig.workDurationSeconds : 0f,
             remainingTimeSeconds = RemainingTimeSeconds,
             endReason = reason,
-            economySnapshot = economyManager != null ? economyManager.GetSnapshot() : new EconomySnapshot()
+            economySnapshot = economyAfterClosing ?? new EconomySnapshot()
         };
 
         summary.headline = reason == DayEndReason.Completed
@@ -945,6 +1038,19 @@ public class DayManager : MonoBehaviour
             : reason == DayEndReason.TimeExpired
                 ? "O horario acabou antes de concluir todos os casos."
                 : "A sessao terminou por limite economico ou disciplinar.";
+
+        if (summary.dailyNetBalance > 0)
+        {
+            summary.details += $" Resultado financeiro: ganhou {summary.dailyNetBalance}.";
+        }
+        else if (summary.dailyNetBalance < 0)
+        {
+            summary.details += $" Resultado financeiro: perdeu {Mathf.Abs(summary.dailyNetBalance)}.";
+        }
+        else
+        {
+            summary.details += " Resultado financeiro: empatou.";
+        }
 
         if (CurrentDayConfig != null && !string.IsNullOrWhiteSpace(CurrentDayConfig.dayIntro))
         {

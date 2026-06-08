@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private EconomyManager economyManager;
     [SerializeField] private UIManager uiManager;
     [SerializeField] private List<DayConfig> daySequence = new List<DayConfig>();
+    [SerializeField, Min(1)] private int expectedDayCount = 5;
     [SerializeField] private bool autoStartGame = true;
 
     public GameState CurrentState { get; private set; } = GameState.Boot;
@@ -62,6 +63,14 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("GameManager nao tem dias configurados.");
             CurrentState = GameState.Boot;
             return;
+        }
+
+        if (expectedDayCount > 0 && daySequence.Count != expectedDayCount)
+        {
+            Debug.LogWarning(
+                $"GameManager esta configurado para {daySequence.Count} dia(s), mas o jogo espera {expectedDayCount}. " +
+                "Preencha a lista Day Sequence com os 5 DayConfig no Inspector.",
+                this);
         }
 
         CurrentDayIndex = 0;
@@ -126,9 +135,7 @@ public class GameManager : MonoBehaviour
     private void HandleDayEnded(DaySummaryData summary)
     {
         LastSummary = summary;
-        CurrentState = summary != null && summary.endReason == DayEndReason.GameOver
-            ? GameState.GameOver
-            : GameState.DaySummary;
+        CurrentState = GameState.DaySummary;
 
         if (uiManager != null && summary != null)
         {

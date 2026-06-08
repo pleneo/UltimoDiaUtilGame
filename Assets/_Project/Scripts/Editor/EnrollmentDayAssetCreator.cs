@@ -120,6 +120,54 @@ public static class EnrollmentDayAssetCreator
         Debug.Log("DayConfig do Dia 1 criado/atualizado em Assets/_Project/ScriptableObjects/Days/Day_01_EnrollmentBasics.asset.");
     }
 
+    [MenuItem("Tools/Ultimo Dia Util/Create 5 Day Enrollment Prototype")]
+    public static void CreateFiveDayEnrollmentPrototype()
+    {
+        CreateEnrollmentCases();
+        EnsureFolder("Assets/_Project/ScriptableObjects", "Days");
+        EnsureFolder("Assets/_Project/ScriptableObjects", "Rules");
+        EnsureFolder("Assets/_Project/ScriptableObjects", "Economy");
+        EnsureFolder("Assets/_Project/ScriptableObjects/Cases", "Generation");
+
+        var enrollmentRule = CreateOrUpdateEnrollmentRule();
+
+        for (var dayNumber = 1; dayNumber <= 5; dayNumber++)
+        {
+            var economyConfig = CreateOrUpdateEconomyConfigForDay(dayNumber);
+            var generationConfig = CreateOrUpdateGenerationConfigForDay(dayNumber);
+            var dayConfig = LoadOrCreateDayConfig($"Day_{dayNumber:00}_EnrollmentQueue.asset");
+
+            dayConfig.dayNumber = dayNumber;
+            dayConfig.dayLabel = $"Dia {dayNumber}";
+            dayConfig.dayIntro = BuildDayIntro(dayNumber);
+            dayConfig.workDurationSeconds = 240f + (dayNumber * 30f);
+            dayConfig.economyConfig = economyConfig;
+            dayConfig.useInfiniteGeneratedCases = false;
+            dayConfig.enrollmentGenerationConfig = generationConfig;
+            dayConfig.maxCasesForDay = generationConfig.totalGeneratedCases;
+            dayConfig.shuffleCaseQueue = true;
+            dayConfig.useFixedQueueSeed = false;
+            dayConfig.queueRandomSeed = 1000 + dayNumber;
+            dayConfig.includeManualCases = false;
+
+            dayConfig.availableRequestTypes.Clear();
+            dayConfig.availableRequestTypes.Add(RequestType.Enrollment);
+
+            dayConfig.rulebookEntries.Clear();
+            dayConfig.rulebookEntries.Add(enrollmentRule);
+
+            dayConfig.noticeBoardEntries.Clear();
+            dayConfig.cases.Clear();
+
+            EditorUtility.SetDirty(dayConfig);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Debug.Log("Protótipo de 5 dias criado em Assets/_Project/ScriptableObjects/Days. Arraste os 5 DayConfig para GameManager > Day Sequence.");
+    }
+
     private static void CreateOrUpdateDocument(
         string fileName,
         DocumentType documentType,
@@ -434,6 +482,29 @@ public static class EnrollmentDayAssetCreator
         return economyConfig;
     }
 
+    private static EconomyConfig CreateOrUpdateEconomyConfigForDay(int dayNumber)
+    {
+        var assetPath = Path.Combine(EconomyFolder, $"Economy_Day{dayNumber:00}.asset").Replace("\\", "/");
+        var economyConfig = AssetDatabase.LoadAssetAtPath<EconomyConfig>(assetPath);
+
+        if (economyConfig == null)
+        {
+            economyConfig = ScriptableObject.CreateInstance<EconomyConfig>();
+            AssetDatabase.CreateAsset(economyConfig, assetPath);
+        }
+
+        economyConfig.initialMoney = dayNumber == 1 ? 120 : 0;
+        economyConfig.initialDebt = dayNumber == 1 ? 300 : 0;
+        economyConfig.payPerCorrectDecision = 12 + (dayNumber * 2);
+        economyConfig.penaltyPerMistake = 5 + dayNumber;
+        economyConfig.dailyExpenses = 4 + (dayNumber * 2);
+        economyConfig.warningLimit = 4;
+        economyConfig.autoPayDebtFromMoney = true;
+
+        EditorUtility.SetDirty(economyConfig);
+        return economyConfig;
+    }
+
     private static EnrollmentCaseGenerationConfig CreateOrUpdateDayOneGenerationConfig()
     {
         var assetPath = Path.Combine(GenerationFolder, "EnrollmentGen_Day01.asset").Replace("\\", "/");
@@ -492,6 +563,98 @@ public static class EnrollmentDayAssetCreator
 
         EditorUtility.SetDirty(generationConfig);
         return generationConfig;
+    }
+
+    private static EnrollmentCaseGenerationConfig CreateOrUpdateGenerationConfigForDay(int dayNumber)
+    {
+        var assetPath = Path.Combine(GenerationFolder, $"EnrollmentGen_Day{dayNumber:00}.asset").Replace("\\", "/");
+        var generationConfig = AssetDatabase.LoadAssetAtPath<EnrollmentCaseGenerationConfig>(assetPath);
+
+        if (generationConfig == null)
+        {
+            generationConfig = ScriptableObject.CreateInstance<EnrollmentCaseGenerationConfig>();
+            AssetDatabase.CreateAsset(generationConfig, assetPath);
+        }
+
+        generationConfig.totalGeneratedCases = 4 + dayNumber;
+        generationConfig.shuffleGeneratedCases = true;
+        generationConfig.useFreshRandomSeed = true;
+        generationConfig.randomSeed = 12000 + dayNumber;
+        generationConfig.identityCardDefinition = LoadDocument("Document_IdentityCard.asset");
+        generationConfig.schoolTranscriptDefinition = LoadDocument("Document_SchoolTranscript.asset");
+        generationConfig.enrollmentProofDefinition = LoadDocument("Document_EnrollmentProof.asset");
+        generationConfig.referenceDateIso = "2026-05-21";
+        generationConfig.firstRaNumber = 2026001;
+        generationConfig.lastRaNumber = 2026999;
+
+        generationConfig.minimumCases.Clear();
+        generationConfig.minimumCases.Add(CreateMinimumCaseRule(EnrollmentGeneratedCaseType.Valid, 1));
+        generationConfig.minimumCases.Add(CreateMinimumCaseRule(EnrollmentGeneratedCaseType.MissingDocument, 1));
+        generationConfig.minimumCases.Add(CreateMinimumCaseRule(EnrollmentGeneratedCaseType.NameMismatch, 1));
+
+        if (dayNumber >= 3)
+        {
+            generationConfig.minimumCases.Add(CreateMinimumCaseRule(EnrollmentGeneratedCaseType.RaMismatch, 1));
+        }
+
+        if (dayNumber >= 4)
+        {
+            generationConfig.minimumCases.Add(CreateMinimumCaseRule(EnrollmentGeneratedCaseType.MissingRequiredField, 1));
+        }
+
+        if (dayNumber >= 5)
+        {
+            generationConfig.minimumCases.Add(CreateMinimumCaseRule(EnrollmentGeneratedCaseType.ExpiredDocument, 1));
+        }
+
+        generationConfig.caseTypeWeights.Clear();
+        generationConfig.caseTypeWeights.Add(CreateCaseTypeWeight(EnrollmentGeneratedCaseType.Valid, Mathf.Max(25, 70 - (dayNumber * 8))));
+        generationConfig.caseTypeWeights.Add(CreateCaseTypeWeight(EnrollmentGeneratedCaseType.MissingDocument, 18 + dayNumber));
+        generationConfig.caseTypeWeights.Add(CreateCaseTypeWeight(EnrollmentGeneratedCaseType.NameMismatch, 12 + dayNumber));
+        generationConfig.caseTypeWeights.Add(CreateCaseTypeWeight(EnrollmentGeneratedCaseType.RaMismatch, dayNumber >= 3 ? 12 : 0));
+        generationConfig.caseTypeWeights.Add(CreateCaseTypeWeight(EnrollmentGeneratedCaseType.MissingRequiredField, dayNumber >= 4 ? 10 : 0));
+        generationConfig.caseTypeWeights.Add(CreateCaseTypeWeight(EnrollmentGeneratedCaseType.ExpiredDocument, dayNumber >= 5 ? 8 : 0));
+
+        generationConfig.firstNames.Clear();
+        generationConfig.firstNames.AddRange(new[]
+        {
+            "Ana", "Bruno", "Camila", "Diego", "Eduarda", "Felipe", "Giovana", "Henrique",
+            "Isabela", "Joao", "Larissa", "Marcos", "Natalia", "Pedro", "Rafaela", "Thiago"
+        });
+
+        generationConfig.lastNames.Clear();
+        generationConfig.lastNames.AddRange(new[]
+        {
+            "Silva", "Souza", "Oliveira", "Lima", "Costa", "Santos", "Pereira", "Almeida",
+            "Ferreira", "Gomes", "Rocha", "Barbosa", "Moura", "Araujo", "Nunes", "Cardoso"
+        });
+
+        generationConfig.courses.Clear();
+        generationConfig.courses.AddRange(new[]
+        {
+            "Ciencia da Computacao", "Direito", "Administracao", "Psicologia",
+            "Engenharia Civil", "Medicina", "Arquitetura", "Design"
+        });
+
+        EditorUtility.SetDirty(generationConfig);
+        return generationConfig;
+    }
+
+    private static string BuildDayIntro(int dayNumber)
+    {
+        switch (dayNumber)
+        {
+            case 1:
+                return "Primeiro dia de atendimento. Confira documentos de matricula com calma.";
+            case 2:
+                return "A fila aumentou. Ainda sao matriculas, mas a ordem dos alunos muda a cada expediente.";
+            case 3:
+                return "Agora divergencias de RA aparecem com mais frequencia. Compare os numeros com atencao.";
+            case 4:
+                return "Alguns comprovantes chegam incompletos. Campos obrigatorios tambem reprovam o pedido.";
+            default:
+                return "Ultimo dia do prototipo. Documentos vencidos entram na mistura e a pressao aumenta.";
+        }
     }
 
     private static EnrollmentMinimumCaseRule CreateMinimumCaseRule(EnrollmentGeneratedCaseType caseType, int minimumCount)

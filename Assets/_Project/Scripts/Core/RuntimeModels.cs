@@ -55,6 +55,11 @@ public class DaySummaryData
     public int completedCases;
     public int correctDecisions;
     public int incorrectDecisions;
+    public int dailyGrossPay;
+    public int dailyPenalty;
+    public int dailyExpenses;
+    public int dailyDebtPayment;
+    public int dailyNetBalance;
     public float workDurationSeconds;
     public float remainingTimeSeconds;
     public DayEndReason endReason;

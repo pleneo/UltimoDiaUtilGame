@@ -24,6 +24,13 @@ public class DayConfig : ScriptableObject
     public bool useInfiniteGeneratedCases = false;
     public EnrollmentCaseGenerationConfig enrollmentGenerationConfig;
 
+    [Header("Case Queue")]
+    [Tooltip("Quantidade de atendimentos no expediente. Use 5 para o MVP.")]
+    [Min(1)] public int maxCasesForDay = 5;
+    public bool shuffleCaseQueue = true;
+    public bool useFixedQueueSeed = false;
+    public int queueRandomSeed = 1;
+
     [Header("Fixed Story Cases")]
     public List<FixedDayCaseEntry> fixedCases = new List<FixedDayCaseEntry>();
 
