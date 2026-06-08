@@ -272,7 +272,7 @@ RectTransform:
   m_GameObject: {fileID: 134960572}
   m_LocalRotation: {x: 0.36181092, y: -0, z: -0, w: 0.9322515}
   m_LocalPosition: {x: 0, y: 0, z: -10.4065}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1090329033}
@@ -432,6 +432,10 @@ MonoBehaviour:
   noticeBoardPanel: {fileID: 0}
   daySummaryPanel: {fileID: 0}
   caseFeedbackText: {fileID: 0}
+  caseFeedbackRoot: {fileID: 0}
+  caseFeedbackBackground: {fileID: 0}
+  caseFeedbackAccent: {fileID: 0}
+  caseFeedbackTitleText: {fileID: 0}
 --- !u!114 &149090566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -517,14 +521,13 @@ MonoBehaviour:
   npcMovementController: {fileID: 505000005}
   npcEventTimeoutSeconds: 4
   postDecisionDelaySeconds: 0.2
-  incorrectDecisionFeedbackDelaySeconds: 5
+  correctDecisionFeedbackDisplaySeconds: 1.35
   incorrectDecisionFeedbackDisplaySeconds: 3
   enableQueueDebugLogs: 1
-  randomNpcDefinitions:
-  - {fileID: 11400000, guid: b725d404e1938724ea908eea7b74def8, type: 2}
-  - {fileID: 11400000, guid: 89b7c416b64e2d2e5a96d9c30cb3badb, type: 2}
-  avoidRepeatingRandomNpc: 1
+  randomNpcDefinitions: []
+  avoidRepeatingRandomNpc: 0
   autoRepeatSingleCaseForRandomNpcs: 1
+  casesPerDay: 5
   debugExtraRepeatedCases: 0
 --- !u!114 &149090570
 MonoBehaviour:
@@ -543,6 +546,11 @@ MonoBehaviour:
   uiManager: {fileID: 149090565}
   daySequence:
   - {fileID: 11400000, guid: 8e04c1f923dcb1141914ae36cf9598ba, type: 2}
+  - {fileID: 11400000, guid: 40d6de0c9969b90eaa6602d1bd10ae7e, type: 2}
+  - {fileID: 11400000, guid: abdcdc148bfb1ced88494aea3e5d4f14, type: 2}
+  - {fileID: 11400000, guid: e2115b6528450dd5da90de79f718f8ba, type: 2}
+  - {fileID: 11400000, guid: 2ea9aca59db289454917a307506b7256, type: 2}
+  expectedDayCount: 5
   autoStartGame: 1
 --- !u!114 &149090571
 MonoBehaviour:

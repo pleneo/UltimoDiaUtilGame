@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7953408adef85904ea41d982e441bc3e, type: 3}
-  m_Name: EnrollmentGen_Day01
+  m_Name: EnrollmentGen_Day05
   m_EditorClassIdentifier: Assembly-CSharp::EnrollmentCaseGenerationConfig
-  totalGeneratedCases: 5
+  totalGeneratedCases: 9
   shuffleGeneratedCases: 1
   useFreshRandomSeed: 1
-  randomSeed: 12001
+  randomSeed: 12005
   identityCardDefinition: {fileID: 11400000, guid: 7bde6ce78d87f1849bf99ff827804f30, type: 2}
   schoolTranscriptDefinition: {fileID: 11400000, guid: b1331e4f7e76d5f4eac0d6c94e7baa73, type: 2}
   enrollmentProofDefinition: {fileID: 11400000, guid: 48f615c100fcc3e42bb3800e98921f47, type: 2}
@@ -29,19 +29,25 @@ MonoBehaviour:
     minimumCount: 1
   - caseType: 2
     minimumCount: 1
+  - caseType: 3
+    minimumCount: 1
+  - caseType: 4
+    minimumCount: 1
+  - caseType: 5
+    minimumCount: 1
   caseTypeWeights:
   - caseType: 0
-    weight: 62
+    weight: 30
   - caseType: 1
-    weight: 19
+    weight: 23
   - caseType: 2
-    weight: 13
+    weight: 17
   - caseType: 3
-    weight: 0
+    weight: 12
   - caseType: 4
-    weight: 0
+    weight: 10
   - caseType: 5
-    weight: 0
+    weight: 8
   firstNames:
   - Ana
   - Bruno
@@ -85,7 +91,7 @@ MonoBehaviour:
   - Medicina
   - Arquitetura
   - Design
-  useProfiledNpcGeneration: 0
+  useProfiledNpcGeneration: 1
   maleFirstNames: []
   femaleFirstNames: []
   maleNpcDefinitions: []

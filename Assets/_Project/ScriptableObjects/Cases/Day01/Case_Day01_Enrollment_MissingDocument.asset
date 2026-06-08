@@ -16,7 +16,7 @@ MonoBehaviour:
   caseTitle: Matricula sem historico
   applicantName: Plinio Gomes
   requestType: 0
-  npcDefinition: {fileID: 11400000, guid: 89b7c416b64e2d2e5a96d9c30cb3badb, type: 2}
+  npcDefinition: {fileID: 11400000, guid: 13274b2881c01dc77aa51b84facf4321, type: 2}
   npcDialogue: Aluno solicita matricula, mas nao trouxe o historico escolar.
   caseSummary: O historico escolar esta faltando, entao a matricula deve ser indeferida.
   referenceDateIso: 2026-05-21

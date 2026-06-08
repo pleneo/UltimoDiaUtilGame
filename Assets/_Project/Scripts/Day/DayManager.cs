@@ -211,16 +211,8 @@ public class DayManager : MonoBehaviour
 
     private void PrepareFiniteCaseFlow(DayConfig dayConfig)
     {
-        var finiteCases = new List<StudentCaseDefinition>();
-
-        if (dayConfig.enrollmentGenerationConfig != null)
-        {
-            var generatedCases = EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig);
-            for (var index = 0; index < generatedCases.Count; index++)
-            {
-                AddCaseIfValid(finiteCases, generatedCases[index]);
-            }
-        }
+        var manualCases = new List<StudentCaseDefinition>();
+        var generatedCasesForDay = new List<StudentCaseDefinition>();
 
         if (dayConfig.includeManualCases && dayConfig.cases != null)
         {
@@ -232,29 +224,51 @@ public class DayManager : MonoBehaviour
                     continue;
                 }
 
-                AddCaseIfValid(finiteCases, caseDefinition);
+                AddCaseIfValid(manualCases, caseDefinition);
+            }
+        }
+
+        if (dayConfig.enrollmentGenerationConfig != null)
+        {
+            var generatedCases = EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig);
+            for (var index = 0; index < generatedCases.Count; index++)
+            {
+                AddCaseIfValid(generatedCasesForDay, generatedCases[index]);
             }
         }
 
         var queueRandom = CreateQueueRandom(dayConfig);
 
-        if (finiteCases.Count == 0)
+        if (manualCases.Count == 0 && generatedCasesForDay.Count == 0)
         {
             return;
         }
 
         if (dayConfig.shuffleCaseQueue)
         {
-            ShuffleFiniteCases(finiteCases, queueRandom);
+            ShuffleFiniteCases(manualCases, queueRandom);
+            ShuffleFiniteCases(generatedCasesForDay, queueRandom);
         }
 
-        var maxCases = GetTargetCaseCount(finiteCases.Count);
+        var availableCaseCount = manualCases.Count + generatedCasesForDay.Count;
+        var maxCases = GetTargetCaseCount(availableCaseCount);
 
         for (var index = 0; index < maxCases; index++)
         {
-            var caseDefinition = finiteCases[index % finiteCases.Count];
+            if (index < manualCases.Count)
+            {
+                EnqueueCase(manualCases[index], null);
+                continue;
+            }
 
-            EnqueueCase(caseDefinition, null);
+            if (generatedCasesForDay.Count == 0)
+            {
+                EnqueueCase(manualCases[index % manualCases.Count], null);
+                continue;
+            }
+
+            var generatedIndex = (index - manualCases.Count) % generatedCasesForDay.Count;
+            EnqueueCase(generatedCasesForDay[generatedIndex], null);
         }
 
         LogDaySetupDiagnostics();
@@ -714,15 +728,15 @@ public class DayManager : MonoBehaviour
 
     private NpcDefinition ResolveNpcDefinitionForCase(QueuedStudentCase queueEntry)
     {
-        if (queueEntry.npcDefinitionOverride != null)
-        {
-            return queueEntry.npcDefinitionOverride;
-        }
-
         var caseDefinition = queueEntry.caseDefinition;
         if (caseDefinition != null && caseDefinition.npcDefinition != null)
         {
             return caseDefinition.npcDefinition;
+        }
+
+        if (queueEntry.npcDefinitionOverride != null)
+        {
+            return queueEntry.npcDefinitionOverride;
         }
 
         if (randomNpcDefinitions == null || randomNpcDefinitions.Count == 0)

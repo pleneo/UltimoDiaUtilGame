@@ -10,22 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b290265242201bda6b3af89dac3b1c4e, type: 3}
-  m_Name: Day_01_EnrollmentBasics
+  m_Name: Day_03_EnrollmentQueue
   m_EditorClassIdentifier: Assembly-CSharp::DayConfig
-  dayNumber: 1
-  dayLabel: Dia 1
-  dayIntro: Primeiro dia de atendimento. Confira documentos de matricula com calma.
-  workDurationSeconds: 300
-  economyConfig: {fileID: 11400000, guid: e84698faf40f402498a135d229895ac6, type: 2}
+  dayNumber: 3
+  dayLabel: Dia 3
+  dayIntro: Agora divergencias de RA aparecem com mais frequencia. Compare os numeros
+    com atencao.
+  workDurationSeconds: 330
+  economyConfig: {fileID: 11400000, guid: 1f4a19fcc53c56749b3214e857782afe, type: 2}
   useInfiniteGeneratedCases: 0
-  enrollmentGenerationConfig: {fileID: 0}
+  enrollmentGenerationConfig: {fileID: 11400000, guid: b1bc8568b0bb80571b98e8340218f9ee, type: 2}
+  maxCasesForDay: 7
+  shuffleCaseQueue: 1
+  useFixedQueueSeed: 0
+  queueRandomSeed: 1003
   fixedCases: []
-  includeManualCases: 1
+  includeManualCases: 0
   availableRequestTypes: 00000000
   rulebookEntries:
   - {fileID: 11400000, guid: f9f72df7ef60c9843b4830b38b7cf0e9, type: 2}
   noticeBoardEntries: []
-  cases:
-  - {fileID: 11400000, guid: ff6044d749eac8249aafab59413bc3ef, type: 2}
-  - {fileID: 11400000, guid: 50835d39f30efb546b1e3c519b2e7228, type: 2}
-  - {fileID: 11400000, guid: 5a349dc8447d29b4fb6dd49a7cb3ecbb, type: 2}
+  cases: []

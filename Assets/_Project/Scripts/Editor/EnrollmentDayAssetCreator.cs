@@ -88,7 +88,6 @@ public static class EnrollmentDayAssetCreator
 
         var enrollmentRule = CreateOrUpdateEnrollmentRule();
         var economyConfig = CreateOrUpdateDayOneEconomyConfig();
-        var generationConfig = CreateOrUpdateDayOneGenerationConfig();
         var dayConfig = LoadOrCreateDayConfig("Day_01_EnrollmentBasics.asset");
 
         dayConfig.dayNumber = 1;
@@ -96,8 +95,11 @@ public static class EnrollmentDayAssetCreator
         dayConfig.dayIntro = "Primeiro dia de atendimento. Confira documentos de matricula com calma.";
         dayConfig.workDurationSeconds = 300f;
         dayConfig.economyConfig = economyConfig;
-        dayConfig.enrollmentGenerationConfig = generationConfig;
-        dayConfig.includeManualCases = false;
+        dayConfig.useInfiniteGeneratedCases = false;
+        dayConfig.enrollmentGenerationConfig = null;
+        dayConfig.maxCasesForDay = 5;
+        dayConfig.shuffleCaseQueue = true;
+        dayConfig.includeManualCases = true;
 
         dayConfig.availableRequestTypes.Clear();
         dayConfig.availableRequestTypes.Add(RequestType.Enrollment);

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 825dfd1d51d4a54fbb2dc605f146ad9b, type: 3}
+  m_Name: Economy_Day04
+  m_EditorClassIdentifier: Assembly-CSharp::EconomyConfig
+  initialMoney: 0
+  initialDebt: 0
+  payPerCorrectDecision: 20
+  penaltyPerMistake: 9
+  dailyExpenses: 12
+  warningLimit: 4
+  autoPayDebtFromMoney: 1
