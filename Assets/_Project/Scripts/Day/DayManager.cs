@@ -196,6 +196,7 @@ public class DayManager : MonoBehaviour
         {
             uiManager.BindDay(dayConfig);
             uiManager.HideDaySummary();
+            uiManager.HideCaseDialogue();
             uiManager.ShowCurrentCase(null);
             uiManager.ClearCaseFeedback();
         }
@@ -470,6 +471,11 @@ public class DayManager : MonoBehaviour
             caseManager.ClearCurrentCase();
         }
 
+        if (uiManager != null)
+        {
+            uiManager.HideCaseDialogue();
+        }
+
         var economyBeforeClosing = economyManager != null ? economyManager.GetSnapshot() : new EconomySnapshot();
         if (economyManager != null)
         {
@@ -652,12 +658,23 @@ public class DayManager : MonoBehaviour
 
         if (caseManager != null)
         {
-            caseManager.LoadCase(caseDefinition);
+            caseManager.ClearCurrentCase();
         }
 
         if (uiManager != null)
         {
             uiManager.ShowCurrentCase(caseDefinition);
+            yield return uiManager.PlayCaseDialogue(caseDefinition);
+        }
+
+        if (!IsDayActive)
+        {
+            yield break;
+        }
+
+        if (caseManager != null)
+        {
+            caseManager.LoadCase(caseDefinition);
         }
 
         PushHudUpdate();

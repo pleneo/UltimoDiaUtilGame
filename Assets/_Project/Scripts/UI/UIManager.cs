@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private RulebookPanel rulebookPanel;
     [SerializeField] private NoticeBoardPanel noticeBoardPanel;
     [SerializeField] private DaySummaryPanel daySummaryPanel;
+    [SerializeField] private CaseDialoguePanel caseDialoguePanel;
     [SerializeField] private TMP_Text caseFeedbackText;
     [SerializeField] private GameObject caseFeedbackRoot;
     [SerializeField] private Image caseFeedbackBackground;
@@ -31,6 +33,11 @@ public class UIManager : MonoBehaviour
             daySummaryPanel = FindObjectOfType<DaySummaryPanel>(true);
         }
 
+        if (caseDialoguePanel == null)
+        {
+            caseDialoguePanel = FindObjectOfType<CaseDialoguePanel>(true);
+        }
+
         var canvas = FindObjectOfType<Canvas>(true);
         if (canvas == null)
         {
@@ -45,6 +52,11 @@ public class UIManager : MonoBehaviour
         if (daySummaryPanel == null)
         {
             daySummaryPanel = CreateFallbackDaySummary(canvas.transform);
+        }
+
+        if (caseDialoguePanel == null)
+        {
+            caseDialoguePanel = CreateFallbackCaseDialoguePanel(canvas.transform);
         }
 
         if (caseFeedbackText == null)
@@ -101,6 +113,24 @@ public class UIManager : MonoBehaviour
         if (daySummaryPanel != null)
         {
             daySummaryPanel.Hide();
+        }
+    }
+
+    public IEnumerator PlayCaseDialogue(StudentCaseDefinition caseDefinition)
+    {
+        if (caseDialoguePanel == null)
+        {
+            yield break;
+        }
+
+        yield return caseDialoguePanel.Play(caseDefinition);
+    }
+
+    public void HideCaseDialogue()
+    {
+        if (caseDialoguePanel != null)
+        {
+            caseDialoguePanel.Hide();
         }
     }
 
@@ -233,6 +263,49 @@ public class UIManager : MonoBehaviour
 
         var panel = root.AddComponent<DaySummaryPanel>();
         panel.Configure(root, title, body, buttonObject.GetComponent<Button>(), buttonText);
+        root.SetActive(false);
+        return panel;
+    }
+
+    private CaseDialoguePanel CreateFallbackCaseDialoguePanel(Transform parent)
+    {
+        var root = CreatePanelRoot("RuntimeCaseDialoguePanel", parent);
+        var rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(0.5f, 0f);
+        rootRect.anchorMax = new Vector2(0.5f, 0f);
+        rootRect.pivot = new Vector2(0.5f, 0f);
+        rootRect.sizeDelta = new Vector2(820f, 180f);
+        rootRect.anchoredPosition = new Vector2(0f, 32f);
+
+        var image = root.AddComponent<Image>();
+        image.color = new Color(0.05f, 0.06f, 0.08f, 0.94f);
+
+        var speaker = CreateText("SpeakerText", root.transform, new Vector2(24f, -18f), new Vector2(240f, 32f), 22, TextAlignmentOptions.TopLeft);
+        speaker.color = new Color(0.91f, 0.75f, 0.37f, 1f);
+
+        var dialogue = CreateText("DialogueText", root.transform, new Vector2(24f, -54f), new Vector2(620f, 92f), 24, TextAlignmentOptions.TopLeft);
+        dialogue.textWrappingMode = TextWrappingModes.Normal;
+
+        var buttonObject = new GameObject("ContinueButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(root.transform, false);
+        var buttonRect = buttonObject.GetComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(1f, 0.5f);
+        buttonRect.anchorMax = new Vector2(1f, 0.5f);
+        buttonRect.pivot = new Vector2(1f, 0.5f);
+        buttonRect.anchoredPosition = new Vector2(-24f, -34f);
+        buttonRect.sizeDelta = new Vector2(180f, 48f);
+
+        var buttonImage = buttonObject.GetComponent<Image>();
+        buttonImage.color = new Color(0.18f, 0.48f, 0.34f, 1f);
+
+        var buttonText = CreateText("ContinueButtonText", buttonObject.transform, Vector2.zero, new Vector2(164f, 40f), 19, TextAlignmentOptions.Center);
+        buttonText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        buttonText.raycastTarget = false;
+
+        var panel = root.AddComponent<CaseDialoguePanel>();
+        panel.Configure(root, speaker, dialogue, buttonObject.GetComponent<Button>(), buttonText);
         root.SetActive(false);
         return panel;
     }

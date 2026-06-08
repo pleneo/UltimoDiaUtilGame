@@ -18,6 +18,7 @@ MonoBehaviour:
   requestType: 0
   npcDefinition: {fileID: 11400000, guid: 13274b2881c01dc77aa51b84facf4321, type: 2}
   npcDialogue: Aluno solicita matricula com todos os documentos em ordem.
+  preDocumentDialogue: []
   caseSummary: Todos os documentos obrigatorios foram entregues. Nome e RA batem
     entre os documentos.
   referenceDateIso: 2026-05-21

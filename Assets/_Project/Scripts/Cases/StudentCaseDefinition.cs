@@ -1,6 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum DialogueSpeaker
+{
+    Npc,
+    Player,
+    Narrator
+}
+
+[System.Serializable]
+public class CaseDialogueLine
+{
+    public DialogueSpeaker speaker = DialogueSpeaker.Npc;
+
+    [TextArea(1, 4)]
+    public string text;
+}
+
 [CreateAssetMenu(menuName = "Ultimo Dia Util/Cases/Student Case Definition", fileName = "Case_")]
 public class StudentCaseDefinition : ScriptableObject
 {
@@ -12,6 +28,9 @@ public class StudentCaseDefinition : ScriptableObject
 
     [TextArea(2, 5)]
     public string npcDialogue;
+
+    [Header("Dialogue Before Documents")]
+    public List<CaseDialogueLine> preDocumentDialogue = new List<CaseDialogueLine>();
 
     [TextArea(2, 5)]
     public string caseSummary;

@@ -205,7 +205,8 @@ public static class EnrollmentDayAssetCreator
             "Matricula regular",
             "Plinio Gomes",
             "Aluno solicita matricula com todos os documentos em ordem.",
-            "Todos os documentos obrigatorios foram entregues. Nome e RA batem entre os documentos.");
+            "Todos os documentos obrigatorios foram entregues. Nome e RA batem entre os documentos.",
+            0);
 
         AddEnrollmentRequirements(studentCase);
         AddEnrollmentComparisonRules(studentCase);
@@ -230,7 +231,8 @@ public static class EnrollmentDayAssetCreator
             "Matricula sem historico",
             "Plinio Gomes",
             "Aluno solicita matricula, mas nao trouxe o historico escolar.",
-            "O historico escolar esta faltando, entao a matricula deve ser indeferida.");
+            "O historico escolar esta faltando, entao a matricula deve ser indeferida.",
+            1);
 
         AddEnrollmentRequirements(studentCase);
         AddEnrollmentComparisonRules(studentCase);
@@ -255,7 +257,8 @@ public static class EnrollmentDayAssetCreator
             "Matricula com nome divergente",
             "Plinio Gomes",
             "Aluno solicita matricula, mas um dos documentos tem nome divergente.",
-            "O comprovante de matricula usa um nome diferente, entao a matricula deve ser indeferida.");
+            "O comprovante de matricula usa um nome diferente, entao a matricula deve ser indeferida.",
+            2);
 
         AddEnrollmentRequirements(studentCase);
         AddEnrollmentComparisonRules(studentCase);
@@ -274,13 +277,15 @@ public static class EnrollmentDayAssetCreator
         string caseTitle,
         string applicantName,
         string npcDialogue,
-        string caseSummary)
+        string caseSummary,
+        int mockDialogueIndex)
     {
         studentCase.caseId = caseId;
         studentCase.caseTitle = caseTitle;
         studentCase.applicantName = applicantName;
         studentCase.requestType = RequestType.Enrollment;
         studentCase.npcDialogue = npcDialogue;
+        CaseDialogueMockLibrary.ApplyMockDialogue(studentCase, mockDialogueIndex);
         studentCase.caseSummary = caseSummary;
         studentCase.referenceDateIso = "2026-05-21";
         studentCase.requiresSupervisorReview = false;

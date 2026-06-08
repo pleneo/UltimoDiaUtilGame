@@ -145,7 +145,7 @@ public static class EnrollmentCaseGenerator
         studentCase.caseTitle = BuildCaseTitle(caseType);
         studentCase.applicantName = studentName;
         studentCase.requestType = RequestType.Enrollment;
-        studentCase.npcDialogue = BuildDialogue(caseType);
+        CaseDialogueMockLibrary.ApplyMockDialogue(studentCase, generatedIndex - 1);
         studentCase.caseSummary = BuildSummary(caseType);
         studentCase.referenceDateIso = string.IsNullOrWhiteSpace(config.referenceDateIso)
             ? "2026-05-21"
@@ -540,20 +540,6 @@ public static class EnrollmentCaseGenerator
             EnrollmentGeneratedCaseType.MissingRequiredField => "Matricula gerada com campo faltando",
             EnrollmentGeneratedCaseType.ExpiredDocument => "Matricula gerada com documento vencido",
             _ => "Matricula gerada"
-        };
-    }
-
-    private static string BuildDialogue(EnrollmentGeneratedCaseType caseType)
-    {
-        return caseType switch
-        {
-            EnrollmentGeneratedCaseType.Valid => "Trouxe tudo que pediram para a matricula.",
-            EnrollmentGeneratedCaseType.MissingDocument => "Acho que esta tudo ai, nao tive tempo de conferir.",
-            EnrollmentGeneratedCaseType.NameMismatch => "Os documentos estao certos, so muda uma coisinha no nome.",
-            EnrollmentGeneratedCaseType.RaMismatch => "Meu RA esta nos documentos, pode conferir.",
-            EnrollmentGeneratedCaseType.MissingRequiredField => "O comprovante saiu meio incompleto, mas deve servir.",
-            EnrollmentGeneratedCaseType.ExpiredDocument => "Esse documento e antigo, mas ainda da para usar, ne?",
-            _ => "Quero fazer minha matricula."
         };
     }
 
