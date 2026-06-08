@@ -392,6 +392,7 @@ GameObject:
   - component: {fileID: 149090567}
   - component: {fileID: 149090566}
   - component: {fileID: 149090565}
+  - component: {fileID: 149090571}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -407,8 +408,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 149090563}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 219, y: 247.5, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 219, y: 247.5, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -513,7 +514,7 @@ MonoBehaviour:
   uiManager: {fileID: 149090565}
   waitForPlayerToAdvanceCase: 0
   useNpcMovementFlow: 1
-  npcMovementController: {fileID: 0}
+  npcMovementController: {fileID: 505000005}
   npcEventTimeoutSeconds: 4
   postDecisionDelaySeconds: 0.2
   incorrectDecisionFeedbackDelaySeconds: 5
@@ -543,6 +544,22 @@ MonoBehaviour:
   daySequence:
   - {fileID: 11400000, guid: 8e04c1f923dcb1141914ae36cf9598ba, type: 2}
   autoStartGame: 1
+--- !u!114 &149090571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149090563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ad59453aebf4a128bdba31befbd782, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NpcDebugGameManager
+  enableNextNpcKey: 0
+  enableEndNpcKey: 1
+  nextNpcInputSystemKey: 28
+  endNpcInputSystemKey: 19
 --- !u!1 &150460951 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8195878900540433322, guid: 0021c3a00b2ea324aaf73641580db6cf, type: 3}
@@ -832,6 +849,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1922667026}
+  - {fileID: 505000002}
   - {fileID: 1860911194}
   - {fileID: 617607029}
   - {fileID: 314760006}
@@ -1265,7 +1283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc57d67f88087293da0f49501e1acf57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DecisionButtonRouter
-  caseManager: {fileID: 0}
+  caseManager: {fileID: 149090568}
 --- !u!1 &318757322
 GameObject:
   m_ObjectHideFlags: 0
@@ -1660,6 +1678,120 @@ Transform:
   - {fileID: 317655659}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &505000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 505000002}
+  - component: {fileID: 505000003}
+  - component: {fileID: 505000004}
+  - component: {fileID: 505000005}
+  m_Layer: 5
+  m_Name: NpcRuntime
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &505000002
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505000001}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 169712381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -80}
+  m_SizeDelta: {x: 162, y: 372}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &505000003
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505000001}
+  m_CullTransparentMesh: 1
+--- !u!114 &505000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 380909185, guid: 34e6ef31fbe0b7afebf47965cbcf5902, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &505000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1010b1bf8f71f2e3db70de6a00b5c769, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NpcMovementController
+  targetCamera: {fileID: 0}
+  npcAnimator: {fileID: 0}
+  npcSpriteRenderer: {fileID: 0}
+  npcImage: {fileID: 505000004}
+  npcRectTransform: {fileID: 505000002}
+  defaultNpcDefinition: {fileID: 11400000, guid: b725d404e1938724ea908eea7b74def8, type: 2}
+  applyCanvasSiblingIndex: 1
+  canvasSiblingIndex: 1
+  applySpriteSortingOrder: 0
+  spriteSortingLayerName: 
+  spriteSortingOrder: 0
+  moveSpeed: 4
+  enableStepBounce: 1
+  canvasStepAmplitude: 10
+  worldStepAmplitude: 0.08
+  stepFrequency: 4
+  startViewportX: -0.15
+  centerViewportX: 0.5
+  endViewportX: 1.15
+  onArrivedCenter:
+    m_PersistentCalls:
+      m_Calls: []
+  sideSprite: {fileID: 380909185, guid: 34e6ef31fbe0b7afebf47965cbcf5902, type: 3}
+  frontSprite: {fileID: 1325055561836722930, guid: 34e6ef31fbe0b7afebf47965cbcf5902, type: 3}
+  disableAnimatorWhenUsingStaticSprites: 1
+  movingBoolParameter: IsMoving
 --- !u!1 &518813208
 GameObject:
   m_ObjectHideFlags: 0
@@ -1796,6 +1928,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1770690937}
   - {fileID: 134960573}
   - {fileID: 1841069843}
   - {fileID: 1094665873}
@@ -3829,12 +3962,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1922667026}
+  m_Father: {fileID: 694020764}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -170, y: 219}
+  m_SizeDelta: {x: 210.6161, y: 649.506}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1770690938
 MonoBehaviour:
@@ -3856,7 +3989,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7802380957724165519, guid: 1230254a189077746b194d7554063670, type: 3}
+  m_Sprite: {fileID: 6753166594888256047, guid: 22e328d4ec033cf39b632373005c2d9d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4272,8 +4405,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1770690937}
+  m_Children: []
   m_Father: {fileID: 169712381}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4874,8 +5006,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 884364247}
-  - {fileID: 149090564}
   - {fileID: 518813209}
+  - {fileID: 149090564}
   - {fileID: 1119196682}
   - {fileID: 454377327}
   - {fileID: 1090182221}

@@ -32,7 +32,7 @@ public class DayManager : MonoBehaviour
     [SerializeField] private CaseManager caseManager;
     [SerializeField] private EconomyManager economyManager;
     [SerializeField] private UIManager uiManager;
-    [SerializeField] private bool waitForPlayerToAdvanceCase = true;
+    [SerializeField] private bool waitForPlayerToAdvanceCase = false;
 
     [Header("NPC Queue Flow")]
     [SerializeField] private bool useNpcMovementFlow = true;
@@ -226,9 +226,12 @@ public class DayManager : MonoBehaviour
     {
         if (dayConfig.enrollmentGenerationConfig != null)
         {
-            currentCases.AddRange(EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig));
+            var generatedCases = EnrollmentCaseGenerator.GenerateCases(dayConfig.enrollmentGenerationConfig);
+            for (var index = 0; index < generatedCases.Count; index++)
+            {
+                EnqueueCase(generatedCases[index], null);
+            }
         }
-        var enrollmentCaseCount = currentCases.Count;
 
         if (dayConfig.includeManualCases && dayConfig.cases != null)
         {
@@ -240,22 +243,13 @@ public class DayManager : MonoBehaviour
                     continue;
                 }
 
-                currentCases.Add(caseDefinition);
-                // Casos manuais já entram na fila aqui — não serão re-enfileirados depois
-                pendingCaseQueue.Enqueue(new QueuedStudentCase(caseDefinition, null));
+                EnqueueCase(caseDefinition, null);
             }
         }
 
         AddDebugRepeatedCasesIfNeeded();
         AddAutomaticRandomNpcTestCasesIfNeeded();
         LogDaySetupDiagnostics();
-
-        // FIX 1: tipo correto — QueuedStudentCase, não StudentCaseDefinition
-        // FIX 2: só enfileira enrollment; manuais e debug já foram enfileirados
-        for (var index = 0; index < enrollmentCaseCount; index++)
-        {
-            pendingCaseQueue.Enqueue(new QueuedStudentCase(currentCases[index], null));
-        }
     }
 
     private void PrepareInfiniteCaseFlow(DayConfig dayConfig)
@@ -314,8 +308,7 @@ public class DayManager : MonoBehaviour
         var repeatedCase = currentCases[0];
         for (var index = 0; index < debugExtraRepeatedCases; index++)
         {
-            currentCases.Add(repeatedCase);
-            pendingCaseQueue.Enqueue(new QueuedStudentCase(repeatedCase, null));
+            EnqueueCase(repeatedCase, null);
         }
 
         LogQueue(
@@ -346,8 +339,7 @@ public class DayManager : MonoBehaviour
                 continue;
             }
 
-            currentCases.Add(repeatedCase);
-            pendingCaseQueue.Enqueue(new QueuedStudentCase(repeatedCase, randomNpcDefinition));
+            EnqueueCase(repeatedCase, randomNpcDefinition);
             addedCases++;
         }
 
@@ -401,6 +393,17 @@ public class DayManager : MonoBehaviour
         return validCount;
     }
 
+    private void EnqueueCase(StudentCaseDefinition caseDefinition, NpcDefinition npcDefinitionOverride)
+    {
+        if (caseDefinition == null)
+        {
+            return;
+        }
+
+        currentCases.Add(caseDefinition);
+        pendingCaseQueue.Enqueue(new QueuedStudentCase(caseDefinition, npcDefinitionOverride));
+    }
+
     public void EndDay(DayEndReason reason)
     {
         if (!IsDayActive)
@@ -439,19 +442,19 @@ public class DayManager : MonoBehaviour
     {
         if (!IsDayActive)
         {
-            Debug.LogWarning("[DayManager] Nao foi possivel avancar para o proximo aluno porque o dia nao esta ativo.");
+            LogQueue("Clique em Proximo Caso ignorado porque o dia ja terminou ou ainda nao iniciou.");
             return;
         }
 
         if (!waitForPlayerToAdvanceCase)
         {
-            Debug.LogWarning("[DayManager] Avanco manual desativado nesta cena/day config.");
+            LogQueue("Clique em Proximo Caso ignorado porque o avanco automatico esta ativo.");
             return;
         }
 
         if (!IsWaitingForNextCase)
         {
-            Debug.LogWarning("[DayManager] Nao foi possivel avancar para o proximo aluno porque o jogo nao esta aguardando avancar caso.");
+            LogQueue("Clique em Proximo Caso ignorado porque o atendimento atual ainda nao foi concluido.");
             return;
         }
 
@@ -646,6 +649,16 @@ public class DayManager : MonoBehaviour
         }
     }
 
+    private void HandleNpcArrivedCenter()
+    {
+        npcArrivedCenter = true;
+    }
+
+    private void HandleNpcExited()
+    {
+        npcExitedDesk = true;
+    }
+
     private bool ShouldUseNpcMovementFlow()
     {
         if (npcMovementController == null)
@@ -757,7 +770,7 @@ public class DayManager : MonoBehaviour
             ? Mathf.Min(ResolvedCasesCount, currentCases.Count - 1)
             : 0;
 
-        IsWaitingForNextCase = waitForPlayerToAdvanceCase && pendingCaseQueue.Count > 0;
+        IsWaitingForNextCase = false;
 
         LogQueue(
             $"Caso '{result.caseDefinition.caseId}' resolvido com {result.chosenDecision}. " +
@@ -962,16 +975,4 @@ public class DayManager : MonoBehaviour
 
         Debug.Log($"[QueueFlow] {message}", this);
     }
-    // FIX 3: métodos ausentes que eram referenciados em OnEnable/OnDisable
-    // sem eles o CS não compilava (método não definido)
-    private void HandleNpcArrivedCenter()
-    {
-        npcArrivedCenter = true;
-    }
-
-    private void HandleNpcExited()
-    {
-        npcExitedDesk = true;
-    }
-
 }

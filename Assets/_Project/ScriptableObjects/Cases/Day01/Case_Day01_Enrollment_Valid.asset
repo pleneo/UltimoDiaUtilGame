@@ -16,6 +16,7 @@ MonoBehaviour:
   caseTitle: Matricula regular
   applicantName: Plinio Gomes
   requestType: 0
+  npcDefinition: {fileID: 0}
   npcDialogue: Aluno solicita matricula com todos os documentos em ordem.
   caseSummary: Todos os documentos obrigatorios foram entregues. Nome e RA batem
     entre os documentos.

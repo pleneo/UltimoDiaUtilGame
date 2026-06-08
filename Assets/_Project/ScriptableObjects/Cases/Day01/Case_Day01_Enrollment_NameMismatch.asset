@@ -16,6 +16,7 @@ MonoBehaviour:
   caseTitle: Matricula com nome divergente
   applicantName: Plinio Gomes
   requestType: 0
+  npcDefinition: {fileID: 11400000, guid: 89b7c416b64e2d2e5a96d9c30cb3badb, type: 2}
   npcDialogue: Aluno solicita matricula, mas um dos documentos tem nome divergente.
   caseSummary: O comprovante de matricula usa um nome diferente, entao a matricula
     deve ser indeferida.

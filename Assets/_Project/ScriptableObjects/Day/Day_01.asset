@@ -17,8 +17,11 @@ MonoBehaviour:
   dayIntro: 
   workDurationSeconds: 300
   economyConfig: {fileID: 11400000, guid: b851aa60b41bb89588d5cb33663a9af6, type: 2}
+  enrollmentGenerationConfig: {fileID: 0}
+  includeManualCases: 1
   availableRequestTypes: 
   rulebookEntries: []
   noticeBoardEntries: []
   cases:
   - {fileID: 11400000, guid: dd5b43cabebbcf5fea8298a9f089b3fb, type: 2}
+  - {fileID: 11400000, guid: 50835d39f30efb546b1e3c519b2e7228, type: 2}

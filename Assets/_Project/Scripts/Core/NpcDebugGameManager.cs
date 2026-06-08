@@ -6,6 +6,9 @@ using UnityEngine.InputSystem;
 public class NpcDebugGameManager : MonoBehaviour
 {
     [Header("Debug Controls")]
+    [SerializeField] private bool enableNextNpcKey;
+    [SerializeField] private bool enableEndNpcKey = true;
+
 #if ENABLE_LEGACY_INPUT_MANAGER
     [SerializeField] private KeyCode nextNpcLegacyKey = KeyCode.N;
     [SerializeField] private KeyCode endNpcLegacyKey = KeyCode.E;
@@ -18,12 +21,12 @@ public class NpcDebugGameManager : MonoBehaviour
 
     private void Update()
     {
-        if (WasNextNpcPressed())
+        if (enableNextNpcKey && WasNextNpcPressed())
         {
             NpcMovementEvents.RaiseNextNpc();
         }
 
-        if (WasEndNpcPressed())
+        if (enableEndNpcKey && WasEndNpcPressed())
         {
             NpcMovementEvents.RaiseEndNpc();
         }

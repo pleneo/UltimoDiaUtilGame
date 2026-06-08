@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class NpcMovementController : MonoBehaviour
 {
@@ -17,11 +18,33 @@ public class NpcMovementController : MonoBehaviour
     [SerializeField] private Animator npcAnimator;
     [Tooltip("SpriteRenderer que mostra o NPC na cena. Pode deixar vazio se ele estiver no mesmo objeto ou em um filho.")]
     [SerializeField] private SpriteRenderer npcSpriteRenderer;
+    [Tooltip("Image usada quando o NPC fica dentro do Canvas da cena Game.")]
+    [SerializeField] private Image npcImage;
+    [SerializeField] private RectTransform npcRectTransform;
     [Tooltip("Visual usado quando a cena/teste chama o NPC direto, sem passar por um caso da fila.")]
     [SerializeField] private NpcDefinition defaultNpcDefinition;
 
+    [Header("Render Order")]
+    [Tooltip("Quando o NPC e uma Image dentro do Canvas, controla a ordem pela hierarquia do Canvas.")]
+    [SerializeField] private bool applyCanvasSiblingIndex = true;
+    [Tooltip("0 fica atras de tudo no Canvas. Na cena Game, 1 deixa o NPC acima do fundo e abaixo da mesa/UI.")]
+    [SerializeField, Min(0)] private int canvasSiblingIndex = 1;
+    [Tooltip("Use apenas quando o NPC for SpriteRenderer fora do Canvas.")]
+    [SerializeField] private bool applySpriteSortingOrder;
+    [SerializeField] private string spriteSortingLayerName;
+    [SerializeField] private int spriteSortingOrder;
+
     [Header("Speed")]
     [SerializeField, Min(0.01f)] private float moveSpeed = 2.5f;
+
+    [Header("Step Bounce")]
+    [SerializeField] private bool enableStepBounce = true;
+    [Tooltip("Altura do passo quando o NPC e uma Image dentro do Canvas, em pixels.")]
+    [SerializeField, Min(0f)] private float canvasStepAmplitude = 10f;
+    [Tooltip("Altura do passo quando o NPC e SpriteRenderer no mundo, em unidades de mundo.")]
+    [SerializeField, Min(0f)] private float worldStepAmplitude = 0.08f;
+    [Tooltip("Quantidade de sobe/desce por segundo enquanto o NPC anda.")]
+    [SerializeField, Min(0.1f)] private float stepFrequency = 3f;
 
     [Header("Viewport Positions")]
     [SerializeField] private float startViewportX = -0.15f;
@@ -50,43 +73,57 @@ public class NpcMovementController : MonoBehaviour
     private int movingBoolHash;
     private Sprite fallbackSideSprite;
     private Sprite fallbackFrontSprite;
+    private RectTransform npcParentRectTransform;
+    private float fixedAnchoredY;
+    private bool usesCanvasMovement;
+    private float stepAnimationTime;
 
     private void Awake()
     {
-        if (targetCamera == null)
+        CacheVisualReferences();
+
+        if (!usesCanvasMovement && targetCamera == null)
         {
             targetCamera = Camera.main;
         }
 
-        if (targetCamera == null)
+        if (!usesCanvasMovement && targetCamera == null)
         {
             Debug.LogError("NpcMovementController precisa de uma Camera para converter viewport em mundo.", this);
             enabled = false;
             return;
         }
 
-        CacheMovementPlane();
-        CacheSpriteRendererSetup();
         ApplyDefaultNpcDefinitionIfConfigured();
+        CacheMovementPlane();
         CacheFallbackSprites();
         CacheAnimatorSetup();
+        ApplyRenderOrder();
         SetSidePose(false);
     }
 
     private void OnValidate()
     {
-        CacheSpriteRendererSetup();
+        CacheVisualReferences();
         ApplyDefaultNpcDefinitionIfConfigured();
 
         if (npcSpriteRenderer != null && sideSprite != null)
         {
             npcSpriteRenderer.sprite = sideSprite;
         }
+
+        if (npcImage != null && sideSprite != null)
+        {
+            npcImage.sprite = sideSprite;
+        }
+
+        ApplyRenderOrder();
     }
 
     public void ApplyNpcDefinition(NpcDefinition npcDefinition)
     {
-        CacheSpriteRendererSetup();
+        CacheVisualReferences();
+        ApplyRenderOrder();
 
         sideSprite = npcDefinition != null && npcDefinition.sideSprite != null
             ? npcDefinition.sideSprite
@@ -134,13 +171,13 @@ public class NpcMovementController : MonoBehaviour
     {
         if (currentState == MovementState.Entering)
         {
-            MoveTowardsTarget(BuildPoint(centerViewportX), OnReachedCenter);
+            MoveTowardsActiveTarget(centerViewportX, OnReachedCenter);
             return;
         }
 
         if (currentState == MovementState.Exiting)
         {
-            MoveTowardsTarget(BuildPoint(endViewportX), OnReachedExit);
+            MoveTowardsActiveTarget(endViewportX, OnReachedExit);
         }
     }
 
@@ -152,25 +189,49 @@ public class NpcMovementController : MonoBehaviour
         }
 
         CacheMovementPlane();
-        transform.position = BuildPoint(startViewportX);
+        ApplyRenderOrder();
+
+        if (usesCanvasMovement)
+        {
+            npcRectTransform.anchoredPosition = BuildAnchoredPoint(startViewportX);
+        }
+        else
+        {
+            transform.position = BuildPoint(startViewportX);
+        }
+
         currentState = MovementState.Entering;
+        stepAnimationTime = 0f;
         SetSidePose(true);
     }
 
     private void HandleEndNpc()
     {
-        if (!enabled || currentState != MovementState.WaitingAtCenter)
+        if (!enabled)
+        {
+            return;
+        }
+
+        if (currentState == MovementState.Idle)
+        {
+            NpcMovementEvents.RaiseNpcExited();
+            return;
+        }
+
+        if (currentState == MovementState.Exiting)
         {
             return;
         }
 
         currentState = MovementState.Exiting;
+        stepAnimationTime = 0f;
         SetSidePose(true);
     }
 
     private void OnReachedCenter()
     {
         currentState = MovementState.WaitingAtCenter;
+        ResetStepOffset();
         SetFrontPose();
         onArrivedCenter?.Invoke();
         NpcMovementEvents.RaiseNpcArrivedCenter();
@@ -179,20 +240,26 @@ public class NpcMovementController : MonoBehaviour
     private void OnReachedExit()
     {
         currentState = MovementState.Idle;
+        ResetStepOffset();
         SetSidePose(false);
         NpcMovementEvents.RaiseNpcExited();
     }
 
     private void MoveTowardsTarget(Vector3 target, UnityAction onReachedTarget)
     {
-        transform.position = Vector3.MoveTowards(
-            transform.position,
+        var currentBasePosition = transform.position;
+        currentBasePosition.y = fixedY;
+
+        var nextBasePosition = Vector3.MoveTowards(
+            currentBasePosition,
             target,
             moveSpeed * Time.deltaTime
         );
 
-        if ((transform.position - target).sqrMagnitude > ArriveThresholdSqr)
+        if ((nextBasePosition - target).sqrMagnitude > ArriveThresholdSqr)
         {
+            nextBasePosition.y = fixedY + GetStepOffset(worldStepAmplitude);
+            transform.position = nextBasePosition;
             return;
         }
 
@@ -200,8 +267,48 @@ public class NpcMovementController : MonoBehaviour
         onReachedTarget?.Invoke();
     }
 
+    private void MoveTowardsCanvasTarget(Vector2 target, UnityAction onReachedTarget)
+    {
+        var currentBasePosition = npcRectTransform.anchoredPosition;
+        currentBasePosition.y = fixedAnchoredY;
+
+        var nextBasePosition = Vector2.MoveTowards(
+            currentBasePosition,
+            target,
+            moveSpeed * 100f * Time.deltaTime
+        );
+
+        if ((nextBasePosition - target).sqrMagnitude > ArriveThresholdSqr)
+        {
+            nextBasePosition.y = fixedAnchoredY + GetStepOffset(canvasStepAmplitude);
+            npcRectTransform.anchoredPosition = nextBasePosition;
+            return;
+        }
+
+        npcRectTransform.anchoredPosition = target;
+        onReachedTarget?.Invoke();
+    }
+
+    private void MoveTowardsActiveTarget(float viewportX, UnityAction onReachedTarget)
+    {
+        if (usesCanvasMovement)
+        {
+            MoveTowardsCanvasTarget(BuildAnchoredPoint(viewportX), onReachedTarget);
+            return;
+        }
+
+        MoveTowardsTarget(BuildPoint(viewportX), onReachedTarget);
+    }
+
     private void CacheMovementPlane()
     {
+        if (usesCanvasMovement)
+        {
+            fixedAnchoredY = npcRectTransform.anchoredPosition.y;
+            npcParentRectTransform = npcRectTransform.parent as RectTransform;
+            return;
+        }
+
         fixedY = transform.position.y;
         distanceFromCamera = Vector3.Dot(
             transform.position - targetCamera.transform.position,
@@ -223,7 +330,53 @@ public class NpcMovementController : MonoBehaviour
         return worldPoint;
     }
 
-    private void CacheSpriteRendererSetup()
+    private Vector2 BuildAnchoredPoint(float viewportX)
+    {
+        var parentWidth = npcParentRectTransform != null
+            ? npcParentRectTransform.rect.width
+            : Screen.width;
+
+        var parentPivotX = npcParentRectTransform != null
+            ? npcParentRectTransform.pivot.x
+            : 0.5f;
+
+        if (parentWidth <= 0f)
+        {
+            parentWidth = Screen.width;
+        }
+
+        return new Vector2((viewportX - parentPivotX) * parentWidth, fixedAnchoredY);
+    }
+
+    private float GetStepOffset(float amplitude)
+    {
+        if (!enableStepBounce || amplitude <= 0f)
+        {
+            return 0f;
+        }
+
+        stepAnimationTime += Time.deltaTime;
+        return Mathf.Sin(stepAnimationTime * stepFrequency * Mathf.PI * 2f) * amplitude;
+    }
+
+    private void ResetStepOffset()
+    {
+        stepAnimationTime = 0f;
+
+        if (usesCanvasMovement && npcRectTransform != null)
+        {
+            var position = npcRectTransform.anchoredPosition;
+            position.y = fixedAnchoredY;
+            npcRectTransform.anchoredPosition = position;
+            return;
+        }
+
+        var worldPosition = transform.position;
+        worldPosition.y = fixedY;
+        transform.position = worldPosition;
+    }
+
+    private void CacheVisualReferences()
     {
         if (npcSpriteRenderer == null)
         {
@@ -239,6 +392,65 @@ public class NpcMovementController : MonoBehaviour
         {
             sideSprite = npcSpriteRenderer.sprite;
         }
+
+        if (npcImage == null)
+        {
+            npcImage = GetComponent<Image>();
+        }
+
+        if (npcImage == null)
+        {
+            npcImage = GetComponentInChildren<Image>(true);
+        }
+
+        if (npcRectTransform == null)
+        {
+            npcRectTransform = GetComponent<RectTransform>();
+        }
+
+        usesCanvasMovement = npcImage != null && npcRectTransform != null;
+
+        if (sideSprite == null && npcImage != null)
+        {
+            sideSprite = npcImage.sprite;
+        }
+    }
+
+    private void ApplyRenderOrder()
+    {
+        if (usesCanvasMovement)
+        {
+            ApplyCanvasRenderOrder();
+            return;
+        }
+
+        ApplySpriteRenderOrder();
+    }
+
+    private void ApplyCanvasRenderOrder()
+    {
+        if (!applyCanvasSiblingIndex || npcRectTransform == null || npcRectTransform.parent == null)
+        {
+            return;
+        }
+
+        var maxSiblingIndex = Mathf.Max(0, npcRectTransform.parent.childCount - 1);
+        npcRectTransform.SetSiblingIndex(Mathf.Clamp(canvasSiblingIndex, 0, maxSiblingIndex));
+    }
+
+    private void ApplySpriteRenderOrder()
+    {
+        if (!applySpriteSortingOrder || npcSpriteRenderer == null)
+        {
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(spriteSortingLayerName))
+        {
+            npcSpriteRenderer.sortingLayerName = spriteSortingLayerName;
+        }
+
+        npcSpriteRenderer.sortingOrder = spriteSortingOrder;
     }
 
     private void CacheFallbackSprites()
@@ -343,12 +555,20 @@ public class NpcMovementController : MonoBehaviour
 
     private void SetSprite(Sprite sprite)
     {
-        if (npcSpriteRenderer == null || sprite == null)
+        if (sprite == null)
         {
             return;
         }
 
-        npcSpriteRenderer.sprite = sprite;
+        if (npcSpriteRenderer != null)
+        {
+            npcSpriteRenderer.sprite = sprite;
+        }
+
+        if (npcImage != null)
+        {
+            npcImage.sprite = sprite;
+        }
     }
 
     private void DisableAnimatorForStaticSpritesIfNeeded()
@@ -363,6 +583,6 @@ public class NpcMovementController : MonoBehaviour
 
     private bool HasStaticSpriteSetup()
     {
-        return npcSpriteRenderer != null && frontSprite != null;
+        return (npcSpriteRenderer != null || npcImage != null) && frontSprite != null;
     }
 }

@@ -43,6 +43,7 @@ public class CaseManager : MonoBehaviour
     {
         if (CurrentCase == null)
         {
+            Debug.LogWarning("[CaseManager] Submissao de decisao ignorada porque nao ha caso ativo. Clique nos botoes Aprovar/Reprovar apenas durante o atendimento.", this);
             return;
         }
 
