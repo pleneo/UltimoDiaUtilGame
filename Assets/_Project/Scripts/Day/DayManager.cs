@@ -67,6 +67,7 @@ public class DayManager : MonoBehaviour
     private bool warnedNpcMovementUnavailable;
     private NpcDefinition lastRandomNpcDefinition;
     private CaseResolutionResult lastResolutionResult;
+    private bool isShowingDayNotice;
     private System.Random generatedCaseRandom;
     private int generatedCaseCounter;
 
@@ -125,7 +126,7 @@ public class DayManager : MonoBehaviour
 
     private void Update()
     {
-        if (!IsDayActive || CurrentDayConfig == null)
+        if (!IsDayActive || CurrentDayConfig == null || isShowingDayNotice)
         {
             return;
         }
@@ -169,6 +170,7 @@ public class DayManager : MonoBehaviour
         warnedNpcMovementUnavailable = false;
         lastRandomNpcDefinition = null;
         lastResolutionResult = null;
+        isShowingDayNotice = false;
 
         currentCases.Clear();
         pendingCaseQueue.Clear();
@@ -196,6 +198,7 @@ public class DayManager : MonoBehaviour
         {
             uiManager.BindDay(dayConfig);
             uiManager.HideDaySummary();
+            uiManager.HideDayStoryNotice();
             uiManager.HideCaseDialogue();
             uiManager.ShowCurrentCase(null);
             uiManager.ClearCaseFeedback();
@@ -457,6 +460,7 @@ public class DayManager : MonoBehaviour
         IsDayActive = false;
         IsWaitingForNextCase = false;
         hasPendingCaseResolution = false;
+        isShowingDayNotice = false;
         npcArrivedCenter = false;
         npcExitedDesk = false;
 
@@ -515,6 +519,12 @@ public class DayManager : MonoBehaviour
 
     private IEnumerator RunDayCaseFlow()
     {
+        yield return ShowStartOfDayNotice();
+        if (!IsDayActive)
+        {
+            yield break;
+        }
+
         while (IsDayActive && pendingCaseQueue.Count > 0)
         {
             CurrentCaseIndex = Mathf.Clamp(ResolvedCasesCount, 0, currentCases.Count - 1);
@@ -568,18 +578,36 @@ public class DayManager : MonoBehaviour
 
         if (IsDayActive)
         {
+            yield return ShowEndOfDayNotice();
+            if (!IsDayActive)
+            {
+                yield break;
+            }
+
             EndDay(DayEndReason.Completed);
         }
     }
 
     private IEnumerator RunInfiniteDayCaseFlow()
     {
+        yield return ShowStartOfDayNotice();
+        if (!IsDayActive)
+        {
+            yield break;
+        }
+
         var maxCases = GetTargetCaseCount(int.MaxValue);
         while (IsDayActive && RemainingTimeSeconds > 0f && ResolvedCasesCount < maxCases)
         {
             var nextQueueEntry = GetNextInfiniteQueueEntry();
             if (nextQueueEntry.caseDefinition == null)
             {
+                yield return ShowEndOfDayNotice();
+                if (!IsDayActive)
+                {
+                    yield break;
+                }
+
                 EndDay(DayEndReason.Completed);
                 yield break;
             }
@@ -624,8 +652,38 @@ public class DayManager : MonoBehaviour
 
         if (IsDayActive)
         {
+            yield return ShowEndOfDayNotice();
+            if (!IsDayActive)
+            {
+                yield break;
+            }
+
             EndDay(ResolvedCasesCount >= maxCases ? DayEndReason.Completed : DayEndReason.TimeExpired);
         }
+    }
+
+    private IEnumerator ShowStartOfDayNotice()
+    {
+        if (uiManager == null)
+        {
+            yield break;
+        }
+
+        isShowingDayNotice = true;
+        yield return uiManager.ShowDayStartNotice(CurrentDayConfig);
+        isShowingDayNotice = false;
+    }
+
+    private IEnumerator ShowEndOfDayNotice()
+    {
+        if (uiManager == null)
+        {
+            yield break;
+        }
+
+        isShowingDayNotice = true;
+        yield return uiManager.ShowDayEndNotice(CurrentDayConfig);
+        isShowingDayNotice = false;
     }
 
     private IEnumerator StartCasePresentation(QueuedStudentCase queueEntry)

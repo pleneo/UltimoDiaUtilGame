@@ -17,6 +17,10 @@ public class DayConfig : ScriptableObject
     [TextArea(2, 4)]
     public string dayIntro;
 
+    [Header("Story Notice")]
+    [TextArea(4, 10)]
+    public string startOfDayNotice;
+
     public float workDurationSeconds = 300f;
     public EconomyConfig economyConfig;
 

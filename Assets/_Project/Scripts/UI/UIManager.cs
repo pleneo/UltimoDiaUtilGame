@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private RulebookPanel rulebookPanel;
     [SerializeField] private NoticeBoardPanel noticeBoardPanel;
     [SerializeField] private DaySummaryPanel daySummaryPanel;
+    [SerializeField] private DayStoryNoticePanel dayStoryNoticePanel;
     [SerializeField] private CaseDialoguePanel caseDialoguePanel;
     [SerializeField] private TMP_Text caseFeedbackText;
     [SerializeField] private GameObject caseFeedbackRoot;
@@ -33,6 +34,11 @@ public class UIManager : MonoBehaviour
             daySummaryPanel = FindObjectOfType<DaySummaryPanel>(true);
         }
 
+        if (dayStoryNoticePanel == null)
+        {
+            dayStoryNoticePanel = FindObjectOfType<DayStoryNoticePanel>(true);
+        }
+
         if (caseDialoguePanel == null)
         {
             caseDialoguePanel = FindObjectOfType<CaseDialoguePanel>(true);
@@ -52,6 +58,11 @@ public class UIManager : MonoBehaviour
         if (daySummaryPanel == null)
         {
             daySummaryPanel = CreateFallbackDaySummary(canvas.transform);
+        }
+
+        if (dayStoryNoticePanel == null)
+        {
+            dayStoryNoticePanel = CreateFallbackDayStoryNoticePanel(canvas.transform);
         }
 
         if (caseDialoguePanel == null)
@@ -113,6 +124,37 @@ public class UIManager : MonoBehaviour
         if (daySummaryPanel != null)
         {
             daySummaryPanel.Hide();
+        }
+    }
+
+    public IEnumerator ShowDayStartNotice(DayConfig dayConfig)
+    {
+        if (dayStoryNoticePanel == null)
+        {
+            yield break;
+        }
+
+        var title = dayConfig != null ? dayConfig.dayLabel : "Dia";
+        var body = DayStoryNoticeLibrary.GetStartNotice(dayConfig);
+        yield return dayStoryNoticePanel.ShowNotice(title, body, "Iniciar expediente");
+    }
+
+    public IEnumerator ShowDayEndNotice(DayConfig dayConfig)
+    {
+        if (dayStoryNoticePanel == null)
+        {
+            yield break;
+        }
+
+        var body = DayStoryNoticeLibrary.GetEndNotice(dayConfig);
+        yield return dayStoryNoticePanel.ShowNotice("Comunicado", body, "Continuar");
+    }
+
+    public void HideDayStoryNotice()
+    {
+        if (dayStoryNoticePanel != null)
+        {
+            dayStoryNoticePanel.Hide();
         }
     }
 
@@ -263,6 +305,114 @@ public class UIManager : MonoBehaviour
 
         var panel = root.AddComponent<DaySummaryPanel>();
         panel.Configure(root, title, body, buttonObject.GetComponent<Button>(), buttonText);
+        root.SetActive(false);
+        return panel;
+    }
+
+    private DayStoryNoticePanel CreateFallbackDayStoryNoticePanel(Transform parent)
+    {
+        var root = CreatePanelRoot("RuntimeDayStoryNoticePanel", parent);
+        var rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(0.5f, 0.5f);
+        rootRect.anchorMax = new Vector2(0.5f, 0.5f);
+        rootRect.pivot = new Vector2(0.5f, 0.5f);
+        rootRect.sizeDelta = new Vector2(900f, 560f);
+        rootRect.anchoredPosition = Vector2.zero;
+
+        var image = root.AddComponent<Image>();
+        image.color = new Color(0.035f, 0.04f, 0.05f, 0.97f);
+
+        var headerObject = new GameObject("HeaderBand", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        headerObject.transform.SetParent(root.transform, false);
+        var headerRect = headerObject.GetComponent<RectTransform>();
+        headerRect.anchorMin = new Vector2(0f, 1f);
+        headerRect.anchorMax = new Vector2(1f, 1f);
+        headerRect.pivot = new Vector2(0.5f, 1f);
+        headerRect.anchoredPosition = Vector2.zero;
+        headerRect.sizeDelta = new Vector2(0f, 78f);
+        headerObject.GetComponent<Image>().color = new Color(0.10f, 0.17f, 0.19f, 1f);
+
+        var title = CreateText("TitleText", root.transform, new Vector2(0f, -18f), new Vector2(780f, 46f), 32, TextAlignmentOptions.Center);
+        title.rectTransform.anchorMin = new Vector2(0.5f, 1f);
+        title.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        title.rectTransform.pivot = new Vector2(0.5f, 1f);
+        title.color = new Color(0.96f, 0.91f, 0.72f, 1f);
+
+        var subtitle = CreateText("SubtitleText", root.transform, new Vector2(0f, -52f), new Vector2(780f, 24f), 17, TextAlignmentOptions.Center);
+        subtitle.rectTransform.anchorMin = new Vector2(0.5f, 1f);
+        subtitle.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        subtitle.rectTransform.pivot = new Vector2(0.5f, 1f);
+        subtitle.color = new Color(0.75f, 0.85f, 0.79f, 1f);
+        subtitle.text = "Comunicado interno";
+
+        var introBubble = new GameObject("IntroBubble", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        introBubble.transform.SetParent(root.transform, false);
+        var introRect = introBubble.GetComponent<RectTransform>();
+        introRect.anchorMin = new Vector2(0.5f, 1f);
+        introRect.anchorMax = new Vector2(0.5f, 1f);
+        introRect.pivot = new Vector2(0.5f, 1f);
+        introRect.anchoredPosition = new Vector2(0f, -104f);
+        introRect.sizeDelta = new Vector2(760f, 126f);
+        introBubble.GetComponent<Image>().color = new Color(0.13f, 0.18f, 0.17f, 0.98f);
+
+        var introLabel = CreateText("IntroLabelText", introBubble.transform, new Vector2(24f, -16f), new Vector2(700f, 24f), 18, TextAlignmentOptions.TopLeft);
+        introLabel.color = new Color(0.96f, 0.82f, 0.42f, 1f);
+        introLabel.text = "ATENDIMENTO";
+
+        var introText = CreateText("IntroText", introBubble.transform, new Vector2(24f, -46f), new Vector2(700f, 66f), 22, TextAlignmentOptions.TopLeft);
+        introText.textWrappingMode = TextWrappingModes.Normal;
+
+        var newsBubble = new GameObject("NewsBubble", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        newsBubble.transform.SetParent(root.transform, false);
+        var newsRect = newsBubble.GetComponent<RectTransform>();
+        newsRect.anchorMin = new Vector2(0.5f, 1f);
+        newsRect.anchorMax = new Vector2(0.5f, 1f);
+        newsRect.pivot = new Vector2(0.5f, 1f);
+        newsRect.anchoredPosition = new Vector2(0f, -254f);
+        newsRect.sizeDelta = new Vector2(760f, 196f);
+        newsBubble.GetComponent<Image>().color = new Color(0.18f, 0.16f, 0.11f, 0.98f);
+
+        var newsAccent = new GameObject("NewsAccent", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        newsAccent.transform.SetParent(newsBubble.transform, false);
+        var newsAccentRect = newsAccent.GetComponent<RectTransform>();
+        newsAccentRect.anchorMin = new Vector2(0f, 0f);
+        newsAccentRect.anchorMax = new Vector2(0f, 1f);
+        newsAccentRect.pivot = new Vector2(0f, 0.5f);
+        newsAccentRect.sizeDelta = new Vector2(10f, 0f);
+        newsAccentRect.anchoredPosition = Vector2.zero;
+        newsAccent.GetComponent<Image>().color = new Color(0.78f, 0.56f, 0.22f, 1f);
+
+        var newsText = CreateText("NewsText", newsBubble.transform, new Vector2(28f, -24f), new Vector2(704f, 150f), 22, TextAlignmentOptions.TopLeft);
+        newsText.textWrappingMode = TextWrappingModes.Normal;
+
+        var body = CreateText("BodyText", root.transform, new Vector2(0f, -100f), new Vector2(720f, 310f), 24, TextAlignmentOptions.TopLeft);
+        body.rectTransform.anchorMin = new Vector2(0.5f, 1f);
+        body.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        body.rectTransform.pivot = new Vector2(0.5f, 1f);
+        body.textWrappingMode = TextWrappingModes.Normal;
+        body.gameObject.SetActive(false);
+
+        var buttonObject = new GameObject("ContinueButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(root.transform, false);
+        var buttonRect = buttonObject.GetComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(0.5f, 0f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0f);
+        buttonRect.pivot = new Vector2(0.5f, 0f);
+        buttonRect.anchoredPosition = new Vector2(0f, 34f);
+        buttonRect.sizeDelta = new Vector2(280f, 56f);
+
+        var buttonImage = buttonObject.GetComponent<Image>();
+        buttonImage.color = new Color(0.20f, 0.49f, 0.34f, 1f);
+
+        var buttonText = CreateText("ContinueButtonText", buttonObject.transform, Vector2.zero, new Vector2(256f, 44f), 22, TextAlignmentOptions.Center);
+        buttonText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        buttonText.raycastTarget = false;
+
+        var panel = root.AddComponent<DayStoryNoticePanel>();
+        panel.Configure(root, title, body, buttonObject.GetComponent<Button>(), buttonText);
+        panel.ConfigureSeparatedBubbles(introBubble, introText, newsBubble, newsText);
         root.SetActive(false);
         return panel;
     }
