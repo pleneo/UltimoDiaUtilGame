@@ -26,18 +26,23 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private RectTransform rootCanvas;
+    private RectTransform originalParent;
 
     private Vector2 posicaoOrigem;
+    private Vector2 posicaoOrigemNoCanvas;
     private Vector2 offsetDrag;
     private bool estaArrastando;
     private Coroutine corotinaRetorno;
+    private int originalSiblingIndex;
 
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         ConfigureAudioSource();
-        posicaoOrigem = rectTransform.anchoredPosition;
+        originalParent = rectTransform.parent as RectTransform;
+        originalSiblingIndex = rectTransform.GetSiblingIndex();
+        SaveOriginalLayout();
 
         var canvas = GetComponentInParent<Canvas>();
         if (canvas != null)
@@ -57,9 +62,18 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         {
             StopCoroutine(corotinaRetorno);
             corotinaRetorno = null;
+            RestoreOriginalParent();
+            rectTransform.anchoredPosition = posicaoOrigem;
         }
 
         estaArrastando = true;
+        SaveOriginalLayout();
+
+        if (rootCanvas != null && rectTransform.parent != rootCanvas)
+        {
+            rectTransform.SetParent(rootCanvas, true);
+        }
+
         transform.SetAsLastSibling();
         canvasGroup.blocksRaycasts = false;
         transform.localScale = Vector3.one * escalaArrastando;
@@ -140,16 +154,17 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
     private IEnumerator RetornarAOrigem()
     {
-        while (Vector2.Distance(rectTransform.anchoredPosition, posicaoOrigem) > 0.5f)
+        while (Vector2.Distance(rectTransform.anchoredPosition, posicaoOrigemNoCanvas) > 0.5f)
         {
             rectTransform.anchoredPosition = Vector2.MoveTowards(
                 rectTransform.anchoredPosition,
-                posicaoOrigem,
+                posicaoOrigemNoCanvas,
                 velocidadeRetorno * Time.deltaTime);
 
             yield return null;
         }
 
+        RestoreOriginalParent();
         rectTransform.anchoredPosition = posicaoOrigem;
         PlayReturnSound();
         corotinaRetorno = null;
@@ -175,5 +190,37 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         }
 
         audioSource.PlayOneShot(returnClip, returnVolume);
+    }
+
+    private void RestoreOriginalParent()
+    {
+        if (originalParent == null)
+        {
+            return;
+        }
+
+        rectTransform.SetParent(originalParent, true);
+        rectTransform.SetSiblingIndex(Mathf.Clamp(originalSiblingIndex, 0, originalParent.childCount - 1));
+    }
+
+    private void SaveOriginalLayout()
+    {
+        originalParent = rectTransform.parent as RectTransform;
+        originalSiblingIndex = rectTransform.GetSiblingIndex();
+        posicaoOrigem = rectTransform.anchoredPosition;
+
+        if (rootCanvas != null && originalParent != null)
+        {
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, rectTransform.position);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                rootCanvas,
+                screenPoint,
+                null,
+                out posicaoOrigemNoCanvas);
+        }
+        else
+        {
+            posicaoOrigemNoCanvas = posicaoOrigem;
+        }
     }
 }
