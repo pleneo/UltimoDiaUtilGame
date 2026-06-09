@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StudentCaseDefinition
   caseId: day02_withdrawal_unauthorized
   caseTitle: Trancamento com pagamento nao autorizado
-  applicantName: Marina Costa
+  applicantName: Bruno Alves
   requestType: 2
   npcDefinition: {fileID: 0}
   npcDialogue: "Quero trancar C\xE1lculo."
@@ -39,9 +39,9 @@ MonoBehaviour:
     definition: {fileID: 11400000, guid: a1522de25a0436d1c8483d2560adc483, type: 2}
     fields:
     - key: nome
-      value: Marina Costa
+      value: Bruno Alves
     - key: cpf
-      value: 123.456.789-00
+      value: 987.654.321-00
     - key: valor
       value: 50
     - key: status
@@ -110,9 +110,9 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 7bde6ce78d87f1849bf99ff827804f30, type: 2}
     fields:
     - key: nome
-      value: Marina Costa
+      value: Bruno Alves
     - key: cpf
-      value: 123.456.789-00
+      value: 987.654.321-00
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0
@@ -122,11 +122,11 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 48f615c100fcc3e42bb3800e98921f47, type: 2}
     fields:
     - key: nome
-      value: Marina Costa
+      value: Bruno Alves
     - key: ra
-      value: 2026017
+      value: 2026034
     - key: curso
-      value: Ciencia da Computacao
+      value: Engenharia Civil
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0
@@ -136,11 +136,11 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 42d3e2a317c29b207b549da93ddd02cd, type: 2}
     fields:
     - key: nome
-      value: Marina Costa
+      value: Bruno Alves
     - key: ra
-      value: 2026017
+      value: 2026034
     - key: curso
-      value: Ciencia da Computacao
+      value: Engenharia Civil
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0

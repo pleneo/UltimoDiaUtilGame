@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StudentCaseDefinition
   caseId: day01_enrollment_name_mismatch
   caseTitle: Matricula com nome divergente
-  applicantName: Plinio Gomes
+  applicantName: Rafael Moura
   requestType: 0
   npcDefinition: {fileID: 11400000, guid: 863df7cb69c93c2648641d213599e5e3, type: 2}
   npcDialogue: Aluno solicita matricula, mas um dos documentos tem nome divergente.
@@ -68,7 +68,7 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 7bde6ce78d87f1849bf99ff827804f30, type: 2}
     fields:
     - key: nome
-      value: Plinio Gomes
+      value: Rafael Moura
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0
@@ -78,11 +78,11 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: b1331e4f7e76d5f4eac0d6c94e7baa73, type: 2}
     fields:
     - key: nome
-      value: Plinio Gomes
+      value: Rafael Moura
     - key: ra
-      value: 2026001
+      value: 2026012
     - key: curso
-      value: Ciencia da Computacao
+      value: Arquitetura e Urbanismo
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0
@@ -92,11 +92,11 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 48f615c100fcc3e42bb3800e98921f47, type: 2}
     fields:
     - key: nome
-      value: Plinio Gomis
+      value: Rafael Maura
     - key: ra
-      value: 2026001
+      value: 2026012
     - key: curso
-      value: Ciencia da Computacao
+      value: Arquitetura e Urbanismo
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0

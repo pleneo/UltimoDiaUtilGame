@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StudentCaseDefinition
   caseId: day01_enrollment_missing_document
   caseTitle: Matricula sem historico
-  applicantName: Plinio Gomes
+  applicantName: Ana Beatriz Lima
   requestType: 0
   npcDefinition: {fileID: 11400000, guid: 13274b2881c01dc77aa51b84facf4321, type: 2}
   npcDialogue: Aluno solicita matricula, mas nao trouxe o historico escolar.
@@ -67,7 +67,7 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 7bde6ce78d87f1849bf99ff827804f30, type: 2}
     fields:
     - key: nome
-      value: Plinio Gomes
+      value: Ana Beatriz Lima
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0
@@ -77,11 +77,11 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 48f615c100fcc3e42bb3800e98921f47, type: 2}
     fields:
     - key: nome
-      value: Plinio Gomes
+      value: Ana Beatriz Lima
     - key: ra
-      value: 2026001
+      value: 2026008
     - key: curso
-      value: Ciencia da Computacao
+      value: Direito
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0

@@ -606,6 +606,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   hudController: {fileID: 0}
   rulebookPanel: {fileID: 0}
+  rulebookController: {fileID: 0}
   noticeBoardPanel: {fileID: 0}
   daySummaryPanel: {fileID: 0}
   dayStoryNoticePanel: {fileID: 0}
@@ -2234,7 +2235,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2288,7 +2289,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 727628113}
   m_LocalRotation: {x: -0.00036093328, y: -0.059081893, z: -0.006098247, w: 0.99823445}
-  m_LocalPosition: {x: 0, y: 0, z: 0.1085}
+  m_LocalPosition: {x: 0, y: 0, z: -0.6843}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2296,8 +2297,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: -0.083, y: -6.774, z: -0.695}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -253.19312, y: -23.020884}
-  m_SizeDelta: {x: 437.2205, y: 630.5755}
+  m_AnchoredPosition: {x: -259.9337, y: -28.4133}
+  m_SizeDelta: {x: 494.5003, y: 641.5244}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &794902494
 GameObject:
