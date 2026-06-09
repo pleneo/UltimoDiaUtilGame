@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private HUDController hudController;
     [SerializeField] private RulebookPanel rulebookPanel;
+    [SerializeField] private RulebookController rulebookController;
     [SerializeField] private NoticeBoardPanel noticeBoardPanel;
     [SerializeField] private DaySummaryPanel daySummaryPanel;
     [SerializeField] private DayStoryNoticePanel dayStoryNoticePanel;
@@ -33,6 +34,11 @@ public class UIManager : MonoBehaviour
         if (daySummaryPanel == null)
         {
             daySummaryPanel = FindObjectOfType<DaySummaryPanel>(true);
+        }
+
+        if (rulebookController == null)
+        {
+            rulebookController = FindObjectOfType<RulebookController>(true);
         }
 
         if (dayStoryNoticePanel == null)
@@ -88,6 +94,11 @@ public class UIManager : MonoBehaviour
         if (rulebookPanel != null)
         {
             rulebookPanel.SetRules(dayConfig != null ? dayConfig.rulebookEntries : null);
+        }
+
+        if (rulebookController != null)
+        {
+            rulebookController.DefinirRegras(dayConfig != null ? dayConfig.rulebookEntries : null);
         }
 
         if (noticeBoardPanel != null)

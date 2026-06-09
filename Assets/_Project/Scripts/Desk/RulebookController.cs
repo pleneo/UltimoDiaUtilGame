@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -93,6 +94,51 @@ public class RulebookController : MonoBehaviour
 
         textoRegras.text = regras != null && regras.Count > 0
             ? string.Join("\n\n", regras)
+            : "Nenhuma regra definida para hoje.";
+    }
+
+    public void DefinirRegras(IReadOnlyList<RuleDefinition> regras)
+    {
+        if (textoRegras == null)
+        {
+            return;
+        }
+
+        if (regras == null || regras.Count == 0)
+        {
+            textoRegras.text = "Nenhuma regra definida para hoje.";
+            return;
+        }
+
+        var builder = new StringBuilder();
+        var displayedCount = 0;
+
+        for (var index = 0; index < regras.Count; index++)
+        {
+            var regra = regras[index];
+            if (regra == null)
+            {
+                continue;
+            }
+
+            displayedCount++;
+            builder.AppendLine($"{displayedCount}. {regra.ruleTitle}");
+
+            if (!string.IsNullOrWhiteSpace(regra.ruleBody))
+            {
+                builder.AppendLine(regra.ruleBody.Trim());
+            }
+
+            if (regra.highlighted)
+            {
+                builder.AppendLine("ATENCAO: regra obrigatoria do expediente.");
+            }
+
+            builder.AppendLine();
+        }
+
+        textoRegras.text = builder.Length > 0
+            ? builder.ToString().TrimEnd()
             : "Nenhuma regra definida para hoje.";
     }
 
