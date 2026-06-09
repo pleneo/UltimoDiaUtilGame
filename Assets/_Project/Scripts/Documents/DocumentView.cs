@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -52,7 +53,9 @@ public class DocumentView : MonoBehaviour
             record.TryGetFieldValue(fieldKey, out var value) &&
             !string.IsNullOrWhiteSpace(value))
         {
-            target.text = value;
+            target.text = string.Equals(fieldKey, "status", StringComparison.OrdinalIgnoreCase)
+                ? value.ToUpperInvariant()
+                : value;
             return;
         }
 

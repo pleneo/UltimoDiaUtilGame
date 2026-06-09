@@ -15,5 +15,5 @@ MonoBehaviour:
   ruleTitle: Trancamento com taxa
   ruleBody: Pedidos de trancamento exigem Carteira de Identidade, Comprovante de
     Matricula, Formulario de Trancamento e pagamento na maquininha. A via deve retornar
-    com status autorizado.
+    com status AUTORIZADO.
   highlighted: 1

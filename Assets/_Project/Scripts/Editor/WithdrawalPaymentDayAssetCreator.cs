@@ -118,7 +118,7 @@ public static class WithdrawalPaymentDayAssetCreator
             "O pedido de trancamento está em ordem e a maquininha autorizou o pagamento.",
             1);
 
-        studentCase.paymentReceiptTemplate = CreatePaymentReceipt(paymentReceipt, "Marina Costa", "123.456.789-00", 50, "autorizado");
+        studentCase.paymentReceiptTemplate = CreatePaymentReceipt(paymentReceipt, "Marina Costa", "123.456.789-00", 50, "AUTORIZADO");
 
         studentCase.documents.Clear();
         studentCase.documents.Add(CreateIdentityCard(identityCard, "Marina Costa", "123.456.789-00"));
@@ -144,7 +144,7 @@ public static class WithdrawalPaymentDayAssetCreator
             "Os documentos estão corretos, mas o pagamento voltou nao autorizado.",
             1);
 
-        studentCase.paymentReceiptTemplate = CreatePaymentReceipt(paymentReceipt, "Marina Costa", "123.456.789-00", 50, "nao autorizado");
+        studentCase.paymentReceiptTemplate = CreatePaymentReceipt(paymentReceipt, "Marina Costa", "123.456.789-00", 50, "NAO AUTORIZADO");
 
         studentCase.documents.Clear();
         studentCase.documents.Add(CreateIdentityCard(identityCard, "Marina Costa", "123.456.789-00"));
@@ -175,7 +175,7 @@ public static class WithdrawalPaymentDayAssetCreator
         studentCase.hasDecisionOverride = false;
         studentCase.overriddenCorrectDecision = DecisionType.Approve;
         studentCase.overrideReason = string.Empty;
-        studentCase.mistakeIsCritical = true;
+        studentCase.mistakeIsCritical = false;
         studentCase.decisionDocumentType = DocumentType.WithdrawalForm;
         studentCase.requiresPaymentProcessing = true;
         studentCase.expectedPaymentAmount = 50;
@@ -211,7 +211,7 @@ public static class WithdrawalPaymentDayAssetCreator
         {
             documentType = DocumentType.PaymentReceipt,
             fieldKey = "status",
-            expectedValue = "autorizado",
+            expectedValue = "AUTORIZADO",
             description = "Pagamento nao autorizado na maquininha."
         });
     }
@@ -227,7 +227,7 @@ public static class WithdrawalPaymentDayAssetCreator
         }
 
         rule.ruleTitle = "Trancamento com taxa";
-        rule.ruleBody = "Pedidos de trancamento exigem Carteira de Identidade, Comprovante de Matricula, Formulario de Trancamento e pagamento na maquininha. A via deve retornar com status autorizado.";
+        rule.ruleBody = "Pedidos de trancamento exigem Carteira de Identidade, Comprovante de Matricula, Formulario de Trancamento e pagamento na maquininha. A via deve retornar com status AUTORIZADO.";
         rule.highlighted = true;
         EditorUtility.SetDirty(rule);
         return rule;

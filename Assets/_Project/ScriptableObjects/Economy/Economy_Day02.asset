@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 825dfd1d51d4a54fbb2dc605f146ad9b, type: 3}
   m_Name: Economy_Day02
   m_EditorClassIdentifier: Assembly-CSharp::EconomyConfig
-  initialMoney: 0
+  initialMoney: 30
   initialDebt: 0
   payPerCorrectDecision: 16
   penaltyPerMistake: 7

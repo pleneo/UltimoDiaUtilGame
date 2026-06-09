@@ -31,7 +31,7 @@ MonoBehaviour:
   hasDecisionOverride: 0
   overriddenCorrectDecision: 0
   overrideReason: 
-  mistakeIsCritical: 1
+  mistakeIsCritical: 0
   decisionDocumentType: 5
   requiresPaymentProcessing: 1
   expectedPaymentAmount: 50
@@ -45,7 +45,7 @@ MonoBehaviour:
     - key: valor
       value: 50
     - key: status
-      value: nao autorizado
+      value: NAO AUTORIZADO
     hasValidStamp: 1
     isSuspicious: 0
     isFake: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   expectedFieldValueRules:
   - documentType: 6
     fieldKey: status
-    expectedValue: autorizado
+    expectedValue: AUTORIZADO
     description: Pagamento nao autorizado na maquininha.
   documents:
   - definition: {fileID: 11400000, guid: 7bde6ce78d87f1849bf99ff827804f30, type: 2}
