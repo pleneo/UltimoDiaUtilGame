@@ -4,12 +4,18 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(RectTransform))]
-public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+[RequireComponent(typeof(AudioSource))]
+public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerDownHandler
 {
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text bodyText;
     [SerializeField] private DocumentView documentView;
     [SerializeField] private float selectedScale = 1.03f;
+    
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip paperPickupClip;
+    [SerializeField] [Range(0f, 1f)] private float paperPickupVolume = 1f;
 
     private static DraggableDocument currentSelected;
 
@@ -27,6 +33,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
     private Vector2 lastValidAnchoredPosition;
     private Vector3 baseScale = Vector3.one;
     private bool interactionEnabled = true;
+    private float lastPaperSoundTime = -1f;
 
     private void Awake()
     {
@@ -39,8 +46,38 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
         parentRectTransform = ResolveDragRoot();
         baseScale = transform.localScale;
+        ConfigureAudioSource();
 
         ResolveDocumentView();
+    }
+    
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (!interactionEnabled)
+        {
+            return;
+        }
+
+        if (eventData.button != PointerEventData.InputButton.Left)
+        {
+            return;
+        }
+
+        TocarSomDePapel();
+    }
+    
+    private void TocarSomDePapel()
+    {
+        if (audioSource != null && paperPickupClip != null)
+        {
+            if (Time.unscaledTime - lastPaperSoundTime < 0.05f)
+            {
+                return;
+            }
+
+            lastPaperSoundTime = Time.unscaledTime;
+            audioSource.PlayOneShot(paperPickupClip, paperPickupVolume);
+        }
     }
 
     public void Bind(DocumentRecord record)
@@ -81,6 +118,7 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
         transform.SetAsLastSibling();
         Select();
+        TocarSomDePapel();
         IsDragging = true;
         lastValidAnchoredPosition = rectTransform.anchoredPosition;
         canvasGroup.blocksRaycasts = false;
@@ -211,6 +249,19 @@ public class DraggableDocument : MonoBehaviour, IBeginDragHandler, IDragHandler,
         }
 
         return null;
+    }
+
+    private void ConfigureAudioSource()
+    {
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
     }
 
     private void EnsureTextFields()

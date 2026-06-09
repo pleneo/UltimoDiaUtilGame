@@ -26,6 +26,11 @@ public class RulebookController : MonoBehaviour
     [Tooltip("Duração da animação de abrir/fechar em segundos.")]
     [SerializeField] private float duracaoAnimacao = 0.2f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip closeClip;
+    [SerializeField] [Range(0f, 1f)] private float closeVolume = 1f;
+
     // -------------------------------------------------------------------------
     // Estado
     // -------------------------------------------------------------------------
@@ -39,6 +44,8 @@ public class RulebookController : MonoBehaviour
 
     private void Awake()
     {
+        ConfigureAudioSource();
+
         // Começa fechado
         painelAberto.SetActive(false);
         painelAberto.transform.localScale = Vector3.zero;
@@ -69,6 +76,7 @@ public class RulebookController : MonoBehaviour
     {
         if (!estaAberto) return;
         estaAberto = false;
+        PlayCloseSound();
 
         if (corotinaAnimacao != null) StopCoroutine(corotinaAnimacao);
         corotinaAnimacao = StartCoroutine(AnimarEscala(painelAberto, Vector3.zero, fecharAoFinal: true));
@@ -129,5 +137,31 @@ public class RulebookController : MonoBehaviour
         }
 
         corotinaAnimacao = null;
+    }
+
+    private void ConfigureAudioSource()
+    {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+    }
+
+    private void PlayCloseSound()
+    {
+        if (audioSource == null || closeClip == null)
+        {
+            return;
+        }
+
+        audioSource.PlayOneShot(closeClip, closeVolume);
     }
 }

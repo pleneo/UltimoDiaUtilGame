@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(CanvasGroup))]
+[RequireComponent(typeof(AudioSource))]
 public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     [Header("Tipo do Carimbo")]
@@ -16,6 +17,11 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     [Header("Feedback Visual")]
     [Tooltip("Escala do carimbo enquanto esta sendo arrastado.")]
     [SerializeField] private float escalaArrastando = 1.1f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip returnClip;
+    [SerializeField] [Range(0f, 1f)] private float returnVolume = 1f;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
@@ -30,6 +36,7 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
+        ConfigureAudioSource();
         posicaoOrigem = rectTransform.anchoredPosition;
 
         var canvas = GetComponentInParent<Canvas>();
@@ -144,6 +151,29 @@ public class DraggableStamp : MonoBehaviour, IPointerDownHandler, IDragHandler, 
         }
 
         rectTransform.anchoredPosition = posicaoOrigem;
+        PlayReturnSound();
         corotinaRetorno = null;
+    }
+
+    private void ConfigureAudioSource()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+    }
+
+    private void PlayReturnSound()
+    {
+        if (audioSource == null || returnClip == null)
+        {
+            return;
+        }
+
+        audioSource.PlayOneShot(returnClip, returnVolume);
     }
 }
