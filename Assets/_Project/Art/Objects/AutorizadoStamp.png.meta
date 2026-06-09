@@ -1,0 +1,1313 @@
+fileFormatVersion: 2
+guid: e86d981f4330ccb4cb9de075b3da8425
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -826882770855220625
+    second: AutorizadoStamp_0
+  - first:
+      213: 3603447408544215645
+    second: AutorizadoStamp_1
+  - first:
+      213: -3447733221299397507
+    second: AutorizadoStamp_2
+  - first:
+      213: 1988322861580298017
+    second: AutorizadoStamp_3
+  - first:
+      213: 3784443564667270017
+    second: AutorizadoStamp_4
+  - first:
+      213: -6720722111384415533
+    second: AutorizadoStamp_5
+  - first:
+      213: 6680049833959813624
+    second: AutorizadoStamp_6
+  - first:
+      213: -472716680236419579
+    second: AutorizadoStamp_7
+  - first:
+      213: -8672465917092178735
+    second: AutorizadoStamp_8
+  - first:
+      213: 7806467791052634796
+    second: AutorizadoStamp_9
+  - first:
+      213: -5539846245534328955
+    second: AutorizadoStamp_10
+  - first:
+      213: 5142492186356896417
+    second: AutorizadoStamp_11
+  - first:
+      213: -1156135708994036550
+    second: AutorizadoStamp_12
+  - first:
+      213: -93620846346230838
+    second: AutorizadoStamp_13
+  - first:
+      213: 3475264915033105568
+    second: AutorizadoStamp_14
+  - first:
+      213: -6305312908636187034
+    second: AutorizadoStamp_15
+  - first:
+      213: 5255667883800369589
+    second: AutorizadoStamp_16
+  - first:
+      213: 4689615659762080514
+    second: AutorizadoStamp_17
+  - first:
+      213: 3408063308612712431
+    second: AutorizadoStamp_18
+  - first:
+      213: -6993545077641034143
+    second: AutorizadoStamp_19
+  - first:
+      213: -3525206675044459652
+    second: AutorizadoStamp_20
+  - first:
+      213: -3435874477013216112
+    second: AutorizadoStamp_21
+  - first:
+      213: 2070850109104958111
+    second: AutorizadoStamp_22
+  - first:
+      213: 749736293752907352
+    second: AutorizadoStamp_23
+  - first:
+      213: -6705693722596717406
+    second: AutorizadoStamp_24
+  - first:
+      213: -632882533907388317
+    second: AutorizadoStamp_25
+  - first:
+      213: -75427401284532938
+    second: AutorizadoStamp_26
+  - first:
+      213: -8977281955996988031
+    second: AutorizadoStamp_27
+  - first:
+      213: 4810554532482011269
+    second: AutorizadoStamp_28
+  - first:
+      213: 2844367219759041988
+    second: AutorizadoStamp_29
+  - first:
+      213: 3478165367972041996
+    second: AutorizadoStamp_30
+  - first:
+      213: -271059247881135541
+    second: AutorizadoStamp_31
+  - first:
+      213: -5268791948234079577
+    second: AutorizadoStamp_32
+  - first:
+      213: -2018496871592677475
+    second: AutorizadoStamp_33
+  - first:
+      213: -8151108175879777061
+    second: AutorizadoStamp_34
+  - first:
+      213: -4740823628719976321
+    second: AutorizadoStamp_35
+  - first:
+      213: 6506573759112559068
+    second: AutorizadoStamp_36
+  - first:
+      213: -2550213383512576009
+    second: AutorizadoStamp_37
+  - first:
+      213: 1211468685144322218
+    second: AutorizadoStamp_38
+  - first:
+      213: 6489740476933964032
+    second: AutorizadoStamp_39
+  - first:
+      213: -4501577702054003132
+    second: AutorizadoStamp_40
+  - first:
+      213: 7597351599030244051
+    second: AutorizadoStamp_41
+  - first:
+      213: -4033003102843021931
+    second: AutorizadoStamp_42
+  - first:
+      213: -8040134114639253243
+    second: AutorizadoStamp_43
+  - first:
+      213: 3309102342342619948
+    second: AutorizadoStamp_44
+  - first:
+      213: 4050826945975669721
+    second: AutorizadoStamp_45
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AutorizadoStamp_0
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 0
+        width: 1515
+        height: 1024
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6aa84c30825684f0800000000000000
+      internalID: -826882770855220625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_1
+      rect:
+        serializedVersion: 2
+        x: 1196
+        y: 775
+        width: 16
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5274118354020230800000000000000
+      internalID: 3603447408544215645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_2
+      rect:
+        serializedVersion: 2
+        x: 1223
+        y: 783
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7cd220f6e03720d0800000000000000
+      internalID: -3447733221299397507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_3
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 770
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1272847ab11f79b10800000000000000
+      internalID: 1988322861580298017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_4
+      rect:
+        serializedVersion: 2
+        x: 1127
+        y: 766
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18371880f5b058430800000000000000
+      internalID: 3784443564667270017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_5
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 765
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d291dcf8d23bb2a0800000000000000
+      internalID: -6720722111384415533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_6
+      rect:
+        serializedVersion: 2
+        x: 1223
+        y: 775
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f1f41b7eed44bc50800000000000000
+      internalID: 6680049833959813624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_7
+      rect:
+        serializedVersion: 2
+        x: 1277
+        y: 772
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5063b131fa29079f0800000000000000
+      internalID: -472716680236419579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_8
+      rect:
+        serializedVersion: 2
+        x: 1093
+        y: 751
+        width: 14
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d4d905723635a780800000000000000
+      internalID: -8672465917092178735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_9
+      rect:
+        serializedVersion: 2
+        x: 1111
+        y: 754
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caa78347815265c60800000000000000
+      internalID: 7806467791052634796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_10
+      rect:
+        serializedVersion: 2
+        x: 1158
+        y: 759
+        width: 27
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58715a8e0338e13b0800000000000000
+      internalID: -5539846245534328955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_11
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 622
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2560cb56dcd5740800000000000000
+      internalID: 5142492186356896417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_12
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 599
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abc1449b2b494ffe0800000000000000
+      internalID: -1156135708994036550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_13
+      rect:
+        serializedVersion: 2
+        x: 1282
+        y: 584
+        width: 15
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac326f5165463bef0800000000000000
+      internalID: -93620846346230838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_14
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 578
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a42de8070f9a3030800000000000000
+      internalID: 3475264915033105568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_15
+      rect:
+        serializedVersion: 2
+        x: 1299
+        y: 583
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6661e0b01570f78a0800000000000000
+      internalID: -6305312908636187034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_16
+      rect:
+        serializedVersion: 2
+        x: 1279
+        y: 562
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b999573812efe840800000000000000
+      internalID: 5255667883800369589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_17
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 543
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20b5a3d889cd41140800000000000000
+      internalID: 4689615659762080514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_18
+      rect:
+        serializedVersion: 2
+        x: 1313
+        y: 551
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe737e1c58fdb4f20800000000000000
+      internalID: 3408063308612712431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_19
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 535
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16646862ecfe1fe90800000000000000
+      internalID: -6993545077641034143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_20
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 543
+        width: 14
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7b9326d433f31fc0800000000000000
+      internalID: -3525206675044459652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_21
+      rect:
+        serializedVersion: 2
+        x: 1300
+        y: 539
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 094dbc00e525150d0800000000000000
+      internalID: -3435874477013216112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_22
+      rect:
+        serializedVersion: 2
+        x: 1323
+        y: 535
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9aa740d3332dbc10800000000000000
+      internalID: 2070850109104958111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_23
+      rect:
+        serializedVersion: 2
+        x: 1291
+        y: 529
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8562c58df29976a00800000000000000
+      internalID: 749736293752907352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_24
+      rect:
+        serializedVersion: 2
+        x: 1290
+        y: 515
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ac4e0c661790f2a0800000000000000
+      internalID: -6705693722596717406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_25
+      rect:
+        serializedVersion: 2
+        x: 1291
+        y: 510
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 368a6e540bc8737f0800000000000000
+      internalID: -632882533907388317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_26
+      rect:
+        serializedVersion: 2
+        x: 1295
+        y: 503
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 635ca1c9d2704fef0800000000000000
+      internalID: -75427401284532938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_27
+      rect:
+        serializedVersion: 2
+        x: 1305
+        y: 488
+        width: 13
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18d864cef994a6380800000000000000
+      internalID: -8977281955996988031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_28
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 491
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5805c312cd582c240800000000000000
+      internalID: 4810554532482011269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_29
+      rect:
+        serializedVersion: 2
+        x: 1284
+        y: 455
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cdc0809ae8397720800000000000000
+      internalID: 2844367219759041988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_30
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 447
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c051a0c59fce44030800000000000000
+      internalID: 3478165367972041996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_31
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 310
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4ad5f8dc010d3cf0800000000000000
+      internalID: -271059247881135541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_32
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 307
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a2c11a63ad71e6b0800000000000000
+      internalID: -5268791948234079577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_33
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 313
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9f2b7c2acbdcf3e0800000000000000
+      internalID: -2018496871592677475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_34
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 312
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd457eaec4271ee80800000000000000
+      internalID: -8151108175879777061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_35
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 313
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f701e531706353eb0800000000000000
+      internalID: -4740823628719976321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_36
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 310
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd938c05c5efb4a50800000000000000
+      internalID: 6506573759112559068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_37
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 310
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ff29467072db9cd0800000000000000
+      internalID: -2550213383512576009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_38
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 309
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa0798ab95000d010800000000000000
+      internalID: 1211468685144322218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_39
+      rect:
+        serializedVersion: 2
+        x: 417
+        y: 310
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0018f146490301a50800000000000000
+      internalID: 6489740476933964032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_40
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 315
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44e704c2eee2781c0800000000000000
+      internalID: -4501577702054003132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_41
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 311
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d291fdd6073f6960800000000000000
+      internalID: 7597351599030244051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_42
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 309
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5955ef4bb05e708c0800000000000000
+      internalID: -4033003102843021931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_43
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 303
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5017d660f94bb6090800000000000000
+      internalID: -8040134114639253243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_44
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 302
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c23beb84c0b4ced20800000000000000
+      internalID: 3309102342342619948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AutorizadoStamp_45
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 302
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d3d57925ad673830800000000000000
+      internalID: 4050826945975669721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AutorizadoStamp_0: -826882770855220625
+      AutorizadoStamp_1: 3603447408544215645
+      AutorizadoStamp_10: -5539846245534328955
+      AutorizadoStamp_11: 5142492186356896417
+      AutorizadoStamp_12: -1156135708994036550
+      AutorizadoStamp_13: -93620846346230838
+      AutorizadoStamp_14: 3475264915033105568
+      AutorizadoStamp_15: -6305312908636187034
+      AutorizadoStamp_16: 5255667883800369589
+      AutorizadoStamp_17: 4689615659762080514
+      AutorizadoStamp_18: 3408063308612712431
+      AutorizadoStamp_19: -6993545077641034143
+      AutorizadoStamp_2: -3447733221299397507
+      AutorizadoStamp_20: -3525206675044459652
+      AutorizadoStamp_21: -3435874477013216112
+      AutorizadoStamp_22: 2070850109104958111
+      AutorizadoStamp_23: 749736293752907352
+      AutorizadoStamp_24: -6705693722596717406
+      AutorizadoStamp_25: -632882533907388317
+      AutorizadoStamp_26: -75427401284532938
+      AutorizadoStamp_27: -8977281955996988031
+      AutorizadoStamp_28: 4810554532482011269
+      AutorizadoStamp_29: 2844367219759041988
+      AutorizadoStamp_3: 1988322861580298017
+      AutorizadoStamp_30: 3478165367972041996
+      AutorizadoStamp_31: -271059247881135541
+      AutorizadoStamp_32: -5268791948234079577
+      AutorizadoStamp_33: -2018496871592677475
+      AutorizadoStamp_34: -8151108175879777061
+      AutorizadoStamp_35: -4740823628719976321
+      AutorizadoStamp_36: 6506573759112559068
+      AutorizadoStamp_37: -2550213383512576009
+      AutorizadoStamp_38: 1211468685144322218
+      AutorizadoStamp_39: 6489740476933964032
+      AutorizadoStamp_4: 3784443564667270017
+      AutorizadoStamp_40: -4501577702054003132
+      AutorizadoStamp_41: 7597351599030244051
+      AutorizadoStamp_42: -4033003102843021931
+      AutorizadoStamp_43: -8040134114639253243
+      AutorizadoStamp_44: 3309102342342619948
+      AutorizadoStamp_45: 4050826945975669721
+      AutorizadoStamp_5: -6720722111384415533
+      AutorizadoStamp_6: 6680049833959813624
+      AutorizadoStamp_7: -472716680236419579
+      AutorizadoStamp_8: -8672465917092178735
+      AutorizadoStamp_9: 7806467791052634796
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
