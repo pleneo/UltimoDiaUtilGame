@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 /// <summary>
 /// Controla o menu principal do jogo.
@@ -13,6 +14,11 @@ public class MainMenuController : MonoBehaviour
     // Referências aos painéis — conecte no Inspector
     // -------------------------------------------------------------------------
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip somClique;
+    [SerializeField] [Range(0f, 1f)] private float volumeClique = 1f;
+    
     [Header("Painéis")]
     [SerializeField] private GameObject painelMenu;
     [SerializeField] private GameObject painelComoJogar;
@@ -60,6 +66,12 @@ public class MainMenuController : MonoBehaviour
     /// </summary>
     public void IniciarJogo()
     {
+        TocarClique();
+        StartCoroutine(IniciarJogoComDelay());    }
+    
+    private IEnumerator IniciarJogoComDelay()
+    {
+        yield return new WaitForSeconds(0.15f);
         SceneManager.LoadScene(nomeCenaJogo);
     }
 
@@ -69,6 +81,7 @@ public class MainMenuController : MonoBehaviour
     /// </summary>
     public void AbrirComoJogar()
     {
+        TocarClique();
         MostrarPainel(painelComoJogar);
     }
 
@@ -78,6 +91,7 @@ public class MainMenuController : MonoBehaviour
     /// </summary>
     public void AbrirConfiguracoes()
     {
+        TocarClique();
         MostrarPainel(painelConfiguracoes);
     }
 
@@ -91,6 +105,7 @@ public class MainMenuController : MonoBehaviour
     /// </summary>
     public void Voltar()
     {
+        TocarClique();
         MostrarPainel(painelMenu);
     }
 
@@ -110,6 +125,14 @@ public class MainMenuController : MonoBehaviour
         // Salva o valor para que persista entre sessões do jogo
         PlayerPrefs.SetFloat(ChaveVolume, novoVolume);
         PlayerPrefs.Save();
+    }
+    
+    private void TocarClique()
+    {
+        if (audioSource != null && somClique != null)
+        {
+            audioSource.PlayOneShot(somClique, volumeClique);
+        }
     }
 
     // -------------------------------------------------------------------------

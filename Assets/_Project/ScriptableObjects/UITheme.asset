@@ -24,7 +24,7 @@ MonoBehaviour:
   feedbackWarning: {r: 0.95, g: 0.75, b: 0.1, a: 1}
   feedbackInfo: {r: 0.22, g: 0.55, b: 0.85, a: 1}
   textPrimary: {r: 0.88, g: 0.85, b: 0.78, a: 1}
-  textSecondary: {r: 0, g: 0, b: 0, a: 1}
+  textSecondary: {r: 1, g: 1, b: 1, a: 1}
   textDisabled: {r: 0.08627451, g: 0.08627451, b: 0.08627451, a: 1}
   textOnDark: {r: 0.95, g: 0.93, b: 0.88, a: 1}
   textHeading: {r: 0.95, g: 0.9, b: 0.75, a: 1}
