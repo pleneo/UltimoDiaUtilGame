@@ -547,12 +547,28 @@ MonoBehaviour:
     prefab: {fileID: 5176305209275541040, guid: c9fcbce7a1b1b4849aabeb7ff5811e4e, type: 3}
   - documentType: 3
     prefab: {fileID: 5176305209275541040, guid: 6039ef2bfa1b03e48a1685c27e87e6d5, type: 3}
-  documentSpawnPoints: []
-  spawnPoints: []
-  spawnPositions:
-  - {x: -240, y: 80}
-  - {x: 0, y: 40}
-  - {x: 240, y: 0}
+  - documentType: 5
+    prefab: {fileID: 5176305209275541040, guid: 17f48a06769e49b4a5cc012df395785b, type: 3}
+  - documentType: 6
+    prefab: {fileID: 1200097208009775666, guid: af614f2ad76c43d69d4435f463829fa4, type: 3}
+  documentSpawnPoints:
+  - documentType: 1
+    spawnPoint: {fileID: 7063011615294401502, guid: 752925a03ef0fa846930f77af1077cae, type: 3}
+  - documentType: 2
+    spawnPoint: {fileID: 7063011615294401502, guid: c9fcbce7a1b1b4849aabeb7ff5811e4e, type: 3}
+  - documentType: 3
+    spawnPoint: {fileID: 7063011615294401502, guid: 6039ef2bfa1b03e48a1685c27e87e6d5, type: 3}
+  - documentType: 5
+    spawnPoint: {fileID: 7063011615294401502, guid: 17f48a06769e49b4a5cc012df395785b, type: 3}
+  - documentType: 6
+    spawnPoint: {fileID: 1423340762}
+  spawnPoints:
+  - {fileID: 1423340762}
+  - {fileID: 1579424614}
+  - {fileID: 422384356}
+  - {fileID: 422384356}
+  - {fileID: 422384356}
+  spawnPositions: []
   animateDocumentEntry: 1
   entryStaggerSeconds: 0.34
   entryDurationSeconds: 0.42
@@ -619,7 +635,7 @@ MonoBehaviour:
   economyManager: {fileID: 149090566}
   uiManager: {fileID: 149090565}
   daySequence:
-  - {fileID: 11400000, guid: 8e04c1f923dcb1141914ae36cf9598ba, type: 2}
+  - {fileID: 11400000, guid: 08c25ce04a7b0e22e9c3fa3ac3c48070, type: 2}
   - {fileID: 11400000, guid: 40d6de0c9969b90eaa6602d1bd10ae7e, type: 2}
   - {fileID: 11400000, guid: abdcdc148bfb1ced88494aea3e5d4f14, type: 2}
   - {fileID: 11400000, guid: e2115b6528450dd5da90de79f718f8ba, type: 2}

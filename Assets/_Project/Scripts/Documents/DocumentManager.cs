@@ -43,6 +43,7 @@ public class DocumentManager : MonoBehaviour
     private readonly List<DocumentRecord> currentDocuments = new List<DocumentRecord>();
     private readonly List<DraggableDocument> spawnedViews = new List<DraggableDocument>();
     private readonly List<Coroutine> runningAnimations = new List<Coroutine>();
+    private RectTransform resolvedDocumentParentRect;
 
     public event Action DocumentsChanged;
 
@@ -139,15 +140,16 @@ public class DocumentManager : MonoBehaviour
 
         DraggableDocument view = null;
         var prefab = ResolvePrefab(record.GetDocumentType());
+        var parentTransform = GetDocumentParentTransform();
 
         if (prefab != null)
         {
-            view = Instantiate(prefab, documentParent != null ? documentParent : transform);
+            view = Instantiate(prefab, parentTransform, false);
         }
         else
         {
             var documentObject = new GameObject("Document", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(CanvasGroup), typeof(DraggableDocument));
-            documentObject.transform.SetParent(documentParent != null ? documentParent : transform, false);
+            documentObject.transform.SetParent(parentTransform, false);
             ConfigureGeneratedDocumentObject(documentObject);
             view = documentObject.GetComponent<DraggableDocument>();
         }
@@ -269,7 +271,7 @@ public class DocumentManager : MonoBehaviour
 
     private void ResolveDocumentParentIfNeeded()
     {
-        if (documentParent != null)
+        if (resolvedDocumentParentRect != null)
         {
             return;
         }
@@ -278,6 +280,24 @@ public class DocumentManager : MonoBehaviour
         if (documentSpawnRoot != null)
         {
             documentParent = documentSpawnRoot.transform;
+        }
+
+        resolvedDocumentParentRect = documentParent as RectTransform;
+        if (resolvedDocumentParentRect == null && documentParent != null)
+        {
+            resolvedDocumentParentRect = documentParent.parent as RectTransform;
+        }
+
+        if (resolvedDocumentParentRect == null)
+        {
+            resolvedDocumentParentRect = GetComponentInParent<Canvas>() != null
+                ? GetComponentInParent<Canvas>().transform as RectTransform
+                : null;
+        }
+
+        if (resolvedDocumentParentRect == null)
+        {
+            Debug.LogWarning("DocumentManager nao encontrou um RectTransform valido para spawn de documentos. Os documentos podem aparecer desalinhados.", this);
         }
     }
 
@@ -354,6 +374,11 @@ public class DocumentManager : MonoBehaviour
                 continue;
             }
 
+            if (!mapping.spawnPoint.gameObject.scene.IsValid())
+            {
+                continue;
+            }
+
             if (mapping.documentType != documentType)
             {
                 continue;
@@ -379,13 +404,42 @@ public class DocumentManager : MonoBehaviour
             return false;
         }
 
+        if (!spawnPoint.gameObject.scene.IsValid())
+        {
+            return false;
+        }
+
         ApplySpawnPointTransform(documentRectTransform, spawnPoint);
         return true;
     }
 
     private static void ApplySpawnPointTransform(RectTransform documentRectTransform, RectTransform spawnPoint)
     {
-        documentRectTransform.position = spawnPoint.position;
+        if (documentRectTransform == null || spawnPoint == null)
+        {
+            return;
+        }
+
+        var parentRect = documentRectTransform.parent as RectTransform;
+        if (parentRect != null)
+        {
+            var canvas = parentRect.GetComponentInParent<Canvas>();
+            var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, RectTransformUtility.WorldToScreenPoint(camera, spawnPoint.position), camera, out var localPoint))
+            {
+                documentRectTransform.anchoredPosition = localPoint;
+            }
+            else
+            {
+                documentRectTransform.anchoredPosition = spawnPoint.anchoredPosition;
+            }
+        }
+        else
+        {
+            documentRectTransform.position = spawnPoint.position;
+        }
+
         documentRectTransform.rotation = spawnPoint.rotation;
     }
 
@@ -404,5 +458,20 @@ public class DocumentManager : MonoBehaviour
         }
 
         return new Vector2(32f * index, -32f * index);
+    }
+
+    private Transform GetDocumentParentTransform()
+    {
+        if (resolvedDocumentParentRect != null)
+        {
+            return resolvedDocumentParentRect;
+        }
+
+        if (documentParent != null)
+        {
+            return documentParent;
+        }
+
+        return transform;
     }
 }
