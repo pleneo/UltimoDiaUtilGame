@@ -1,13 +1,16 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Controla o fluxo de pagamento via maquininha.
+/// A maquininha fica sempre presente na cena, mas só aparece e é usável
+/// quando o caso atual exige pagamento (requiresPaymentProcessing = true).
+/// Nos dias sem casos de pagamento (ex: Dia 1), ela simplesmente não é exibida.
+/// </summary>
 public class PaymentFlowController : MonoBehaviour
 {
-    [SerializeField, Min(1)] private int firstDayWithPaymentMachine = 2;
-    [SerializeField] private GameManager gameManager;
     [SerializeField] private CaseManager caseManager;
     [SerializeField] private DocumentManager documentManager;
-    [SerializeField] private DayManager dayManager;
     [SerializeField] private DraggablePaymentMachine paymentMachine;
     [SerializeField] private DocumentDefinition fallbackPaymentReceiptDefinition;
     [SerializeField, Min(0.1f)] private float machineProcessingDelaySeconds = 1.2f;
@@ -16,7 +19,10 @@ public class PaymentFlowController : MonoBehaviour
     public bool IsPaymentCompleted { get; private set; }
 
     private Coroutine paymentRoutine;
-    private int lastAppliedDayNumber = -1;
+
+    // -------------------------------------------------------------------------
+    // Unity lifecycle
+    // -------------------------------------------------------------------------
 
     private void Awake()
     {
@@ -25,19 +31,9 @@ public class PaymentFlowController : MonoBehaviour
             caseManager = FindObjectOfType<CaseManager>();
         }
 
-        if (gameManager == null)
-        {
-            gameManager = FindObjectOfType<GameManager>();
-        }
-
         if (documentManager == null)
         {
             documentManager = FindObjectOfType<DocumentManager>();
-        }
-
-        if (dayManager == null)
-        {
-            dayManager = FindObjectOfType<DayManager>();
         }
 
         if (paymentMachine == null)
@@ -45,7 +41,8 @@ public class PaymentFlowController : MonoBehaviour
             paymentMachine = FindObjectOfType<DraggablePaymentMachine>(true);
         }
 
-        RefreshPaymentMachineVisibility();
+        // Garante que a maquininha comece oculta (nenhum caso ativo ainda).
+        HideMachine();
     }
 
     private void OnEnable()
@@ -60,13 +57,6 @@ public class PaymentFlowController : MonoBehaviour
         {
             documentManager.DocumentsChanged += RefreshPaymentStateFromDocuments;
         }
-
-        if (gameManager != null)
-        {
-            lastAppliedDayNumber = gameManager.CurrentDayIndex;
-        }
-
-        SyncCurrentState();
     }
 
     private void OnDisable()
@@ -82,11 +72,6 @@ public class PaymentFlowController : MonoBehaviour
             documentManager.DocumentsChanged -= RefreshPaymentStateFromDocuments;
         }
 
-        if (gameManager != null)
-        {
-            lastAppliedDayNumber = -1;
-        }
-
         if (paymentRoutine != null)
         {
             StopCoroutine(paymentRoutine);
@@ -94,12 +79,24 @@ public class PaymentFlowController : MonoBehaviour
         }
     }
 
+    // -------------------------------------------------------------------------
+    // API pública
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Retorna true se o envio de documentos deve ser bloqueado enquanto
+    /// o pagamento do caso atual ainda não foi concluído.
+    /// </summary>
     public bool ShouldBlockDocumentSubmission()
     {
         var currentCase = caseManager != null ? caseManager.CurrentCase : null;
         return CaseDocumentRules.RequiresPayment(currentCase) && !IsPaymentCompleted;
     }
 
+    /// <summary>
+    /// Chamado pela DocumentSubmissionZone quando a maquininha é arrastada
+    /// para a área de entrega. Inicia o processamento do pagamento.
+    /// </summary>
     public bool TryStartPayment(DraggablePaymentMachine deliveredMachine)
     {
         if (deliveredMachine == null || !CanProcessCurrentCasePayment())
@@ -116,6 +113,87 @@ public class PaymentFlowController : MonoBehaviour
         paymentRoutine = StartCoroutine(ProcessPaymentRoutine(deliveredMachine));
         return true;
     }
+
+    // -------------------------------------------------------------------------
+    // Lógica de visibilidade por caso
+    // -------------------------------------------------------------------------
+
+    private void HandleCaseLoaded(StudentCaseDefinition caseDefinition)
+    {
+        if (paymentRoutine != null)
+        {
+            StopCoroutine(paymentRoutine);
+            paymentRoutine = null;
+        }
+
+        IsPaymentInProgress = false;
+        IsPaymentCompleted = CaseDocumentRules.RequiresPayment(caseDefinition) && HasPaymentReceiptDocument();
+
+        // Mostra a maquininha apenas quando o caso exige pagamento.
+        if (CaseDocumentRules.RequiresPayment(caseDefinition))
+        {
+            ShowMachine();
+        }
+        else
+        {
+            HideMachine();
+        }
+    }
+
+    private void HandleCaseResolved(CaseResolutionResult _)
+    {
+        IsPaymentInProgress = false;
+        IsPaymentCompleted = false;
+        HideMachine();
+    }
+
+    private void RefreshPaymentStateFromDocuments()
+    {
+        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
+        if (!CaseDocumentRules.RequiresPayment(currentCase))
+        {
+            IsPaymentCompleted = false;
+            return;
+        }
+
+        IsPaymentCompleted = HasPaymentReceiptDocument();
+    }
+
+    // -------------------------------------------------------------------------
+    // Controle de visibilidade da maquininha
+    // -------------------------------------------------------------------------
+
+    private void ShowMachine()
+    {
+        if (paymentMachine == null)
+        {
+            return;
+        }
+
+        if (!paymentMachine.gameObject.activeSelf)
+        {
+            paymentMachine.gameObject.SetActive(true);
+        }
+
+        paymentMachine.ReturnToOriginImmediate();
+        paymentMachine.SetVisible(true);
+        paymentMachine.SetInteractionEnabled(true);
+    }
+
+    private void HideMachine()
+    {
+        if (paymentMachine == null)
+        {
+            return;
+        }
+
+        paymentMachine.SetVisible(false);
+        paymentMachine.SetInteractionEnabled(false);
+    }
+
+    // -------------------------------------------------------------------------
+    // Processamento de pagamento
+    // -------------------------------------------------------------------------
 
     private bool CanProcessCurrentCasePayment()
     {
@@ -153,119 +231,9 @@ public class PaymentFlowController : MonoBehaviour
         paymentRoutine = null;
     }
 
-    private void HandleCaseLoaded(StudentCaseDefinition caseDefinition)
-    {
-        if (paymentRoutine != null)
-        {
-            StopCoroutine(paymentRoutine);
-            paymentRoutine = null;
-        }
-
-        IsPaymentInProgress = false;
-        IsPaymentCompleted = CaseDocumentRules.RequiresPayment(caseDefinition) && HasPaymentReceiptDocument();
-            RefreshPaymentMachineVisibility();
-    }
-
-    private void HandleCaseResolved(CaseResolutionResult _)
-    {
-        IsPaymentInProgress = false;
-        IsPaymentCompleted = false;
-        RefreshPaymentMachineVisibility();
-    }
-
-    private void RefreshPaymentStateFromDocuments()
-    {
-        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
-        if (!CaseDocumentRules.RequiresPayment(currentCase))
-        {
-            IsPaymentCompleted = false;
-            return;
-        }
-
-        IsPaymentCompleted = HasPaymentReceiptDocument();
-    }
-
-    private void RefreshPaymentMachineVisibility()
-    {
-        if (paymentMachine == null)
-        {
-            return;
-        }
-
-        paymentMachine.ReturnToOriginImmediate();
-
-        if (!IsPaymentMachineAllowed())
-        {
-            paymentMachine.SetVisible(false);
-            paymentMachine.SetInteractionEnabled(false);
-            paymentMachine.gameObject.SetActive(false);
-            return;
-        }
-
-        if (!paymentMachine.gameObject.activeSelf)
-        {
-            paymentMachine.gameObject.SetActive(true);
-        }
-
-        paymentMachine.SetVisible(true);
-        paymentMachine.SetInteractionEnabled(true);
-    }
-
-    private void SyncCurrentState()
-    {
-        SyncPaymentMachineByDay();
-        RefreshPaymentStateFromDocuments();
-        RefreshPaymentMachineVisibility();
-    }
-
-    private void Update()
-    {
-        SyncPaymentMachineByDay();
-    }
-
-    private void SyncPaymentMachineByDay()
-    {
-        var currentDayIndex = gameManager != null ? gameManager.CurrentDayIndex : -1;
-
-        if (currentDayIndex == lastAppliedDayNumber)
-        {
-            return;
-        }
-
-        lastAppliedDayNumber = currentDayIndex;
-        ApplyPaymentMachineState();
-    }
-
-    private void ApplyPaymentMachineState()
-    {
-        if (paymentMachine == null)
-        {
-            return;
-        }
-
-        if (!IsPaymentMachineAllowed())
-        {
-            paymentMachine.ReturnToOriginImmediate();
-            paymentMachine.SetVisible(false);
-            paymentMachine.SetInteractionEnabled(false);
-            paymentMachine.gameObject.SetActive(false);
-            return;
-        }
-
-        if (!paymentMachine.gameObject.activeSelf)
-        {
-            paymentMachine.gameObject.SetActive(true);
-        }
-
-        paymentMachine.ReturnToOriginImmediate();
-        paymentMachine.SetVisible(true);
-        paymentMachine.SetInteractionEnabled(true);
-    }
-
-    private bool IsPaymentMachineAllowed()
-    {
-        return gameManager != null && (gameManager.CurrentDayIndex + 1) >= firstDayWithPaymentMachine;
-    }
+    // -------------------------------------------------------------------------
+    // Helpers de documento
+    // -------------------------------------------------------------------------
 
     private bool HasPaymentReceiptDocument()
     {

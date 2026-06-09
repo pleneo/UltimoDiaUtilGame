@@ -9,6 +9,96 @@ public static class WithdrawalPaymentDayAssetCreator
     private const string DaysFolder = "Assets/_Project/ScriptableObjects/Days";
     private const string RulesFolder = "Assets/_Project/ScriptableObjects/Rules";
     private const string EconomyFolder = "Assets/_Project/ScriptableObjects/Economy";
+    private const string GenerationFolder = "Assets/_Project/ScriptableObjects/Cases/Generation";
+
+    // -------------------------------------------------------------------------
+    // Menu: Withdrawal Generation Config
+    // -------------------------------------------------------------------------
+
+    [MenuItem("Tools/Ultimo Dia Util/Withdrawal/Create Withdrawal Generation Config (Day 02)")]
+    public static void CreateWithdrawalGenerationConfigDay02()
+    {
+        CreateWithdrawalGenerationConfig("WithdrawalGen_Day02.asset", randomSeed: 55002);
+    }
+
+    [MenuItem("Tools/Ultimo Dia Util/Withdrawal/Create Withdrawal Generation Config (Day 03)")]
+    public static void CreateWithdrawalGenerationConfigDay03()
+    {
+        CreateWithdrawalGenerationConfig("WithdrawalGen_Day03.asset", randomSeed: 55003);
+    }
+
+    private static void CreateWithdrawalGenerationConfig(string fileName, int randomSeed)
+    {
+        EnsureFolder("Assets/_Project/ScriptableObjects", "Days");
+
+        var assetPath = (DaysFolder + "/" + fileName).Replace("\\", "/");
+        var config = AssetDatabase.LoadAssetAtPath<WithdrawalCaseGenerationConfig>(assetPath);
+        if (config == null)
+        {
+            config = ScriptableObject.CreateInstance<WithdrawalCaseGenerationConfig>();
+            AssetDatabase.CreateAsset(config, assetPath);
+        }
+
+        config.totalGeneratedCases = 4;
+        config.shuffleGeneratedCases = true;
+        config.useFreshRandomSeed = false;
+        config.randomSeed = randomSeed;
+        config.paymentAmount = 150;
+        config.referenceDateIso = "2026-05-22";
+
+        // Carrega as DocumentDefinitions existentes
+        config.withdrawalFormDefinition = LoadDocument("Document_WithdrawalForm.asset");
+        config.identityCardDefinition = LoadDocument("Document_IdentityCard.asset");
+        config.paymentReceiptDefinition = LoadDocument("Document_PaymentReceipt.asset");
+
+        // Garante ao menos 1 autorizado e 1 negado
+        config.minimumCases.Clear();
+        config.minimumCases.Add(new WithdrawalMinimumCaseRule
+        {
+            caseType = WithdrawalGeneratedCaseType.AuthorizedPayment,
+            minimumCount = 1
+        });
+        config.minimumCases.Add(new WithdrawalMinimumCaseRule
+        {
+            caseType = WithdrawalGeneratedCaseType.UnauthorizedPayment,
+            minimumCount = 1
+        });
+
+        // Pesos para o preenchimento aleatório
+        config.caseTypeWeights.Clear();
+        config.caseTypeWeights.Add(new WithdrawalCaseTypeWeight
+        {
+            caseType = WithdrawalGeneratedCaseType.AuthorizedPayment,
+            weight = 10
+        });
+        config.caseTypeWeights.Add(new WithdrawalCaseTypeWeight
+        {
+            caseType = WithdrawalGeneratedCaseType.UnauthorizedPayment,
+            weight = 8
+        });
+        config.caseTypeWeights.Add(new WithdrawalCaseTypeWeight
+        {
+            caseType = WithdrawalGeneratedCaseType.MissingWithdrawalForm,
+            weight = 4
+        });
+
+        // Nomes padrão
+        config.maleFirstNames.Clear();
+        config.maleFirstNames.AddRange(new[] { "Carlos", "Rafael", "Bruno", "Lucas", "Diego" });
+        config.femaleFirstNames.Clear();
+        config.femaleFirstNames.AddRange(new[] { "Marina", "Julia", "Fernanda", "Patricia", "Camila" });
+        config.lastNames.Clear();
+        config.lastNames.AddRange(new[] { "Costa", "Oliveira", "Lima", "Pereira", "Souza", "Ramos" });
+        config.courses.Clear();
+        config.courses.AddRange(new[] { "Ciencia da Computacao", "Engenharia Civil", "Administracao", "Direito", "Medicina" });
+
+        EditorUtility.SetDirty(config);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Debug.Log($"[WithdrawalPaymentDayAssetCreator] {fileName} criado/atualizado em {assetPath}");
+        Selection.activeObject = config;
+    }
 
     [MenuItem("Tools/Ultimo Dia Util/Day 2/Create Withdrawal Payment Documents")]
     public static void CreateWithdrawalPaymentDocuments()

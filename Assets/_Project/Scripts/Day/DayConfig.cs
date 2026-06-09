@@ -28,6 +28,10 @@ public class DayConfig : ScriptableObject
     public bool useInfiniteGeneratedCases = false;
     public EnrollmentCaseGenerationConfig enrollmentGenerationConfig;
 
+    [Tooltip("Configuração para geração dinâmica de casos de trancamento com pagamento. " +
+             "Deixe vazio para não gerar casos de trancamento neste dia.")]
+    public WithdrawalCaseGenerationConfig withdrawalGenerationConfig;
+
     [Header("Case Queue")]
     [Tooltip("Quantidade de atendimentos no expediente. Use 5 para o MVP.")]
     [Min(1)] public int maxCasesForDay = 5;

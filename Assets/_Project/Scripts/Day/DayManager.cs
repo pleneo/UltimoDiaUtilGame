@@ -244,6 +244,17 @@ public class DayManager : MonoBehaviour
             }
         }
 
+        // Casos de trancamento com pagamento — mesclados com os de matrícula na mesma pool.
+        // Para adicionar trancamento a um dia, basta atribuir withdrawalGenerationConfig no DayConfig.
+        if (dayConfig.withdrawalGenerationConfig != null)
+        {
+            var withdrawalCases = WithdrawalCaseGenerator.GenerateCases(dayConfig.withdrawalGenerationConfig);
+            for (var index = 0; index < withdrawalCases.Count; index++)
+            {
+                AddCaseIfValid(generatedCasesForDay, withdrawalCases[index]);
+            }
+        }
+
         var queueRandom = CreateQueueRandom(dayConfig);
 
         if (manualCases.Count == 0 && generatedCasesForDay.Count == 0)
