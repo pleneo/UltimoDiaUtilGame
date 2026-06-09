@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [Serializable]
 public class DocumentPrefabMapping
@@ -20,6 +23,13 @@ public class DocumentSpawnPointMapping
 
 public class DocumentManager : MonoBehaviour
 {
+    private const string FallbackDocumentPrefabPath = "Assets/_Project/Prefabs/Documents/DocumentGenericFallback.prefab";
+    private const string IdentityCardPrefabPath = "Assets/_Project/Prefabs/Documents/DocumentIdentityCard.prefab";
+    private const string SchoolTranscriptPrefabPath = "Assets/_Project/Prefabs/Documents/DocumentSchoolTranscript.prefab";
+    private const string EnrollmentProofPrefabPath = "Assets/_Project/Prefabs/Documents/DocumentEnrollmentProof.prefab";
+    private const string WithdrawalFormPrefabPath = "Assets/_Project/Prefabs/Documents/DocumentWithdrawalForm.prefab";
+    private const string PaymentReceiptPrefabPath = "Assets/_Project/Prefabs/Documents/DocumentPaymentReceipt.prefab";
+
     [SerializeField] private Transform documentParent;
     [SerializeField] private DraggableDocument fallbackDocumentPrefab;
     [SerializeField] private List<DocumentPrefabMapping> documentPrefabs = new List<DocumentPrefabMapping>();
@@ -53,6 +63,18 @@ public class DocumentManager : MonoBehaviour
     private void Awake()
     {
         ResolveDocumentParentIfNeeded();
+    }
+
+    private void OnValidate()
+    {
+        ResolveDocumentParentIfNeeded();
+        AutoConfigureKnownDocumentPrefabs();
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            EditorUtility.SetDirty(this);
+        }
+#endif
     }
 
     public void LoadCase(StudentCaseDefinition caseDefinition)
@@ -330,6 +352,74 @@ public class DocumentManager : MonoBehaviour
         var image = documentObject.GetComponent<Image>();
         image.color = new Color(0.98f, 0.96f, 0.82f, 1f);
     }
+
+    private void AutoConfigureKnownDocumentPrefabs()
+    {
+#if UNITY_EDITOR
+        fallbackDocumentPrefab = LoadPrefabIfNeeded(fallbackDocumentPrefab, FallbackDocumentPrefabPath);
+
+        EnsurePrefabMapping(DocumentType.IdentityCard, IdentityCardPrefabPath);
+        EnsurePrefabMapping(DocumentType.SchoolTranscript, SchoolTranscriptPrefabPath);
+        EnsurePrefabMapping(DocumentType.EnrollmentProof, EnrollmentProofPrefabPath);
+        EnsurePrefabMapping(DocumentType.WithdrawalForm, WithdrawalFormPrefabPath);
+        EnsurePrefabMapping(DocumentType.PaymentReceipt, PaymentReceiptPrefabPath);
+#endif
+    }
+
+#if UNITY_EDITOR
+    private void EnsurePrefabMapping(DocumentType documentType, string assetPath)
+    {
+        var prefab = LoadPrefabIfNeeded(GetConfiguredPrefab(documentType), assetPath);
+        if (prefab == null)
+        {
+            return;
+        }
+
+        for (var index = 0; index < documentPrefabs.Count; index++)
+        {
+            if (documentPrefabs[index].documentType == documentType)
+            {
+                documentPrefabs[index].prefab = prefab;
+                return;
+            }
+        }
+
+        documentPrefabs.Add(new DocumentPrefabMapping
+        {
+            documentType = documentType,
+            prefab = prefab
+        });
+    }
+
+    private DraggableDocument GetConfiguredPrefab(DocumentType documentType)
+    {
+        if (documentPrefabs == null)
+        {
+            return null;
+        }
+
+        for (var index = 0; index < documentPrefabs.Count; index++)
+        {
+            var mapping = documentPrefabs[index];
+            if (mapping != null && mapping.documentType == documentType && mapping.prefab != null)
+            {
+                return mapping.prefab;
+            }
+        }
+
+        return null;
+    }
+
+    private static DraggableDocument LoadPrefabIfNeeded(DraggableDocument currentPrefab, string assetPath)
+    {
+        if (currentPrefab != null)
+        {
+            return currentPrefab;
+        }
+
+        return AssetDatabase.LoadAssetAtPath<DraggableDocument>(assetPath);
+    }
+#endif
 
     private DraggableDocument ResolvePrefab(DocumentType documentType)
     {
