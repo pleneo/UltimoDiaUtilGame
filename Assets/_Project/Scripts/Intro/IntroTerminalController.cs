@@ -45,7 +45,7 @@ public class IntroTerminalController : MonoBehaviour
             "Alerta: Dividas de Mensalidade Detectadas!",
             "Bloqueio de Formatura: Ativo.",
             "Carregando Rotinas de Trabalho Diario...",
-            "Sistema Pronto. Acessando 'ULTIMOS DIAS UTEIS'..."
+            "Sistema Pronto. Acessando 'ULTIMO DIA UTIL'..."
         };
     }
 
