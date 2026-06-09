@@ -32,6 +32,9 @@ public class StudentCaseDefinition : ScriptableObject
     [Header("Dialogue Before Documents")]
     public List<CaseDialogueLine> preDocumentDialogue = new List<CaseDialogueLine>();
 
+    [Header("Dialogue After Decision")]
+    public List<CaseDialogueLine> postDecisionDialogue = new List<CaseDialogueLine>();
+
     [TextArea(2, 5)]
     public string caseSummary;
 

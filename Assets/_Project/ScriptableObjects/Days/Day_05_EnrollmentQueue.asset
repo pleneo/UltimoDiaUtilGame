@@ -16,15 +16,17 @@ MonoBehaviour:
   dayLabel: Dia 5
   dayIntro: Ultimo dia do prototipo. Documentos vencidos entram na mistura e a pressao
     aumenta.
+  startOfDayNotice: 
   workDurationSeconds: 390
   economyConfig: {fileID: 11400000, guid: f1fccef9af019b7d5a77c0a6665ee8ac, type: 2}
   useInfiniteGeneratedCases: 0
   enrollmentGenerationConfig: {fileID: 11400000, guid: 89010eca40c319be58523628dbebeaef, type: 2}
-  maxCasesForDay: 9
+  maxCasesForDay: 4
   shuffleCaseQueue: 1
   useFixedQueueSeed: 0
   queueRandomSeed: 1005
   fixedCases: []
+  finalCase: {fileID: 11400000, guid: aa864c05d58df62adbc0d800354900ed, type: 2}
   includeManualCases: 0
   availableRequestTypes: 00000000
   rulebookEntries:

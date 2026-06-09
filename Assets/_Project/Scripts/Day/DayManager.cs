@@ -68,6 +68,7 @@ public class DayManager : MonoBehaviour
     private bool warnedNpcMovementUnavailable;
     private NpcDefinition lastRandomNpcDefinition;
     private CaseResolutionResult lastResolutionResult;
+    private StudentCaseDefinition lastPresentedCaseDefinition;
     private bool isShowingDayNotice;
     private System.Random generatedCaseRandom;
     private int generatedCaseCounter;
@@ -275,6 +276,12 @@ public class DayManager : MonoBehaviour
 
             var generatedIndex = (index - manualCases.Count) % generatedCasesForDay.Count;
             EnqueueCase(generatedCasesForDay[generatedIndex], null);
+        }
+
+        if (dayConfig.finalCase != null)
+        {
+            EnqueueCase(dayConfig.finalCase, null);
+            currentCases.Add(dayConfig.finalCase);
         }
 
         LogDaySetupDiagnostics();
@@ -562,6 +569,12 @@ public class DayManager : MonoBehaviour
                 yield return new WaitForSeconds(postDecisionDelaySeconds);
             }
 
+            if (uiManager != null &&
+                lastPresentedCaseDefinition?.postDecisionDialogue?.Count > 0)
+            {
+                yield return uiManager.PlayPostDecisionDialogue(lastPresentedCaseDefinition.postDecisionDialogue);
+            }
+
             yield return EndCasePresentation();
             if (!IsDayActive)
             {
@@ -645,6 +658,12 @@ public class DayManager : MonoBehaviour
                 yield return new WaitForSeconds(postDecisionDelaySeconds);
             }
 
+            if (uiManager != null &&
+                lastPresentedCaseDefinition?.postDecisionDialogue?.Count > 0)
+            {
+                yield return uiManager.PlayPostDecisionDialogue(lastPresentedCaseDefinition.postDecisionDialogue);
+            }
+
             yield return EndCasePresentation();
             if (!IsDayActive)
             {
@@ -696,6 +715,7 @@ public class DayManager : MonoBehaviour
             yield break;
         }
 
+        lastPresentedCaseDefinition = caseDefinition;
         LogQueue($"Caso ativo no balcao: '{caseDefinition.caseId}'.");
 
         if (ShouldUseNpcMovementFlow())

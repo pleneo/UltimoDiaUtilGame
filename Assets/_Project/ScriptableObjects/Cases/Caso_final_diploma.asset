@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3327ca22ddb3dfd328edcdeb6fdf9ccf, type: 3}
+  m_Name: Caso_final_diploma
+  m_EditorClassIdentifier: Assembly-CSharp::StudentCaseDefinition
+  caseId: case_final_diploma
+  caseTitle: Retirada de Diploma
+  applicantName: Estudante
+  requestType: 0
+  npcDefinition: {fileID: 11400000, guid: 13274b2881c01dc77aa51b84facf4321, type: 2}
+  npcDialogue: 
+  preDocumentDialogue:
+  - speaker: 0
+    text: Vim buscar meu diploma antes que fechem tudo.
+  - speaker: 1
+    text: Documento com foto.
+  - speaker: 0
+    text: Aqui.
+  postDecisionDialogue:
+  - speaker: 0
+    text: "Engra\xE7ado. Passei cinco anos reclamando deste lugar. Agora n\xE3o sei
+      quando vou v\xEA-lo de novo."
+  - speaker: 1
+    text: Vai sentir falta?
+  - speaker: 0
+    text: "Da biblioteca, do caf\xE9 ruim, das filas... talvez das pessoas."
+  caseSummary: 
+  referenceDateIso: 
+  requiresSupervisorReview: 0
+  hasDecisionOverride: 1
+  overriddenCorrectDecision: 0
+  overrideReason: 
+  mistakeIsCritical: 1
+  decisionDocumentType: 1
+  requiresPaymentProcessing: 0
+  expectedPaymentAmount: 0
+  paymentReceiptTemplate:
+    definition: {fileID: 0}
+    fields: []
+    hasValidStamp: 1
+    isSuspicious: 0
+    isFake: 0
+    issueDateIso: 
+    expiryDateIso: 
+    notes: 
+  requiredDocuments:
+  - documentType: 1
+    required: 0
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys: []
+  - documentType: 2
+    required: 0
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys: []
+  - documentType: 3
+    required: 0
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys: []
+  comparisonRules: []
+  expectedFieldValueRules: []
+  documents: []

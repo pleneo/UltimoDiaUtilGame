@@ -47,7 +47,12 @@ public class CaseDialoguePanel : MonoBehaviour
     public IEnumerator Play(StudentCaseDefinition caseDefinition)
     {
         var dialogueLines = BuildDialogueLines(caseDefinition);
-        if (dialogueLines.Count == 0)
+        yield return PlayLines(dialogueLines, lastButtonLabel: "Entregar documentos");
+    }
+
+    public IEnumerator PlayLines(List<CaseDialogueLine> lines, string lastButtonLabel = "Continuar")
+    {
+        if (lines == null || lines.Count == 0)
         {
             Hide();
             yield break;
@@ -55,9 +60,9 @@ public class CaseDialoguePanel : MonoBehaviour
 
         Show();
 
-        for (var index = 0; index < dialogueLines.Count; index++)
+        for (var index = 0; index < lines.Count; index++)
         {
-            ShowLine(dialogueLines[index], index, dialogueLines.Count);
+            ShowLine(lines[index], index, lines.Count, lastButtonLabel);
 
             if (continueButton == null)
             {
@@ -102,7 +107,7 @@ public class CaseDialoguePanel : MonoBehaviour
         }
     }
 
-    private void ShowLine(CaseDialogueLine line, int lineIndex, int totalLines)
+    private void ShowLine(CaseDialogueLine line, int lineIndex, int totalLines, string lastButtonLabel = "Continuar")
     {
         if (line == null)
         {
@@ -121,7 +126,7 @@ public class CaseDialoguePanel : MonoBehaviour
 
         if (continueButtonText != null)
         {
-            continueButtonText.text = lineIndex + 1 >= totalLines ? "Entregar documentos" : "Continuar";
+            continueButtonText.text = lineIndex + 1 >= totalLines ? lastButtonLabel : "Continuar";
         }
     }
 

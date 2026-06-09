@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -166,6 +167,16 @@ public class UIManager : MonoBehaviour
         }
 
         yield return caseDialoguePanel.Play(caseDefinition);
+    }
+
+    public IEnumerator PlayPostDecisionDialogue(List<CaseDialogueLine> lines)
+    {
+        if (caseDialoguePanel == null || lines == null || lines.Count == 0)
+        {
+            yield break;
+        }
+
+        yield return caseDialoguePanel.PlayLines(lines);
     }
 
     public void HideCaseDialogue()

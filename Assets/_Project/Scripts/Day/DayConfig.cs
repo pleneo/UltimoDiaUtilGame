@@ -38,6 +38,9 @@ public class DayConfig : ScriptableObject
     [Header("Fixed Story Cases")]
     public List<FixedDayCaseEntry> fixedCases = new List<FixedDayCaseEntry>();
 
+    [Header("Final Case (always last, regardless of maxCasesForDay)")]
+    public StudentCaseDefinition finalCase;
+
     [Header("Legacy Manual Cases")]
     public bool includeManualCases = true;
     public List<RequestType> availableRequestTypes = new List<RequestType>();

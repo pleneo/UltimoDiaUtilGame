@@ -16,15 +16,17 @@ MonoBehaviour:
   dayLabel: Dia 3
   dayIntro: Agora divergencias de RA aparecem com mais frequencia. Compare os numeros
     com atencao.
+  startOfDayNotice: 
   workDurationSeconds: 330
   economyConfig: {fileID: 11400000, guid: 1f4a19fcc53c56749b3214e857782afe, type: 2}
   useInfiniteGeneratedCases: 0
   enrollmentGenerationConfig: {fileID: 11400000, guid: b1bc8568b0bb80571b98e8340218f9ee, type: 2}
-  maxCasesForDay: 7
+  maxCasesForDay: 4
   shuffleCaseQueue: 1
   useFixedQueueSeed: 0
   queueRandomSeed: 1003
   fixedCases: []
+  finalCase: {fileID: 11400000, guid: 7069ee7d6d7049b8e901f5d3bc84e21f, type: 2}
   includeManualCases: 0
   availableRequestTypes: 00000000
   rulebookEntries:

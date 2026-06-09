@@ -16,15 +16,17 @@ MonoBehaviour:
   dayLabel: Dia 4
   dayIntro: Alguns comprovantes chegam incompletos. Campos obrigatorios tambem reprovam
     o pedido.
+  startOfDayNotice: 
   workDurationSeconds: 360
   economyConfig: {fileID: 11400000, guid: f3fe0c7da07bbb6d2a1c868dfed53d6e, type: 2}
   useInfiniteGeneratedCases: 0
   enrollmentGenerationConfig: {fileID: 11400000, guid: 3978fc8d5fc528931bff06c709bb3fee, type: 2}
-  maxCasesForDay: 8
+  maxCasesForDay: 4
   shuffleCaseQueue: 1
   useFixedQueueSeed: 0
   queueRandomSeed: 1004
   fixedCases: []
+  finalCase: {fileID: 11400000, guid: 60e27372414a5b5b48ce60d6abe221ad, type: 2}
   includeManualCases: 0
   availableRequestTypes: 00000000
   rulebookEntries:

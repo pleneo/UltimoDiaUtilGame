@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3327ca22ddb3dfd328edcdeb6fdf9ccf, type: 3}
+  m_Name: Case_
+  m_EditorClassIdentifier: Assembly-CSharp::StudentCaseDefinition
+  caseId: caso_final_1
+  caseTitle: Caso
+  applicantName: Advogado
+  requestType: 0
+  npcDefinition: {fileID: 11400000, guid: 552f58880d0d886b2b4debbd38229bf3, type: 2}
+  npcDialogue: 
+  preDocumentDialogue:
+  - speaker: 0
+    text: "Recebi um e-mail dizendo que minha bolsa est\xE1 sob revis\xE3o, pode
+      verificar o motivo por favor?"
+  - speaker: 1
+    text: Claro, irei verificar nosso sistema...
+  - speaker: 1
+    text: "O sistema aponta diverg\xEAncia de renda."
+  - speaker: 0
+    text: "Isso \xE9 imposs\xEDvel."
+  - speaker: 1
+    text: "Houve alguma altera\xE7\xE3o recente?"
+  - speaker: 0
+    text: "Meu pai perdeu o emprego, a bolsa s\xF3 deveria entrar em revis\xE3o se
+      a renda aumentasse"
+  - speaker: 1
+    text: Entendo.Existe um recurso administrativo.
+  - speaker: 0
+    text: E quanto tempo demora?
+  - speaker: 1
+    text: "At\xE9 trinta dias."
+  - speaker: 0
+    text: "Trinta dias \xE9 tempo suficiente para eu perder o semestre inteiro."
+  postDecisionDialogue:
+  - speaker: 0
+    text: "Obrigado pela compreens\xE3o"
+  caseSummary: 
+  referenceDateIso: 
+  requiresSupervisorReview: 0
+  hasDecisionOverride: 1
+  overriddenCorrectDecision: 0
+  overrideReason: 
+  mistakeIsCritical: 1
+  decisionDocumentType: 6
+  requiresPaymentProcessing: 0
+  expectedPaymentAmount: 0
+  paymentReceiptTemplate:
+    definition: {fileID: 0}
+    fields: []
+    hasValidStamp: 1
+    isSuspicious: 0
+    isFake: 0
+    issueDateIso: 
+    expiryDateIso: 
+    notes: 
+  requiredDocuments:
+  - documentType: 1
+    required: 0
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys: []
+  - documentType: 6
+    required: 0
+    requiresValidStamp: 0
+    requiresNonExpiredDate: 0
+    requiredFieldKeys: []
+  comparisonRules: []
+  expectedFieldValueRules: []
+  documents: []

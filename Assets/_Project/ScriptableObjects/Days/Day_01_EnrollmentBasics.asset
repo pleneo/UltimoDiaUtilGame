@@ -15,11 +15,17 @@ MonoBehaviour:
   dayNumber: 1
   dayLabel: Dia 1
   dayIntro: Primeiro dia de atendimento. Confira documentos de matricula com calma.
+  startOfDayNotice: 
   workDurationSeconds: 300
   economyConfig: {fileID: 11400000, guid: e84698faf40f402498a135d229895ac6, type: 2}
   useInfiniteGeneratedCases: 0
   enrollmentGenerationConfig: {fileID: 0}
+  maxCasesForDay: 4
+  shuffleCaseQueue: 1
+  useFixedQueueSeed: 0
+  queueRandomSeed: 1
   fixedCases: []
+  finalCase: {fileID: 11400000, guid: 8386effc278de55e5ad46b93b9f7915c, type: 2}
   includeManualCases: 1
   availableRequestTypes: 00000000
   rulebookEntries:

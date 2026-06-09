@@ -15,15 +15,17 @@ MonoBehaviour:
   dayNumber: 2
   dayLabel: Dia 2
   dayIntro: Hoje, pedidos de trancamento exigem taxa paga na maquininha.
+  startOfDayNotice: 
   workDurationSeconds: 330
   economyConfig: {fileID: 11400000, guid: 5d1c08ef4d32205c4b748aa51b3ce69d, type: 2}
   useInfiniteGeneratedCases: 0
   enrollmentGenerationConfig: {fileID: 0}
-  maxCasesForDay: 5
+  maxCasesForDay: 4
   shuffleCaseQueue: 1
   useFixedQueueSeed: 0
   queueRandomSeed: 1
   fixedCases: []
+  finalCase: {fileID: 11400000, guid: 4778f7d7528674086a93f9ed76b301f2, type: 2}
   includeManualCases: 1
   availableRequestTypes: 02000000
   rulebookEntries:
