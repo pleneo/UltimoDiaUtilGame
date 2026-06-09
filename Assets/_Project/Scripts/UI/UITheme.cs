@@ -164,6 +164,9 @@ public class UITheme : ScriptableObject
 
     [Tooltip("Fonte de título — aplicada em headings (deixe vazio para usar a principal)")]
     public TMP_FontAsset fontHeading;
+    
+    [Tooltip("Fonte de Codigo — aplicada na intro")]
+    public TMP_FontAsset fontCode;
 
     // -------------------------------------------------------------------------
     // MÉTODOS UTILITÁRIOS

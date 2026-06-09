@@ -10,6 +10,9 @@ public class UIThemeTarget : MonoBehaviour
     [Tooltip("Qual variável de cor do tema este elemento representa.")]
     public UIColorRole role = UIColorRole.TextPrimary;
 
+    [Tooltip("Se verdadeiro, o tema não sobrescreve a fonte deste TMP_Text.")]
+    public bool ignoreThemeFont = false;
+
     [Tooltip("Se verdadeiro, sobrescreve o tamanho da fonte pelo tema.")]
     public bool overrideFontSize = false;
 

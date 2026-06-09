@@ -79,8 +79,13 @@ public class UIThemeApplier : MonoBehaviour
 
         foreach (var txt in todosOsTextos)
         {
-            // Se tem UIThemeTarget com role de Heading e fontHeading definida, usa ela
             var themeTarget = txt.GetComponent<UIThemeTarget>();
+            if (themeTarget != null && themeTarget.ignoreThemeFont)
+            {
+                continue;
+            }
+
+            // Se tem UIThemeTarget com role de Heading e fontHeading definida, usa ela
             bool isHeading = themeTarget != null && themeTarget.role == UIColorRole.TextHeading;
 
             if (isHeading && theme.fontHeading != null)
@@ -122,14 +127,17 @@ public class UIThemeApplier : MonoBehaviour
                 tmp.fontSize = ResolveFontSize(target.fontRole);
             }
 
-            // Aplica a fonte correta: heading usa fontHeading (se definida), resto usa fontPrimary
-            var fonte = (target.role == UIColorRole.TextHeading && theme.fontHeading != null)
-                ? theme.fontHeading
-                : theme.fontPrimary;
-
-            if (fonte != null)
+            if (!target.ignoreThemeFont)
             {
-                tmp.font = fonte;
+                // Aplica a fonte correta: heading usa fontHeading (se definida), resto usa fontPrimary
+                var fonte = (target.role == UIColorRole.TextHeading && theme.fontHeading != null)
+                    ? theme.fontHeading
+                    : theme.fontPrimary;
+
+                if (fonte != null)
+                {
+                    tmp.font = fonte;
+                }
             }
 
             Log($"TMP '{target.name}' → {target.role}");

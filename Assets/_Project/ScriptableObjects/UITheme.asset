@@ -49,3 +49,4 @@ MonoBehaviour:
   paddingPanel: 12
   fontPrimary: {fileID: 11400000, guid: 13c6dd0ce1174354bb823cb108f65f0a, type: 2}
   fontHeading: {fileID: 11400000, guid: 13c6dd0ce1174354bb823cb108f65f0a, type: 2}
+  fontCode: {fileID: 11400000, guid: 678b545fe64e8924ab01c83a7ba24099, type: 2}
