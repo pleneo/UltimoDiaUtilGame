@@ -346,11 +346,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134960572}
   m_LocalRotation: {x: 0.36181092, y: -0, z: -0, w: 0.9322515}
-<<<<<<< HEAD
-  m_LocalPosition: {x: 0, y: 0, z: 53}
-=======
   m_LocalPosition: {x: 0, y: 0, z: 50}
->>>>>>> 128c2a6 (chore: update MainMenu and Game scenes; adjust UI positions, replace font assets, and add new components)
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -359,13 +355,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 42.423, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-<<<<<<< HEAD
-  m_AnchoredPosition: {x: 702.6283, y: 76}
-  m_SizeDelta: {x: 338.5196, y: 497.155}
-=======
   m_AnchoredPosition: {x: 694, y: 74}
   m_SizeDelta: {x: 654.5211, y: 937.6419}
->>>>>>> 128c2a6 (chore: update MainMenu and Game scenes; adjust UI positions, replace font assets, and add new components)
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &134960574
 MonoBehaviour:
@@ -2625,13 +2616,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: -32.142, y: -185.782, z: -6.462}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-<<<<<<< HEAD
-  m_AnchoredPosition: {x: -656, y: 76}
-  m_SizeDelta: {x: 100, y: 100}
-=======
   m_AnchoredPosition: {x: -693.2336, y: 85.5}
   m_SizeDelta: {x: 299.2884, y: 247.228}
->>>>>>> 128c2a6 (chore: update MainMenu and Game scenes; adjust UI positions, replace font assets, and add new components)
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &918067259
 GameObject:
@@ -3257,13 +3243,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0.148, y: 2.813, z: -3.011}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-<<<<<<< HEAD
-  m_AnchoredPosition: {x: 506, y: 102}
-  m_SizeDelta: {x: 119.7937, y: 176.314}
-=======
   m_AnchoredPosition: {x: 474.2, y: 95.2}
   m_SizeDelta: {x: 121.2711, y: 162.6819}
->>>>>>> 128c2a6 (chore: update MainMenu and Game scenes; adjust UI positions, replace font assets, and add new components)
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1094665874
 MonoBehaviour:
@@ -4367,13 +4348,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-<<<<<<< HEAD
-  m_AnchoredPosition: {x: 405, y: 135}
-  m_SizeDelta: {x: 109.7835, y: 170.1243}
-=======
   m_AnchoredPosition: {x: 364.9828, y: 122.50195}
   m_SizeDelta: {x: 111.1375, y: 156.9708}
->>>>>>> 128c2a6 (chore: update MainMenu and Game scenes; adjust UI positions, replace font assets, and add new components)
   m_Pivot: {x: 0.5000011, y: 0.49999994}
 --- !u!114 &1841069844
 MonoBehaviour:
