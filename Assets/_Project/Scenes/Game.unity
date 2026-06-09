@@ -550,7 +550,7 @@ MonoBehaviour:
   - documentType: 5
     prefab: {fileID: 5176305209275541040, guid: 17f48a06769e49b4a5cc012df395785b, type: 3}
   - documentType: 6
-    prefab: {fileID: 1200097208009775666, guid: af614f2ad76c43d69d4435f463829fa4, type: 3}
+    prefab: {fileID: 5176305209275541040, guid: af614f2ad76c43d69d4435f463829fa4, type: 3}
   documentSpawnPoints:
   - documentType: 1
     spawnPoint: {fileID: 7063011615294401502, guid: 752925a03ef0fa846930f77af1077cae, type: 3}
@@ -635,8 +635,8 @@ MonoBehaviour:
   economyManager: {fileID: 149090566}
   uiManager: {fileID: 149090565}
   daySequence:
+  - {fileID: 11400000, guid: 8e04c1f923dcb1141914ae36cf9598ba, type: 2}
   - {fileID: 11400000, guid: 08c25ce04a7b0e22e9c3fa3ac3c48070, type: 2}
-  - {fileID: 11400000, guid: 40d6de0c9969b90eaa6602d1bd10ae7e, type: 2}
   - {fileID: 11400000, guid: abdcdc148bfb1ced88494aea3e5d4f14, type: 2}
   - {fileID: 11400000, guid: e2115b6528450dd5da90de79f718f8ba, type: 2}
   - {fileID: 11400000, guid: 2ea9aca59db289454917a307506b7256, type: 2}
@@ -2313,8 +2313,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50f94ebf49b671e4cb23d258b3909938, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaymentFlowController
+  firstDayWithPaymentMachine: 2
+  gameManager: {fileID: 0}
   caseManager: {fileID: 149090568}
   documentManager: {fileID: 149090567}
+  dayManager: {fileID: 0}
   paymentMachine: {fileID: 914237963}
   fallbackPaymentReceiptDefinition: {fileID: 11400000, guid: a1522de25a0436d1c8483d2560adc483, type: 2}
   machineProcessingDelaySeconds: 1.2
@@ -2474,7 +2477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &914237963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2546,13 +2549,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 914237962}
-  m_LocalRotation: {x: 0.0680264, y: -0.95738536, z: -0.27330214, w: -0.06396642}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.0505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 694020764}
-  m_LocalEulerAnglesHint: {x: -32.142, y: -185.782, z: -6.462}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693.2336, y: 85.5}

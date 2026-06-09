@@ -46,6 +46,7 @@ public class DayManager : MonoBehaviour
     [SerializeField, Min(0)] private int debugExtraRepeatedCases;
 
     public event Action<DaySummaryData> DayEnded;
+    public event Action<DayConfig> DayStarted;
 
     public DayConfig CurrentDayConfig { get; private set; }
     public float RemainingTimeSeconds { get; private set; }
@@ -210,6 +211,7 @@ public class DayManager : MonoBehaviour
         LogQueue(dayConfig.useInfiniteGeneratedCases
             ? $"Dia infinito iniciado. Casos fixos pendentes: {pendingFixedCaseEntries.Count}."
             : $"Dia iniciado com {pendingCaseQueue.Count} caso(s) na fila.");
+        DayStarted?.Invoke(dayConfig);
         PushHudUpdate();
     }
 

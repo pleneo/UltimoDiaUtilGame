@@ -3,8 +3,11 @@ using UnityEngine;
 
 public class PaymentFlowController : MonoBehaviour
 {
+    [SerializeField, Min(1)] private int firstDayWithPaymentMachine = 2;
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private CaseManager caseManager;
     [SerializeField] private DocumentManager documentManager;
+    [SerializeField] private DayManager dayManager;
     [SerializeField] private DraggablePaymentMachine paymentMachine;
     [SerializeField] private DocumentDefinition fallbackPaymentReceiptDefinition;
     [SerializeField, Min(0.1f)] private float machineProcessingDelaySeconds = 1.2f;
@@ -13,6 +16,7 @@ public class PaymentFlowController : MonoBehaviour
     public bool IsPaymentCompleted { get; private set; }
 
     private Coroutine paymentRoutine;
+    private int lastAppliedDayNumber = -1;
 
     private void Awake()
     {
@@ -21,9 +25,19 @@ public class PaymentFlowController : MonoBehaviour
             caseManager = FindObjectOfType<CaseManager>();
         }
 
+        if (gameManager == null)
+        {
+            gameManager = FindObjectOfType<GameManager>();
+        }
+
         if (documentManager == null)
         {
             documentManager = FindObjectOfType<DocumentManager>();
+        }
+
+        if (dayManager == null)
+        {
+            dayManager = FindObjectOfType<DayManager>();
         }
 
         if (paymentMachine == null)
@@ -31,7 +45,7 @@ public class PaymentFlowController : MonoBehaviour
             paymentMachine = FindObjectOfType<DraggablePaymentMachine>(true);
         }
 
-        RefreshPaymentMachineVisibility(null);
+        RefreshPaymentMachineVisibility();
     }
 
     private void OnEnable()
@@ -45,6 +59,11 @@ public class PaymentFlowController : MonoBehaviour
         if (documentManager != null)
         {
             documentManager.DocumentsChanged += RefreshPaymentStateFromDocuments;
+        }
+
+        if (gameManager != null)
+        {
+            lastAppliedDayNumber = gameManager.CurrentDayIndex;
         }
 
         SyncCurrentState();
@@ -61,6 +80,11 @@ public class PaymentFlowController : MonoBehaviour
         if (documentManager != null)
         {
             documentManager.DocumentsChanged -= RefreshPaymentStateFromDocuments;
+        }
+
+        if (gameManager != null)
+        {
+            lastAppliedDayNumber = -1;
         }
 
         if (paymentRoutine != null)
@@ -124,8 +148,8 @@ public class PaymentFlowController : MonoBehaviour
         IsPaymentInProgress = false;
 
         deliveredMachine.ReturnToOriginImmediate();
-        deliveredMachine.SetVisible(CaseDocumentRules.RequiresPayment(caseManager != null ? caseManager.CurrentCase : null));
-        deliveredMachine.SetInteractionEnabled(CaseDocumentRules.RequiresPayment(caseManager != null ? caseManager.CurrentCase : null));
+        deliveredMachine.SetVisible(true);
+        deliveredMachine.SetInteractionEnabled(true);
         paymentRoutine = null;
     }
 
@@ -139,14 +163,14 @@ public class PaymentFlowController : MonoBehaviour
 
         IsPaymentInProgress = false;
         IsPaymentCompleted = CaseDocumentRules.RequiresPayment(caseDefinition) && HasPaymentReceiptDocument();
-        RefreshPaymentMachineVisibility(caseDefinition);
+            RefreshPaymentMachineVisibility();
     }
 
     private void HandleCaseResolved(CaseResolutionResult _)
     {
         IsPaymentInProgress = false;
         IsPaymentCompleted = false;
-        RefreshPaymentMachineVisibility(null);
+        RefreshPaymentMachineVisibility();
     }
 
     private void RefreshPaymentStateFromDocuments()
@@ -161,24 +185,86 @@ public class PaymentFlowController : MonoBehaviour
         IsPaymentCompleted = HasPaymentReceiptDocument();
     }
 
-    private void RefreshPaymentMachineVisibility(StudentCaseDefinition caseDefinition)
+    private void RefreshPaymentMachineVisibility()
     {
         if (paymentMachine == null)
         {
             return;
         }
 
-        var requiresPayment = CaseDocumentRules.RequiresPayment(caseDefinition);
         paymentMachine.ReturnToOriginImmediate();
-        paymentMachine.SetVisible(requiresPayment);
-        paymentMachine.SetInteractionEnabled(requiresPayment);
+
+        if (!IsPaymentMachineAllowed())
+        {
+            paymentMachine.SetVisible(false);
+            paymentMachine.SetInteractionEnabled(false);
+            paymentMachine.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!paymentMachine.gameObject.activeSelf)
+        {
+            paymentMachine.gameObject.SetActive(true);
+        }
+
+        paymentMachine.SetVisible(true);
+        paymentMachine.SetInteractionEnabled(true);
     }
 
     private void SyncCurrentState()
     {
-        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
+        SyncPaymentMachineByDay();
         RefreshPaymentStateFromDocuments();
-        RefreshPaymentMachineVisibility(currentCase);
+        RefreshPaymentMachineVisibility();
+    }
+
+    private void Update()
+    {
+        SyncPaymentMachineByDay();
+    }
+
+    private void SyncPaymentMachineByDay()
+    {
+        var currentDayIndex = gameManager != null ? gameManager.CurrentDayIndex : -1;
+
+        if (currentDayIndex == lastAppliedDayNumber)
+        {
+            return;
+        }
+
+        lastAppliedDayNumber = currentDayIndex;
+        ApplyPaymentMachineState();
+    }
+
+    private void ApplyPaymentMachineState()
+    {
+        if (paymentMachine == null)
+        {
+            return;
+        }
+
+        if (!IsPaymentMachineAllowed())
+        {
+            paymentMachine.ReturnToOriginImmediate();
+            paymentMachine.SetVisible(false);
+            paymentMachine.SetInteractionEnabled(false);
+            paymentMachine.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!paymentMachine.gameObject.activeSelf)
+        {
+            paymentMachine.gameObject.SetActive(true);
+        }
+
+        paymentMachine.ReturnToOriginImmediate();
+        paymentMachine.SetVisible(true);
+        paymentMachine.SetInteractionEnabled(true);
+    }
+
+    private bool IsPaymentMachineAllowed()
+    {
+        return gameManager != null && (gameManager.CurrentDayIndex + 1) >= firstDayWithPaymentMachine;
     }
 
     private bool HasPaymentReceiptDocument()
