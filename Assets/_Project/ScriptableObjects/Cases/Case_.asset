@@ -65,12 +65,12 @@ MonoBehaviour:
     notes: 
   requiredDocuments:
   - documentType: 1
-    required: 0
+    required: 1
     requiresValidStamp: 0
     requiresNonExpiredDate: 0
     requiredFieldKeys: []
   - documentType: 6
-    required: 0
+    required: 1
     requiresValidStamp: 0
     requiresNonExpiredDate: 0
     requiredFieldKeys: []

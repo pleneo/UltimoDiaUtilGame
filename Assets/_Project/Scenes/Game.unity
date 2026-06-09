@@ -720,7 +720,7 @@ MonoBehaviour:
   randomNpcDefinitions: []
   avoidRepeatingRandomNpc: 0
   autoRepeatSingleCaseForRandomNpcs: 1
-  casesPerDay: 4
+  casesPerDay: 3
   debugExtraRepeatedCases: 0
 --- !u!114 &149090570
 MonoBehaviour:
