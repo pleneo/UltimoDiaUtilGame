@@ -16,7 +16,7 @@ MonoBehaviour:
   caseTitle: Trancamento com pagamento nao autorizado
   applicantName: Bruno Alves
   requestType: 2
-  npcDefinition: {fileID: 0}
+  npcDefinition: {fileID: 11400000, guid: 552f58880d0d886b2b4debbd38229bf3, type: 2}
   npcDialogue: "Quero trancar C\xE1lculo."
   preDocumentDialogue:
   - speaker: 0
@@ -25,6 +25,7 @@ MonoBehaviour:
     text: Existe uma taxa administrativa a ser paga.
   - speaker: 0
     text: "Eu sei, mas n\xE3o vou pagar. Essa taxa n\xE3o consta no contrato."
+  postDecisionDialogue: []
   caseSummary: "Os documentos est\xE3o corretos, mas o pagamento voltou nao autorizado."
   referenceDateIso: 2026-05-22
   requiresSupervisorReview: 0

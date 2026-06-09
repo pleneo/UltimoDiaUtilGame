@@ -16,8 +16,10 @@ MonoBehaviour:
   caseTitle: Matricula sem historico
   applicantName: Ana Beatriz Lima
   requestType: 0
-  npcDefinition: {fileID: 11400000, guid: 13274b2881c01dc77aa51b84facf4321, type: 2}
+  npcDefinition: {fileID: 11400000, guid: 89b7c416b64e2d2e5a96d9c30cb3badb, type: 2}
   npcDialogue: Aluno solicita matricula, mas nao trouxe o historico escolar.
+  preDocumentDialogue: []
+  postDecisionDialogue: []
   caseSummary: O historico escolar esta faltando, entao a matricula deve ser indeferida.
   referenceDateIso: 2026-05-21
   requiresSupervisorReview: 0
@@ -25,6 +27,18 @@ MonoBehaviour:
   overriddenCorrectDecision: 0
   overrideReason: 
   mistakeIsCritical: 1
+  decisionDocumentType: 0
+  requiresPaymentProcessing: 0
+  expectedPaymentAmount: 0
+  paymentReceiptTemplate:
+    definition: {fileID: 0}
+    fields: []
+    hasValidStamp: 1
+    isSuspicious: 0
+    isFake: 0
+    issueDateIso: 
+    expiryDateIso: 
+    notes: 
   requiredDocuments:
   - documentType: 1
     required: 1
@@ -63,6 +77,7 @@ MonoBehaviour:
     secondDocumentType: 3
     secondFieldKey: ra
     description: O RA do Historico Escolar deve bater com o Comprovante de Matricula.
+  expectedFieldValueRules: []
   documents:
   - definition: {fileID: 11400000, guid: 7bde6ce78d87f1849bf99ff827804f30, type: 2}
     fields:

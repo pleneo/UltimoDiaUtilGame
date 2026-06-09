@@ -32,4 +32,7 @@ MonoBehaviour:
   rulebookEntries:
   - {fileID: 11400000, guid: f9f72df7ef60c9843b4830b38b7cf0e9, type: 2}
   noticeBoardEntries: []
-  cases: []
+  cases:
+  - {fileID: 11400000, guid: ff6044d749eac8249aafab59413bc3ef, type: 2}
+  - {fileID: 11400000, guid: f246979c257468883b483ed050dd4c99, type: 2}
+  - {fileID: 11400000, guid: dd5b43cabebbcf5fea8298a9f089b3fb, type: 2}
