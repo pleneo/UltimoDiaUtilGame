@@ -74,6 +74,11 @@ public class DocumentManager : MonoBehaviour
                 continue;
             }
 
+            if (ShouldSkipInitialSpawnRecord(caseDefinition, sourceRecord))
+            {
+                continue;
+            }
+
             var clonedRecord = sourceRecord.Clone();
             documentsToSpawn.Add(clonedRecord);
         }
@@ -96,6 +101,21 @@ public class DocumentManager : MonoBehaviour
         }
 
         DocumentsChanged?.Invoke();
+    }
+
+    private static bool ShouldSkipInitialSpawnRecord(StudentCaseDefinition caseDefinition, DocumentRecord sourceRecord)
+    {
+        if (caseDefinition == null || sourceRecord == null)
+        {
+            return false;
+        }
+
+        if (!caseDefinition.requiresPaymentProcessing)
+        {
+            return false;
+        }
+
+        return sourceRecord.GetDocumentType() == DocumentType.PaymentReceipt;
     }
 
     public DraggableDocument AddDocument(DocumentRecord record, bool animated = true)

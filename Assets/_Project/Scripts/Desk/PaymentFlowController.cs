@@ -46,17 +46,8 @@ public class PaymentFlowController : MonoBehaviour
         {
             documentManager.DocumentsChanged += RefreshPaymentStateFromDocuments;
         }
-    }
 
-    private void Update()
-    {
-        if (IsPaymentInProgress)
-        {
-            return;
-        }
-
-        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
-        RefreshPaymentMachineVisibility(currentCase);
+        SyncCurrentState();
     }
 
     private void OnDisable()
@@ -183,6 +174,13 @@ public class PaymentFlowController : MonoBehaviour
         paymentMachine.SetInteractionEnabled(requiresPayment);
     }
 
+    private void SyncCurrentState()
+    {
+        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
+        RefreshPaymentStateFromDocuments();
+        RefreshPaymentMachineVisibility(currentCase);
+    }
+
     private bool HasPaymentReceiptDocument()
     {
         if (documentManager == null || documentManager.CurrentDocuments == null)
@@ -248,7 +246,7 @@ public class PaymentFlowController : MonoBehaviour
         fallbackRecord.fields.Add(new DocumentField
         {
             key = "status",
-            value = "autorizado"
+            value = "AUTORIZADO"
         });
 
         return fallbackRecord;
