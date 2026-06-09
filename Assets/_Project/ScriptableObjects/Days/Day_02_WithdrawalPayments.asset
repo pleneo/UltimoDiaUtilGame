@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b290265242201bda6b3af89dac3b1c4e, type: 3}
+  m_Name: Day_02_WithdrawalPayments
+  m_EditorClassIdentifier: Assembly-CSharp::DayConfig
+  dayNumber: 2
+  dayLabel: Dia 2
+  dayIntro: Hoje, pedidos de trancamento exigem taxa paga na maquininha.
+  workDurationSeconds: 330
+  economyConfig: {fileID: 11400000, guid: 5d1c08ef4d32205c4b748aa51b3ce69d, type: 2}
+  useInfiniteGeneratedCases: 0
+  enrollmentGenerationConfig: {fileID: 0}
+  maxCasesForDay: 5
+  shuffleCaseQueue: 1
+  useFixedQueueSeed: 0
+  queueRandomSeed: 1
+  fixedCases: []
+  includeManualCases: 1
+  availableRequestTypes: 02000000
+  rulebookEntries:
+  - {fileID: 11400000, guid: aab610ea195b9a6be8bf27c272233760, type: 2}
+  noticeBoardEntries: []
+  cases:
+  - {fileID: 11400000, guid: f605ab64231af4cbb9fb5b2748979666, type: 2}
+  - {fileID: 11400000, guid: f246979c257468883b483ed050dd4c99, type: 2}

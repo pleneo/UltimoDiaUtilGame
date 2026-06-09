@@ -8,6 +8,9 @@ public class DocumentView : MonoBehaviour
     [SerializeField] private TMP_Text nameValueText;
     [SerializeField] private TMP_Text raValueText;
     [SerializeField] private TMP_Text courseValueText;
+    [SerializeField] private TMP_Text cpfValueText;
+    [SerializeField] private TMP_Text valueValueText;
+    [SerializeField] private TMP_Text statusValueText;
     [SerializeField] private TMP_Text notesText;
 
     [Header("Fallback")]
@@ -21,6 +24,9 @@ public class DocumentView : MonoBehaviour
             SetText(nameValueText, emptyValueText);
             SetText(raValueText, emptyValueText);
             SetText(courseValueText, emptyValueText);
+            SetText(cpfValueText, emptyValueText);
+            SetText(valueValueText, emptyValueText);
+            SetText(statusValueText, emptyValueText);
             SetText(notesText, string.Empty);
             return;
         }
@@ -29,6 +35,9 @@ public class DocumentView : MonoBehaviour
         SetFieldText(nameValueText, record, "nome");
         SetFieldText(raValueText, record, "ra");
         SetFieldText(courseValueText, record, "curso");
+        SetFieldText(cpfValueText, record, "cpf");
+        SetFieldText(valueValueText, record, "valor");
+        SetFieldText(statusValueText, record, "status");
         SetText(notesText, string.IsNullOrWhiteSpace(record.notes) ? string.Empty : record.notes);
     }
 

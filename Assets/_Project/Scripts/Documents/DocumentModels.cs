@@ -192,3 +192,14 @@ public class DocumentComparisonRule
     [TextArea(2, 4)]
     public string description;
 }
+
+[Serializable]
+public class DocumentExpectedFieldValueRule
+{
+    public DocumentType documentType = DocumentType.Unknown;
+    public string fieldKey;
+    public string expectedValue;
+
+    [TextArea(2, 4)]
+    public string description;
+}

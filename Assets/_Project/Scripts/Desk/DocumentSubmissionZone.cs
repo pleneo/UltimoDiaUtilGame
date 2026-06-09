@@ -6,14 +6,14 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(RectTransform))]
 public class DocumentSubmissionZone : MonoBehaviour
 {
-    private const DocumentType DecisionDocumentType = DocumentType.EnrollmentProof;
-
     [SerializeField] private DocumentManager documentManager;
     [SerializeField] private CaseManager caseManager;
+    [SerializeField] private PaymentFlowController paymentFlowController;
     [SerializeField] private RectTransform submissionArea;
     [SerializeField] private TMP_Text feedbackText;
-    [SerializeField] private string missingStampMessage = "Carimbe o comprovante de matricula antes de entregar.";
+    [SerializeField] private string missingStampMessage = "Carimbe o documento principal antes de entregar.";
     [SerializeField] private string pendingDocumentsMessage = "Entregue os demais documentos.";
+    [SerializeField] private string pendingPaymentMessage = "Entregue a maquininha ao aluno antes de devolver os documentos.";
 
     private readonly HashSet<DraggableDocument> submittedDocuments = new HashSet<DraggableDocument>();
     private DecisionType? queuedDecision;
@@ -34,6 +34,26 @@ public class DocumentSubmissionZone : MonoBehaviour
         {
             caseManager = FindObjectOfType<CaseManager>();
         }
+
+        if (paymentFlowController == null)
+        {
+            paymentFlowController = FindObjectOfType<PaymentFlowController>();
+        }
+    }
+
+    public bool TryReceivePaymentMachine(DraggablePaymentMachine machine)
+    {
+        if (machine == null || submissionArea == null || paymentFlowController == null)
+        {
+            return false;
+        }
+
+        if (!RectTransformsOverlap(machine.RectTransform, submissionArea))
+        {
+            return false;
+        }
+
+        return paymentFlowController.TryStartPayment(machine);
     }
 
     private void OnEnable()
@@ -109,9 +129,16 @@ public class DocumentSubmissionZone : MonoBehaviour
             return;
         }
 
+        if (paymentFlowController != null && paymentFlowController.ShouldBlockDocumentSubmission())
+        {
+            ShowFeedback(pendingPaymentMessage);
+            document.ReturnToLastValidPosition();
+            return;
+        }
+
         if (!TryGetStampedDecision(out var stampedDecision))
         {
-            ShowFeedback(missingStampMessage);
+            ShowFeedback(BuildMissingStampMessage());
             document.ReturnToLastValidPosition();
             return;
         }
@@ -131,7 +158,7 @@ public class DocumentSubmissionZone : MonoBehaviour
 
         if (!queuedDecision.HasValue)
         {
-            ShowFeedback(missingStampMessage);
+            ShowFeedback(BuildMissingStampMessage());
             return;
         }
 
@@ -146,6 +173,11 @@ public class DocumentSubmissionZone : MonoBehaviour
     private bool TryGetStampedDecision(out DecisionType decision)
     {
         decision = default;
+        var decisionDocumentType = GetDecisionDocumentType();
+        if (decisionDocumentType == DocumentType.Unknown)
+        {
+            return false;
+        }
 
         if (documentManager == null || documentManager.SpawnedViews == null)
         {
@@ -219,14 +251,23 @@ public class DocumentSubmissionZone : MonoBehaviour
         }
     }
 
-    private static bool IsDecisionDocument(DraggableDocument document)
+    private bool IsDecisionDocument(DraggableDocument document)
     {
         if (document == null || document.BoundRecord == null)
         {
             return false;
         }
 
-        return document.BoundRecord.GetDocumentType() == DecisionDocumentType;
+        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
+        var decisionDocumentType = CaseDocumentRules.ResolveDecisionDocumentType(currentCase);
+        return decisionDocumentType != DocumentType.Unknown &&
+               document.BoundRecord.GetDocumentType() == decisionDocumentType;
+    }
+
+    private DocumentType GetDecisionDocumentType()
+    {
+        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
+        return CaseDocumentRules.ResolveDecisionDocumentType(currentCase);
     }
 
     private bool IsDocumentInsideSubmissionArea(DraggableDocument document, PointerEventData eventData)
@@ -236,12 +277,55 @@ public class DocumentSubmissionZone : MonoBehaviour
         return RectTransformUtility.RectangleContainsScreenPoint(submissionArea, screenPoint, camera);
     }
 
+    private static bool RectTransformsOverlap(RectTransform first, RectTransform second)
+    {
+        if (first == null || second == null)
+        {
+            return false;
+        }
+
+        var firstCorners = new Vector3[4];
+        var secondCorners = new Vector3[4];
+        first.GetWorldCorners(firstCorners);
+        second.GetWorldCorners(secondCorners);
+
+        var firstMin = firstCorners[0];
+        var firstMax = firstCorners[2];
+        var secondMin = secondCorners[0];
+        var secondMax = secondCorners[2];
+
+        return firstMin.x <= secondMax.x &&
+               firstMax.x >= secondMin.x &&
+               firstMin.y <= secondMax.y &&
+               firstMax.y >= secondMin.y;
+    }
+
     private void ShowFeedback(string message)
     {
         if (feedbackText != null)
         {
             feedbackText.text = message;
         }
+    }
+
+    private string BuildMissingStampMessage()
+    {
+        var decisionDocumentType = GetDecisionDocumentType();
+        var decisionLabel = GetDocumentTypeLabel(decisionDocumentType);
+        return decisionDocumentType == DocumentType.Unknown
+            ? missingStampMessage
+            : $"Carimbe {decisionLabel.ToLowerInvariant()} antes de entregar.";
+    }
+
+    private static string GetDocumentTypeLabel(DocumentType documentType)
+    {
+        return documentType switch
+        {
+            DocumentType.EnrollmentProof => "Comprovante de Matricula",
+            DocumentType.WithdrawalForm => "Formulario de Trancamento",
+            DocumentType.TuitionReceipt => "Comprovante de Mensalidade",
+            _ => "o documento principal"
+        };
     }
 
     private void ClearFeedback()

@@ -51,6 +51,7 @@ public enum ValidationIssueType
     MissingDocument,
     MissingField,
     FieldMismatch,
+    InvalidFieldValue, 
     InvalidStamp,
     ExpiredDocument,
     SuspiciousDocument,

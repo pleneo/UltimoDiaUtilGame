@@ -8,8 +8,6 @@ using UnityEngine;
 /// </summary>
 public class StampReceiver : MonoBehaviour
 {
-    private const DocumentType AllowedStampDocumentType = DocumentType.EnrollmentProof;
-
     [Header("Marcas Visuais")]
     [Tooltip("GameObject filho com a imagem do carimbo APROVADO.")]
     [SerializeField] private GameObject marcaAprovado;
@@ -31,12 +29,15 @@ public class StampReceiver : MonoBehaviour
     /// <summary>Disparado sempre que um carimbo é aplicado com sucesso.</summary>
     public event Action<StampType> CarimboAplicado;
 
+    private CaseManager caseManager;
+
     // -------------------------------------------------------------------------
     // Unity Messages
     // -------------------------------------------------------------------------
 
     private void Awake()
     {
+        caseManager = FindObjectOfType<CaseManager>();
         // Começa sem nenhuma marca visível
         LimparMarcas();
     }
@@ -91,7 +92,19 @@ public class StampReceiver : MonoBehaviour
             return false;
         }
 
-        return draggableDocument.BoundRecord.GetDocumentType() == AllowedStampDocumentType;
+        if (caseManager == null)
+        {
+            caseManager = FindObjectOfType<CaseManager>();
+        }
+
+        var currentCase = caseManager != null ? caseManager.CurrentCase : null;
+        var allowedDocumentType = CaseDocumentRules.ResolveDecisionDocumentType(currentCase);
+        if (allowedDocumentType == DocumentType.Unknown)
+        {
+            return false;
+        }
+
+        return draggableDocument.BoundRecord.GetDocumentType() == allowedDocumentType;
     }
 
     private void AtualizarVisuais(StampType tipo, Vector3 worldPosition)

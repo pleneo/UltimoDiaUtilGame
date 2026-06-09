@@ -47,7 +47,14 @@ public class StudentCaseDefinition : ScriptableObject
 
     public bool mistakeIsCritical = true;
 
+    [Header("Desk Flow")]
+    public DocumentType decisionDocumentType = DocumentType.Unknown;
+    public bool requiresPaymentProcessing;
+    [Min(0)] public int expectedPaymentAmount;
+    public DocumentRecord paymentReceiptTemplate;
+
     public List<DocumentRequirement> requiredDocuments = new List<DocumentRequirement>();
     public List<DocumentComparisonRule> comparisonRules = new List<DocumentComparisonRule>();
+    public List<DocumentExpectedFieldValueRule> expectedFieldValueRules = new List<DocumentExpectedFieldValueRule>();
     public List<DocumentRecord> documents = new List<DocumentRecord>();
 }

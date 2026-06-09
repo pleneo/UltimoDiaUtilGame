@@ -97,6 +97,19 @@ public class DocumentManager : MonoBehaviour
         DocumentsChanged?.Invoke();
     }
 
+    public DraggableDocument AddDocument(DocumentRecord record, bool animated = true)
+    {
+        if (record == null)
+        {
+            return null;
+        }
+
+        currentDocuments.Add(record);
+        var spawnedView = SpawnDocumentView(record, currentDocuments.Count - 1, animated);
+        DocumentsChanged?.Invoke();
+        return spawnedView;
+    }
+
     public void ClearDocuments()
     {
         StopRunningAnimations();
@@ -115,11 +128,11 @@ public class DocumentManager : MonoBehaviour
         DocumentsChanged?.Invoke();
     }
 
-    private void SpawnDocumentView(DocumentRecord record, int index)
+    private DraggableDocument SpawnDocumentView(DocumentRecord record, int index, bool animated = true)
     {
         if (record == null)
         {
-            return;
+            return null;
         }
 
         ResolveDocumentParentIfNeeded();
@@ -144,18 +157,20 @@ public class DocumentManager : MonoBehaviour
             ApplySpawnPosition(view, index, record.GetDocumentType());
             view.Bind(record);
             spawnedViews.Add(view);
-            StartEntryAnimation(view, index);
+            StartEntryAnimation(view, index, animated);
         }
+
+        return view;
     }
 
-    private void StartEntryAnimation(DraggableDocument view, int index)
+    private void StartEntryAnimation(DraggableDocument view, int index, bool animated)
     {
         if (view == null)
         {
             return;
         }
 
-        if (!animateDocumentEntry)
+        if (!animateDocumentEntry || !animated)
         {
             view.SetInteractionEnabled(true);
             view.SetVisualAlpha(1f);

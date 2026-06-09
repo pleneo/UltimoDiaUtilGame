@@ -33,6 +33,7 @@ public static class CaseValidator
 
         EvaluateRequiredDocuments(caseDefinition, activeDocuments, referenceDate, result);
         EvaluateComparisons(caseDefinition, activeDocuments, result);
+        EvaluateExpectedFieldValues(caseDefinition, activeDocuments, result);
 
         result.hasSupervisorReview = caseDefinition.requiresSupervisorReview;
 
@@ -219,6 +220,59 @@ public static class CaseValidator
         }
     }
 
+    private static void EvaluateExpectedFieldValues(
+        StudentCaseDefinition caseDefinition,
+        IReadOnlyList<DocumentRecord> documents,
+        CaseValidationResult result)
+    {
+        if (caseDefinition.expectedFieldValueRules == null)
+        {
+            return;
+        }
+
+        for (var index = 0; index < caseDefinition.expectedFieldValueRules.Count; index++)
+        {
+            var rule = caseDefinition.expectedFieldValueRules[index];
+            if (rule == null || rule.documentType == DocumentType.Unknown || string.IsNullOrWhiteSpace(rule.fieldKey))
+            {
+                continue;
+            }
+
+            var document = FindDocument(documents, rule.documentType);
+            if (document == null)
+            {
+                continue;
+            }
+
+            if (!document.TryGetFieldValue(rule.fieldKey, out var actualValue) || string.IsNullOrWhiteSpace(actualValue))
+            {
+                result.issues.Add(new ValidationIssue
+                {
+                    issueType = ValidationIssueType.MissingField,
+                    message = string.IsNullOrWhiteSpace(rule.description)
+                        ? $"Faltando o campo {GetFieldLabel(rule.fieldKey)} em {document.GetDisplayName()}."
+                        : rule.description,
+                    sourceDocumentType = rule.documentType
+                });
+                continue;
+            }
+
+            if (ValuesMatch(actualValue, rule.expectedValue))
+            {
+                continue;
+            }
+
+            result.issues.Add(new ValidationIssue
+            {
+                issueType = ValidationIssueType.InvalidFieldValue,
+                message = string.IsNullOrWhiteSpace(rule.description)
+                    ? BuildUnexpectedFieldValueMessage(rule, document)
+                    : rule.description,
+                sourceDocumentType = rule.documentType
+            });
+        }
+    }
+
     private static DocumentRecord FindDocument(IReadOnlyList<DocumentRecord> documents, DocumentType documentType)
     {
         if (documents == null)
@@ -257,6 +311,14 @@ public static class CaseValidator
         return $"{fieldLabel} divergente entre {firstDocumentLabel} e {secondDocumentLabel}.";
     }
 
+    private static string BuildUnexpectedFieldValueMessage(DocumentExpectedFieldValueRule rule, DocumentRecord document)
+    {
+        var fieldLabel = GetFieldLabel(rule.fieldKey);
+        var documentLabel = document != null ? document.GetDisplayName() : GetDocumentTypeLabel(rule.documentType);
+        var expectedValue = string.IsNullOrWhiteSpace(rule.expectedValue) ? "valor esperado" : rule.expectedValue;
+        return $"{fieldLabel} invalido em {documentLabel}. Esperado: {expectedValue}.";
+    }
+
     private static string GetDocumentTypeLabel(DocumentType documentType)
     {
         return documentType switch
@@ -266,7 +328,7 @@ public static class CaseValidator
             DocumentType.EnrollmentProof => "Comprovante de Matricula",
             DocumentType.TuitionReceipt => "Comprovante de Mensalidade",
             DocumentType.WithdrawalForm => "Formulario de Trancamento",
-            DocumentType.PaymentReceipt => "Comprovante de Pagamento",
+            DocumentType.PaymentReceipt => "Via da Maquininha",
             DocumentType.SpecialNotice => "Aviso Especial",
             _ => "Documento"
         };
@@ -287,6 +349,8 @@ public static class CaseValidator
             "curso" => "curso",
             "cpf" => "CPF",
             "data" => "data",
+            "valor" => "valor",
+            "status" => "status",
             _ => fieldKey
         };
     }
