@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(RectTransform))]
 public class DocumentSubmissionZone : MonoBehaviour
@@ -23,6 +24,13 @@ public class DocumentSubmissionZone : MonoBehaviour
         if (submissionArea == null)
         {
             submissionArea = GetComponent<RectTransform>();
+        }
+
+        var zoneImage = GetComponent<Image>();
+        if (zoneImage != null)
+        {
+            // The zone is a transparent drop area; it must not steal pointer input from draggable items.
+            zoneImage.raycastTarget = false;
         }
 
         if (documentManager == null)

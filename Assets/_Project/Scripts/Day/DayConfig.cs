@@ -10,7 +10,7 @@ public class FixedDayCaseEntry
 
 [CreateAssetMenu(menuName = "Ultimo Dia Util/Day/Day Config", fileName = "Day_")]
 public class DayConfig : ScriptableObject
-{
+{ 
     public int dayNumber = 1;
     public string dayLabel = "Dia 1";
 

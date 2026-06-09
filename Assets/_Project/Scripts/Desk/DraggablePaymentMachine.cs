@@ -4,14 +4,14 @@ using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(CanvasGroup))]
-public class DraggablePaymentMachine : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+public class DraggablePaymentMachine : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private float returnSpeed = 900f;
     [SerializeField] private float dragScale = 1.08f;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
-    private RectTransform rootCanvas;
+    private RectTransform dragRoot;
     private Coroutine returnCoroutine;
     private Vector2 homePosition;
     private Vector2 dragOffset;
@@ -25,18 +25,16 @@ public class DraggablePaymentMachine : MonoBehaviour, IPointerDownHandler, IDrag
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
 
-        var canvas = GetComponentInParent<Canvas>();
-        if (canvas != null)
-        {
-            rootCanvas = canvas.GetComponent<RectTransform>();
-        }
+        dragRoot = ResolveDragRoot();
 
         homePosition = rectTransform.anchoredPosition;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!interactionEnabled || rootCanvas == null)
+        dragRoot = ResolveDragRoot();
+
+        if (!interactionEnabled || dragRoot == null)
         {
             return;
         }
@@ -53,7 +51,7 @@ public class DraggablePaymentMachine : MonoBehaviour, IPointerDownHandler, IDrag
         canvasGroup.blocksRaycasts = false;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rootCanvas,
+            dragRoot,
             eventData.position,
             eventData.pressEventCamera,
             out var pointerPosition);
@@ -63,13 +61,13 @@ public class DraggablePaymentMachine : MonoBehaviour, IPointerDownHandler, IDrag
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!interactionEnabled || !isDragging || rootCanvas == null)
+        if (!interactionEnabled || !isDragging || dragRoot == null)
         {
             return;
         }
 
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                rootCanvas,
+                dragRoot,
                 eventData.position,
                 eventData.pressEventCamera,
                 out var pointerPosition))
@@ -78,7 +76,7 @@ public class DraggablePaymentMachine : MonoBehaviour, IPointerDownHandler, IDrag
         }
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)
     {
         if (!interactionEnabled)
         {
@@ -93,8 +91,6 @@ public class DraggablePaymentMachine : MonoBehaviour, IPointerDownHandler, IDrag
         {
             return;
         }
-
-        ReturnToOriginAnimated();
     }
 
     public void SetInteractionEnabled(bool isEnabled)
@@ -154,6 +150,22 @@ public class DraggablePaymentMachine : MonoBehaviour, IPointerDownHandler, IDrag
         }
 
         return false;
+    }
+
+    private RectTransform ResolveDragRoot()
+    {
+        var current = transform.parent;
+        while (current != null)
+        {
+            if (current is RectTransform rectTransformParent)
+            {
+                return rectTransformParent;
+            }
+
+            current = current.parent;
+        }
+
+        return null;
     }
 
     private IEnumerator ReturnRoutine()
